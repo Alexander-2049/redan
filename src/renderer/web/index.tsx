@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Layout from "./components/layout";
 import { GameAPI } from "./utils/GameAPI";
 import { WEBSOCKET_SERVER_PORT } from "../../shared/constants";
+import Menu from "./components/menu";
 // import useLocationHash from "./hooks/useLocationHash";
 
 const Main = () => {
@@ -21,6 +22,7 @@ const Main = () => {
 
   return (
     <Layout>
+      <Menu />
       <pre>{JSON.stringify(controls, undefined, " ")}</pre>
     </Layout>
   );

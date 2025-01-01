@@ -9,6 +9,7 @@
 }
 
 .app-content {
+  display: flex;
   flex-grow: 1;
   overflow: auto;
   grid-area: content;
