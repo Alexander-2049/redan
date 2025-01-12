@@ -1,29 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Layout from "./components/layout";
-import { GameAPI } from "./utils/GameAPI";
-import { WEBSOCKET_SERVER_PORT } from "../../shared/constants";
 import Menu from "./components/menu";
-// import useLocationHash from "./hooks/useLocationHash";
+import { PageType } from "./types/PageType";
+import DashboardPage from "./components/pages/dashboard";
+import OverlaysPage from "./components/pages/overlays";
+import LayoutsPage from "./components/pages/layouts";
+
+const pages: { [key in PageType]: JSX.Element } = {
+  dashboard: <DashboardPage />,
+  overlays: <OverlaysPage />,
+  layouts: <LayoutsPage />,
+};
 
 const Main = () => {
-  const [api] = useState(new GameAPI(WEBSOCKET_SERVER_PORT));
-  const [controls, setControls] = useState(null);
-
-  useEffect(() => {
-    const callback = (data: unknown) => {
-      setControls(data);
-    };
-
-    api.addEventListener("controls", callback);
-    return () => {
-      api.removeEventListener("controls", callback);
-    };
-  }, []);
+  const [selectedPage, setSelectedPage] = useState<PageType>("dashboard");
 
   return (
     <Layout>
-      <Menu />
-      <pre>{JSON.stringify(controls, undefined, " ")}</pre>
+      <Menu setSelectedPage={setSelectedPage} />
+      {pages[selectedPage]}
     </Layout>
   );
 };

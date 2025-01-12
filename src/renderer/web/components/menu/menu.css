@@ -6,15 +6,25 @@
 .menu__wrapper .menu__button {
   display: flex;
   width: 100%;
-  height: 36px;
-  background-color: none;
+  background: linear-gradient(#ffffff3a, #b8b8b810);
   color: #000000;
   border: none;
   font-size: 1rem;
-  margin-top: 4px;
-  margin-bottom: 4px;
   text-align: left;
-  padding: 8px;
+  padding: 16px;
+  justify-content: space-between;
+}
+
+.menu__wrapper .menu__button::after {
+  content: "»";
+}
+
+.menu__wrapper .menu__button:hover::after {
+  transform: translateX(2px);
+}
+
+.menu__wrapper .menu__button:active::after {
+  transform: translateX(4px);
 }
 
 .menu__wrapper .menu__button:hover {
