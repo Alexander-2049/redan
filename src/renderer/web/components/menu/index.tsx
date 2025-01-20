@@ -32,6 +32,14 @@ const Menu = ({
       >
         Layouts
       </button>
+      <button
+        className="menu__button"
+        onClick={() => {
+          setSelectedPage("debug");
+        }}
+      >
+        Debug
+      </button>
     </div>
   );
 };

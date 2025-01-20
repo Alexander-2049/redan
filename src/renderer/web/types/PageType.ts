@@ -1,1 +1,1 @@
-export type PageType = "dashboard" | "overlays" | "layouts";
+export type PageType = "dashboard" | "overlays" | "layouts" | "debug";
