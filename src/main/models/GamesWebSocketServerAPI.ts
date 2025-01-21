@@ -9,15 +9,17 @@ export class GamesWebSocketServerAPI {
     controls: new ConnectedListeners(),
     rpm: new ConnectedListeners(),
     speed: new ConnectedListeners(),
-    "car-location": new ConnectedListeners(),
+    carLocation: new ConnectedListeners(),
   };
   private webSocketServer = new WebSocket.Server({
     port: WEBSOCKET_SERVER_PORT,
   });
 
-  public groupNames = new Set<keyof WebSocketConnections>(
-    Object.keys(this.connections) as (keyof WebSocketConnections)[]
-  );
+  public get groupNamesLowercase(): Set<string> {
+    return new Set(
+      Object.keys(this.connections).map((key) => key.toLowerCase())
+    );
+  }
 
   constructor() {
     this.webSocketServer.on("error", (error) => {
@@ -26,11 +28,18 @@ export class GamesWebSocketServerAPI {
     this.webSocketServer.on("connection", (ws, req) => {
       const group = req.url.slice(1).toLowerCase();
 
-      if (this.groupNames.has(group as keyof WebSocketConnections)) {
-        const groupMap = this.connections[group as keyof WebSocketConnections];
+      // Find the actual group name in its original case
+      const actualGroupName = Object.keys(this.connections).find(
+        (key) => key.toLowerCase() === group
+      );
+
+      if (actualGroupName) {
+        const groupMap = this.connections[actualGroupName as keyof WebSocketConnections];
         groupMap.add(ws);
 
         ws.on("close", () => groupMap.delete(ws));
+      } else {
+        console.warn(`Group "${group}" does not exist.`);
       }
     });
   }
@@ -43,7 +52,7 @@ export class GamesWebSocketServerAPI {
     return this.selectedGame;
   }
 
-  public getConnections() {
+  public get groups() {
     return this.connections;
   }
 }

@@ -6,7 +6,7 @@ import { GameAPI } from "../../utils/GameAPI";
     // controls: new ConnectedListeners(),
     // rpm: new ConnectedListeners(),
     // speed: new ConnectedListeners(),
-    // "car-location": new ConnectedListeners(),
+    // "carLocation": new ConnectedListeners(),
 
 const Debug = () => {
   const api = useMemo(() => new GameAPI(WEBSOCKET_SERVER_PORT), []);
@@ -19,13 +19,13 @@ const Debug = () => {
     api.addEventListener("controls", setControls);
     api.addEventListener("rpm", setRpm);
     api.addEventListener("speed", setSpeed);
-    api.addEventListener("car-location", setCarLocation);
+    api.addEventListener("carLocation", setCarLocation);
 
     return () => {
       api.removeEventListener("controls", setControls);
       api.removeEventListener("rpm", setControls);
       api.removeEventListener("speed", setControls);
-      api.removeEventListener("car-location", setControls);
+      api.removeEventListener("carLocation", setControls);
     };
   }, []);
 

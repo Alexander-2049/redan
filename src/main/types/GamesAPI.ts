@@ -8,7 +8,7 @@ export interface WebSocketConnections {
   controls: ConnectedListeners<DataControls>;
   rpm: ConnectedListeners<DataRPM>;
   speed: ConnectedListeners<DataSpeed>;
-  "car-location": ConnectedListeners<DataCarLocation>;
+  carLocation: ConnectedListeners<DataCarLocation>;
 }
 
 export type DisplayUnits = "METRIC" | "IMPERIAL";
