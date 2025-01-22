@@ -32,6 +32,9 @@ export function formatTelemetryData(telemetry: TelemetryInterface) {
       steeringAnglePercents: iracingSteeringAngleToPercents(
         telemetry.SteeringWheelAngle
       ),
+      steeringAnglePercentsMax: iracingSteeringAngleToPercents(
+        telemetry.SteeringWheelAngleMax
+      ),
       throttle: telemetry.Throttle,
     },
     speed: speed,
@@ -39,6 +42,9 @@ export function formatTelemetryData(telemetry: TelemetryInterface) {
       isInGarage: telemetry.IsInGarage,
       isOnPitLane: telemetry.OnPitRoad,
       isOnTrack: telemetry.IsOnTrack,
+    },
+    gear: {
+      gear: telemetry.Gear,
     },
   };
 }

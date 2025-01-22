@@ -2,13 +2,19 @@ import { ConnectedListeners } from "../models/ConnectedListeners";
 
 export type SelectedGame = "NONE" | "IRACING" | "ACC";
 
-export type ObjectOptions = DataRPM | DataSpeed | DataControls | DataCarLocation;
+export type ObjectOptions =
+  | DataRPM
+  | DataSpeed
+  | DataControls
+  | DataCarLocation
+  | DataGear;
 
 export interface WebSocketConnections {
   controls: ConnectedListeners<DataControls>;
   rpm: ConnectedListeners<DataRPM>;
   speed: ConnectedListeners<DataSpeed>;
   carLocation: ConnectedListeners<DataCarLocation>;
+  gear: ConnectedListeners<DataGear>;
 }
 
 export type DisplayUnits = "METRIC" | "IMPERIAL";
@@ -38,4 +44,8 @@ export interface DataCarLocation {
   isOnPitLane: boolean;
   isOnTrack: boolean;
   isInGarage: boolean;
+}
+
+export interface DataGear {
+  gear: number;
 }

@@ -19,6 +19,7 @@ irsdkipc.on("telemetry", (telemetry) => {
   gamesWebSocketServerAPI.groups.controls.send(formattedTelemetryData.controls);
   gamesWebSocketServerAPI.groups.speed.send(formattedTelemetryData.speed);
   gamesWebSocketServerAPI.groups.carLocation.send(formattedTelemetryData.carLocation);
+  gamesWebSocketServerAPI.groups.gear.send(formattedTelemetryData.gear);
 });
 
 // TODO ??
