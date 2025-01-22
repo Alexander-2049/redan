@@ -1,21 +1,35 @@
 import { useGameAPIEvents } from "../../hooks/useGameAPIEvents";
+import { useEffect, useState } from "react";
 
 const Debug = () => {
-  const { controls, rpm, speed, carLocation, gear } = useGameAPIEvents([
+  const api = useGameAPIEvents([
     "controls",
     "rpm",
     "speed",
     "carLocation",
     "gear",
   ]);
+  const [apiCopy, setApiCopy] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
+  useEffect(() => {
+    if (!isPaused) setApiCopy(JSON.parse(JSON.stringify(api)));
+  }, [api]);
 
   return (
     <div>
-      <pre>{JSON.stringify(controls, undefined, " ")}</pre>
-      <pre>{JSON.stringify(rpm, undefined, " ")}</pre>
-      <pre>{JSON.stringify(gear, undefined, " ")}</pre>
-      <pre>{JSON.stringify(speed, undefined, " ")}</pre>
-      <pre>{JSON.stringify(carLocation, undefined, " ")}</pre>
+      <textarea
+        cols={60}
+        rows={45}
+        value={JSON.stringify(apiCopy, undefined, " ")}
+      />
+      <button
+        style={{ display: "block" }}
+        onClick={() => {
+          setIsPaused((prev) => !prev);
+        }}
+      >
+        {isPaused ? "Unpause" : "Pause"}
+      </button>
     </div>
   );
 };
