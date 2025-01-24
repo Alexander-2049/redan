@@ -21,6 +21,7 @@ const Debug = () => {
         cols={60}
         rows={45}
         value={JSON.stringify(apiCopy, undefined, " ")}
+        readOnly={true}
       />
       <button
         style={{ display: "block" }}
