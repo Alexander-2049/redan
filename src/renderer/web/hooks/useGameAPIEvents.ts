@@ -11,6 +11,8 @@ import { GameAPI } from "../utils/GameAPI";
 export const useGameAPIEvents = (events: string[]): Record<string, unknown> => {
   const api = useMemo(() => new GameAPI(WEBSOCKET_SERVER_PORT), []);
 
+  const updateQueueRef = useRef(new Set<string>());
+
   // The raw state for each event (updated as frequently as events occur).
   const rawStateRef = useRef<Record<string, unknown>>(
     events.reduce((acc, event) => {
@@ -30,6 +32,7 @@ export const useGameAPIEvents = (events: string[]): Record<string, unknown> => {
   useEffect(() => {
     const updateRawState = (event: string) => (value: unknown) => {
       rawStateRef.current[event] = value;
+      updateQueueRef.current.add(event);
     };
 
     // Add event listeners
@@ -46,13 +49,18 @@ export const useGameAPIEvents = (events: string[]): Record<string, unknown> => {
   }, [api, events]);
 
   useEffect(() => {
-    // Throttled update loop
     const interval = setInterval(() => {
-      setState(() => {
-        const updatedState = { ...rawStateRef.current };
-        return updatedState;
-      });
-    }, 1000 / 60); // Approximately 16.67ms (1/60th of a second)
+      if (updateQueueRef.current.size > 0) {
+        setState((prevState) => {
+          const updatedState = { ...prevState };
+          updateQueueRef.current.forEach((event) => {
+            updatedState[event] = rawStateRef.current[event];
+          });
+          updateQueueRef.current.clear();
+          return updatedState;
+        });
+      }
+    }, 16); // ~60fps
 
     return () => clearInterval(interval);
   }, []);
