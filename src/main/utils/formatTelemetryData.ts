@@ -6,16 +6,22 @@ import { SpeedConverter } from "./speedConverter";
 export function formatTelemetryData(telemetry: TelemetryInterface) {
   const speed: DataSpeed = {
     displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
-    speedKph: SpeedConverter.convert(
-      telemetry.Speed,
-      "METERS_PER_SECOND",
-      "KILOMETERS_PER_HOUR"
-    ),
-    speedMph: SpeedConverter.convert(
-      telemetry.Speed,
-      "METERS_PER_SECOND",
-      "MILES_PER_HOUR"
-    ),
+    speedKph:
+      Math.floor(
+        SpeedConverter.convert(
+          telemetry.Speed,
+          "METERS_PER_SECOND",
+          "KILOMETERS_PER_HOUR"
+        ) * 100
+      ) / 100,
+    speedMph:
+      Math.floor(
+        SpeedConverter.convert(
+          telemetry.Speed,
+          "METERS_PER_SECOND",
+          "MILES_PER_HOUR"
+        ) * 100
+      ) / 100,
   };
 
   return {
@@ -24,22 +30,25 @@ export function formatTelemetryData(telemetry: TelemetryInterface) {
       orange: telemetry.PlayerCarSLShiftRPM,
       red: telemetry.PlayerCarSLLastRPM,
       max: telemetry.PlayerCarSLBlinkRPM,
-      rpm: telemetry.RPM,
+      rpm: Math.floor(telemetry.RPM),
     },
     controls: {
-      brake: telemetry.Brake,
+      brake: Math.floor(telemetry.Brake * 1000) / 1000,
       clutch: telemetry.Clutch,
-      steeringAnglePercents: iracingSteeringAngleToPercents(
-        telemetry.SteeringWheelAngle
-      ),
-      steeringAnglePercentsMax: iracingSteeringAngleToPercents(
-        telemetry.SteeringWheelAngleMax
-      ),
-      throttle: telemetry.Throttle,
+      steeringAnglePercents:
+        Math.floor(
+          iracingSteeringAngleToPercents(telemetry.SteeringWheelAngle * -1) *
+            1000
+        ) / 1000,
+      steeringAnglePercentsMax:
+        Math.floor(
+          iracingSteeringAngleToPercents(telemetry.SteeringWheelAngleMax) * 100
+        ) / 100,
+      throttle: Math.floor(telemetry.Throttle * 1000) / 1000,
       gear: telemetry.Gear,
     },
     speed: speed,
-    carLocation: {
+    state: {
       isInGarage: telemetry.IsInGarage,
       isOnPitLane: telemetry.OnPitRoad,
       isOnTrack: telemetry.IsOnTrack,
