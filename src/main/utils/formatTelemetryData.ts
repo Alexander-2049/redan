@@ -36,15 +36,13 @@ export function formatTelemetryData(telemetry: TelemetryInterface) {
         telemetry.SteeringWheelAngleMax
       ),
       throttle: telemetry.Throttle,
+      gear: telemetry.Gear,
     },
     speed: speed,
     carLocation: {
       isInGarage: telemetry.IsInGarage,
       isOnPitLane: telemetry.OnPitRoad,
       isOnTrack: telemetry.IsOnTrack,
-    },
-    gear: {
-      gear: telemetry.Gear,
     },
   };
 }

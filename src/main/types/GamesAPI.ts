@@ -6,15 +6,13 @@ export type ObjectOptions =
   | DataRPM
   | DataSpeed
   | DataControls
-  | DataCarLocation
-  | DataGear;
+  | DataCarLocation;
 
 export interface WebSocketConnections {
   controls: ConnectedListeners<DataControls>;
   rpm: ConnectedListeners<DataRPM>;
   speed: ConnectedListeners<DataSpeed>;
   carLocation: ConnectedListeners<DataCarLocation>;
-  gear: ConnectedListeners<DataGear>;
 }
 
 export type DisplayUnits = "METRIC" | "IMPERIAL";
@@ -38,14 +36,11 @@ export interface DataControls {
   brake: number;
   clutch: number;
   steeringAnglePercents: number;
+  gear: number;
 }
 
 export interface DataCarLocation {
   isOnPitLane: boolean;
   isOnTrack: boolean;
   isInGarage: boolean;
-}
-
-export interface DataGear {
-  gear: number;
 }

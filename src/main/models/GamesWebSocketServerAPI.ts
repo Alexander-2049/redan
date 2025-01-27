@@ -10,7 +10,6 @@ export class GamesWebSocketServerAPI {
     rpm: new ConnectedListeners(),
     speed: new ConnectedListeners(),
     carLocation: new ConnectedListeners(),
-    gear: new ConnectedListeners(),
   };
   private webSocketServer = new WebSocket.Server({
     port: WEBSOCKET_SERVER_PORT,
