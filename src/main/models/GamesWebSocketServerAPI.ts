@@ -38,9 +38,9 @@ export class GamesWebSocketServerAPI {
         groupMap.add(ws);
 
         ws.on("close", () => groupMap.delete(ws));
-      } else {
-        console.warn(`Group "${group}" does not exist.`);
-      }
+      } // else {
+      //   console.warn(`Group "${group}" does not exist.`);
+      // }
     });
   }
 
