@@ -2,7 +2,7 @@ import { useGameAPIEvents } from "../../hooks/useGameAPIEvents";
 import { useEffect, useState } from "react";
 
 const Debug = () => {
-  const api = useGameAPIEvents(["controls", "rpm", "speed", "carLocation"]);
+  const api = useGameAPIEvents(["controls", "rpm", "speed", "state"]);
   const [apiCopy, setApiCopy] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   useEffect(() => {
