@@ -9,7 +9,9 @@ export class GamesWebSocketServerAPI {
     controls: new ConnectedListeners(),
     rpm: new ConnectedListeners(),
     speed: new ConnectedListeners(),
-    carLocation: new ConnectedListeners(),
+    state: new ConnectedListeners(),
+    sessionInfo: new ConnectedListeners(),
+    telemetry: new ConnectedListeners(),
   };
   private webSocketServer = new WebSocket.Server({
     port: WEBSOCKET_SERVER_PORT,
@@ -34,7 +36,8 @@ export class GamesWebSocketServerAPI {
       );
 
       if (actualGroupName) {
-        const groupMap = this.connections[actualGroupName as keyof WebSocketConnections];
+        const groupMap =
+          this.connections[actualGroupName as keyof WebSocketConnections];
         groupMap.add(ws);
 
         ws.on("close", () => groupMap.delete(ws));

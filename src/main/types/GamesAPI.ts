@@ -1,3 +1,5 @@
+import { TelemetryInterface } from "../../shared/types/telemetry";
+import { SessionInfo } from "../../shared/types/sessionInfo";
 import { ConnectedListeners } from "../models/ConnectedListeners";
 
 export type SelectedGame = "NONE" | "IRACING" | "ACC";
@@ -6,13 +8,17 @@ export type ObjectOptions =
   | DataRPM
   | DataSpeed
   | DataControls
-  | DataCarLocation;
+  | DataState
+  | SessionInfo
+  | TelemetryInterface;
 
 export interface WebSocketConnections {
   controls: ConnectedListeners<DataControls>;
   rpm: ConnectedListeners<DataRPM>;
   speed: ConnectedListeners<DataSpeed>;
-  carLocation: ConnectedListeners<DataCarLocation>;
+  state: ConnectedListeners<DataState>;
+  sessionInfo: ConnectedListeners<SessionInfo>;
+  telemetry: ConnectedListeners<TelemetryInterface>;
 }
 
 export type DisplayUnits = "METRIC" | "IMPERIAL";
@@ -39,7 +45,7 @@ export interface DataControls {
   gear: number;
 }
 
-export interface DataCarLocation {
+export interface DataState {
   isOnPitLane: boolean;
   isOnTrack: boolean;
   isInGarage: boolean;
