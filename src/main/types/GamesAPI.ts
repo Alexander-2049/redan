@@ -10,7 +10,8 @@ export type ObjectOptions =
   | DataControls
   | DataState
   | SessionInfo
-  | TelemetryInterface;
+  | TelemetryInterface
+  | DataConnected;
 
 export interface WebSocketConnections {
   controls: ConnectedListeners<DataControls>;
@@ -19,6 +20,7 @@ export interface WebSocketConnections {
   state: ConnectedListeners<DataState>;
   sessionInfo: ConnectedListeners<SessionInfo>;
   telemetry: ConnectedListeners<TelemetryInterface>;
+  connected: ConnectedListeners<DataConnected>;
 }
 
 export type DisplayUnits = "METRIC" | "IMPERIAL";
@@ -49,4 +51,8 @@ export interface DataState {
   isOnPitLane: boolean;
   isOnTrack: boolean;
   isInGarage: boolean;
+}
+
+export interface DataConnected {
+  isConnected: boolean;
 }

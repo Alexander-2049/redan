@@ -16,6 +16,8 @@ const iracingData: {
   sessionInfo: null,
 };
 
+let isGameConnected = false;
+
 irsdkipc.on("sessionInfo", (sessionInfo) => {
   if (gamesWebSocketServerAPI.getSelectedGame() !== "IRACING") return;
   iracingData.sessionInfo = sessionInfo.data;
@@ -36,10 +38,14 @@ irsdkipc.on("telemetry", (telemetry) => {
   gamesWebSocketServerAPI.groups.state.send(formattedTelemetryData.state);
 });
 
-// TODO ??
-// irsdkipc.on("connected", (connected) => {
-//   if (gamesWebSocketServerAPI.getSelectedGame() !== "IRACING") return;
-// });
+irsdkipc.on("connected", (connected) => {
+  if (gamesWebSocketServerAPI.getSelectedGame() !== "IRACING") return;
+  isGameConnected = connected.data;
+
+  gamesWebSocketServerAPI.groups.connected.send({
+    isConnected: isGameConnected,
+  });
+});
 
 // irsdkipc.on("close", () => {
 //   if (gamesWebSocketServerAPI.getSelectedGame() !== "IRACING") return;

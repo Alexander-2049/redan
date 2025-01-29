@@ -12,6 +12,7 @@ export class GamesWebSocketServerAPI {
     state: new ConnectedListeners(),
     sessionInfo: new ConnectedListeners(),
     telemetry: new ConnectedListeners(),
+    connected: new ConnectedListeners(),
   };
   private webSocketServer = new WebSocket.Server({
     port: WEBSOCKET_SERVER_PORT,
