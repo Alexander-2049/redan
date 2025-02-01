@@ -9,3 +9,7 @@ export const createModsFolder = () => {
     return false;
   }
 };
+
+export const getModFolderNames = () => {
+  return fs.readdirSync(MODS_PATH);
+};
