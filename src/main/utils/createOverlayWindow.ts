@@ -17,7 +17,7 @@ export const createOverlayWindow = (
     minimizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    resizable: false,
+    // resizable: false,
     webPreferences: {
       preload: OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
