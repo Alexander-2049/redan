@@ -97,6 +97,15 @@ app.on("ready", () => {
         height: 200,
       })
     );
+
+    /* Getting an overlay from dev server */
+
+    // windows.push(
+    //   createOverlayWindow("http://localhost:5173", {
+    //     width: 500,
+    //     height: 200,
+    //   })
+    // );
   }
 });
 
