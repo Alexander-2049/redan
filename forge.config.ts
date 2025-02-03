@@ -43,9 +43,9 @@ const config: ForgeConfig = {
           {
             name: "overlay_window",
             preload: {
-              js: "./src/preload/overlayPreload.ts"
-            }
-          }
+              js: "./src/preload/overlayPreload.ts",
+            },
+          },
         ],
       },
     }),
