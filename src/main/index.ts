@@ -1,5 +1,9 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { createOverlaysFolder, getOverlayNames } from "./utils/overlaysFolder";
+import {
+  createOverlaySettingsFile,
+  createOverlaysFolder,
+  getOverlayNames,
+} from "./utils/overlaysFolder";
 import { gamesWebSocketServerAPI, irsdkipc } from "./games-api";
 import { createOverlayWindow } from "./utils/createOverlayWindow";
 import path from "path";
@@ -20,6 +24,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 createOverlaysFolder();
+createOverlaySettingsFile();
 overlayServer.listen(OVERLAY_SERVER_PORT, undefined, () => {
   console.log("Overlay server is listening at port: " + OVERLAY_SERVER_PORT);
 });
