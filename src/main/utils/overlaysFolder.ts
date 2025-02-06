@@ -1,5 +1,6 @@
 import { OVERLAYS_PATH, OVERLAYS_SETTINGS_FILE_PATH } from "../constants";
 import fs from "fs";
+import path from "path";
 
 export const createOverlaysFolder = () => {
   if (!fs.existsSync(OVERLAYS_PATH)) {
@@ -11,7 +12,13 @@ export const createOverlaysFolder = () => {
 };
 
 export const getOverlayNames = () => {
-  return fs.readdirSync(OVERLAYS_PATH);
+  const dir = fs.readdirSync(OVERLAYS_PATH);
+  const overlayNames: string[] = [];
+  for (let i = 0; i < dir.length; i++) {
+    if (fs.statSync(path.join(OVERLAYS_PATH, dir[i])).isDirectory())
+      overlayNames.push(dir[i]);
+  }
+  return overlayNames;
 };
 
 export interface OverlaySettingsInterface {
