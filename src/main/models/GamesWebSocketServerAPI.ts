@@ -29,7 +29,7 @@ export class GamesWebSocketServerAPI {
       console.error(error.message);
     });
     this.webSocketServer.on("connection", (ws, req) => {
-      const group = req.url.slice(1).toLowerCase();
+      const group = req.url?.slice(1).toLowerCase();
 
       // Find the actual group name in its original case
       const actualGroupName = Object.keys(this.connections).find(

@@ -25,7 +25,7 @@ if (require("electron-squirrel-startup")) {
 
 createOverlaysFolder();
 createOverlaySettingsFile();
-overlayServer.listen(OVERLAY_SERVER_PORT, undefined, () => {
+overlayServer.listen(OVERLAY_SERVER_PORT, "localhost", () => {
   console.log("Overlay server is listening at port: " + OVERLAY_SERVER_PORT);
 });
 

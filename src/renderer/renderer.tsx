@@ -31,7 +31,10 @@ import "./index.css";
 import { createRoot } from "react-dom/client";
 import Main from "./web";
 
-const root = createRoot(document.getElementById("app"));
+const app = document.getElementById("app");
+if (!app) throw new Error("root element with app id was not found");
+
+const root = createRoot(app);
 root.render(<Main />);
 
 console.log(

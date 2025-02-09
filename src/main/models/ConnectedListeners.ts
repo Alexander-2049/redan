@@ -3,7 +3,7 @@ import WebSocket from "ws";
 
 export class ConnectedListeners<T extends ObjectOptions> {
   private listeners: Set<WebSocket> = new Set();
-  private lastMessageStringified: string = null;
+  private lastMessageStringified: string | null = null;
 
   public add(ws: WebSocket) {
     this.listeners.add(ws);

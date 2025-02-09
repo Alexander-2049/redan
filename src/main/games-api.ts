@@ -9,8 +9,8 @@ export const irsdkipc = new iRacingSDK();
 export const gamesWebSocketServerAPI = new GamesWebSocketServerAPI();
 
 const iracingData: {
-  telemetry: TelemetryInterface;
-  sessionInfo: SessionInfo;
+  telemetry: TelemetryInterface | null;
+  sessionInfo: SessionInfo | null;
 } = {
   telemetry: null,
   sessionInfo: null,
@@ -22,12 +22,16 @@ irsdkipc.on("sessionInfo", (sessionInfo) => {
   if (gamesWebSocketServerAPI.getSelectedGame() !== "IRACING") return;
   iracingData.sessionInfo = sessionInfo.data;
 
+  if (sessionInfo.data === null) return;
+
   gamesWebSocketServerAPI.groups.sessionInfo.send(sessionInfo.data);
 });
 
 irsdkipc.on("telemetry", (telemetry) => {
   if (gamesWebSocketServerAPI.getSelectedGame() !== "IRACING") return;
   iracingData.telemetry = telemetry.data;
+
+  if (telemetry.data === null) return;
 
   const formattedTelemetryData = formatTelemetryData(telemetry.data);
 

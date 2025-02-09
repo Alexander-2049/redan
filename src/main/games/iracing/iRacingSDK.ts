@@ -22,6 +22,11 @@ export class iRacingSDK extends EventEmitter {
   private irsdkipc: ChildProcess | null;
   private connectedInterval: NodeJS.Timeout | null = null;
 
+  constructor() {
+    super();
+    this.irsdkipc = null;
+  }
+
   open() {
     this.kill();
     this.irsdkipc = spawn(exePath, {
@@ -30,7 +35,7 @@ export class iRacingSDK extends EventEmitter {
 
     this.irsdkipc.on("spawn", () => {
       this.connectedInterval = setInterval(() => {
-        this.irsdkipc.send("connected");
+        if (this.irsdkipc) this.irsdkipc.send("connected");
       });
     });
 
