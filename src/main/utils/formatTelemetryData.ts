@@ -1,10 +1,13 @@
-import { TelemetryInterface } from "../../shared/types/telemetry";
-import { DataSpeed } from "../types/GamesAPI";
+import { z } from "zod";
+import { telemetrySchema } from "../schemas/telemetrySchema";
+import { dataSpeedSchema } from "../types/GamesAPI";
 import { iracingSteeringAngleToPercents } from "./iracingSteeringAngleToPercents";
 import { SpeedConverter } from "./speedConverter";
 
-export function formatTelemetryData(telemetry: TelemetryInterface) {
-  const speed: DataSpeed = {
+export function formatTelemetryData(
+  telemetry: z.infer<typeof telemetrySchema>
+) {
+  const speed: z.infer<typeof dataSpeedSchema> = {
     displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
     speedKph:
       Math.floor(

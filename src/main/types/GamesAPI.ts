@@ -1,58 +1,66 @@
-import { TelemetryInterface } from "../../shared/types/telemetry";
-import { SessionInfo } from "../../shared/types/sessionInfo";
 import { ConnectedListeners } from "../models/ConnectedListeners";
+import { sessionInfoSchema } from "../schemas/sessionInfoSchema";
+import { telemetrySchema } from "../schemas/telemetrySchema";
+import { z } from "zod";
 
-export type SelectedGame = "NONE" | "IRACING" | "ACC";
+export const displayUnitsSchema = z.union([
+  z.literal("METRIC"),
+  z.literal("IMPERIAL"),
+]);
+
+export const dataRPMSchema = z.object({
+  rpm: z.number(),
+  green: z.number(),
+  orange: z.number(),
+  red: z.number(),
+  max: z.number(),
+});
+
+export const dataSpeedSchema = z.object({
+  speedKph: z.number(),
+  speedMph: z.number(),
+  displayUnits: displayUnitsSchema,
+});
+
+export const dataControlsSchema = z.object({
+  throttle: z.number(),
+  brake: z.number(),
+  clutch: z.number(),
+  steeringAnglePercents: z.number(),
+  gear: z.number(),
+});
+
+export const dataStateSchema = z.object({
+  isOnPitLane: z.boolean(),
+  isOnTrack: z.boolean(),
+  isInGarage: z.boolean(),
+});
+
+export const dataConnectedSchema = z.object({
+  isConnected: z.boolean(),
+});
+
+export const selectedGameSchema = z.union([
+  z.literal("NONE"),
+  z.literal("IRACING"),
+  z.literal("ACC"),
+]);
 
 export type ObjectOptions =
-  | DataRPM
-  | DataSpeed
-  | DataControls
-  | DataState
-  | SessionInfo
-  | TelemetryInterface
-  | DataConnected;
+  | z.infer<typeof dataRPMSchema>
+  | z.infer<typeof dataSpeedSchema>
+  | z.infer<typeof dataControlsSchema>
+  | z.infer<typeof dataStateSchema>
+  | z.infer<typeof sessionInfoSchema>
+  | z.infer<typeof telemetrySchema>
+  | z.infer<typeof dataConnectedSchema>;
 
 export interface WebSocketConnections {
-  controls: ConnectedListeners<DataControls>;
-  rpm: ConnectedListeners<DataRPM>;
-  speed: ConnectedListeners<DataSpeed>;
-  state: ConnectedListeners<DataState>;
-  sessionInfo: ConnectedListeners<SessionInfo>;
-  telemetry: ConnectedListeners<TelemetryInterface>;
-  connected: ConnectedListeners<DataConnected>;
-}
-
-export type DisplayUnits = "METRIC" | "IMPERIAL";
-
-export interface DataRPM {
-  rpm: number;
-  green: number;
-  orange: number;
-  red: number;
-  max: number;
-}
-
-export interface DataSpeed {
-  speedKph: number;
-  speedMph: number;
-  displayUnits: DisplayUnits;
-}
-
-export interface DataControls {
-  throttle: number;
-  brake: number;
-  clutch: number;
-  steeringAnglePercents: number;
-  gear: number;
-}
-
-export interface DataState {
-  isOnPitLane: boolean;
-  isOnTrack: boolean;
-  isInGarage: boolean;
-}
-
-export interface DataConnected {
-  isConnected: boolean;
+  controls: ConnectedListeners<z.infer<typeof dataControlsSchema>>;
+  rpm: ConnectedListeners<z.infer<typeof dataRPMSchema>>;
+  speed: ConnectedListeners<z.infer<typeof dataSpeedSchema>>;
+  state: ConnectedListeners<z.infer<typeof dataStateSchema>>;
+  sessionInfo: ConnectedListeners<z.infer<typeof sessionInfoSchema>>;
+  telemetry: ConnectedListeners<z.infer<typeof telemetrySchema>>;
+  connected: ConnectedListeners<z.infer<typeof dataConnectedSchema>>;
 }

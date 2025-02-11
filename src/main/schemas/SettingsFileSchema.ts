@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const versionRegex = /^\d+\.\d+(\.\d+)?$/;
 
-export const OverlaySettingsSchema = z.object({
+export const overlaySettingsSchema = z.object({
   folderName: z.string(),
   windowWidth: z.number(),
   windowHeight: z.number(),
@@ -13,7 +13,7 @@ export const OverlaySettingsSchema = z.object({
   draggable: z.boolean(),
 });
 
-export const SettingsFileSchema = z.object({
+export const settingsFileSchema = z.object({
   version: z.string().regex(versionRegex, "Invalid version format"),
-  overlays: z.array(OverlaySettingsSchema),
+  overlays: z.array(overlaySettingsSchema),
 });

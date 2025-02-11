@@ -2,13 +2,13 @@ import { OVERLAYS_PATH, OVERLAYS_SETTINGS_FILE_PATH } from "../constants";
 import fs from "fs";
 import path from "path";
 import {
-  OverlaySettingsSchema,
-  SettingsFileSchema,
-} from "../schemas/SettingsFileSchema";
+  overlaySettingsSchema,
+  settingsFileSchema,
+} from "../schemas/settingsFileSchema";
 import { z } from "zod";
 
-export type OverlaySettings = z.infer<typeof OverlaySettingsSchema>;
-export type SettingsFile = z.infer<typeof SettingsFileSchema>;
+export type OverlaySettings = z.infer<typeof overlaySettingsSchema>;
+export type SettingsFile = z.infer<typeof settingsFileSchema>;
 
 export const createOverlaysFolder = () => {
   if (!fs.existsSync(OVERLAYS_PATH)) {
@@ -48,7 +48,7 @@ export const readOverlaySettingsFile = () => {
   const fileContent = fs.readFileSync(OVERLAYS_SETTINGS_FILE_PATH, "utf-8");
   try {
     const parsedData = JSON.parse(fileContent);
-    const result = SettingsFileSchema.safeParse(parsedData);
+    const result = settingsFileSchema.safeParse(parsedData);
     if (!result.success) {
       console.error("Invalid settings file format:", result.error.format());
       return null;

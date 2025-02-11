@@ -1,10 +1,11 @@
 import WebSocket from "ws";
 import { WEBSOCKET_SERVER_PORT } from "../../shared/constants";
-import { SelectedGame, WebSocketConnections } from "../types/GamesAPI";
+import { selectedGameSchema, WebSocketConnections } from "../types/GamesAPI";
 import { ConnectedListeners } from "./ConnectedListeners";
+import { z } from "zod";
 
 export class GamesWebSocketServerAPI {
-  private selectedGame: SelectedGame = "NONE";
+  private selectedGame: z.infer<typeof selectedGameSchema> = "NONE";
   private connections: WebSocketConnections = {
     controls: new ConnectedListeners(),
     rpm: new ConnectedListeners(),
@@ -48,7 +49,7 @@ export class GamesWebSocketServerAPI {
     });
   }
 
-  public setSelectedGame(game: SelectedGame) {
+  public setSelectedGame(game: z.infer<typeof selectedGameSchema>) {
     this.selectedGame = game;
   }
 
