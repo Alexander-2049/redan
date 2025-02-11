@@ -1,6 +1,6 @@
 import { ConnectedListeners } from "../models/ConnectedListeners";
-import { sessionInfoSchema } from "../schemas/sessionInfoSchema";
-import { telemetrySchema } from "../schemas/telemetrySchema";
+import { sessionInfoSchema } from "../../schemas/sessionInfoSchema";
+import { telemetrySchema } from "../../schemas/telemetrySchema";
 import { z } from "zod";
 
 export const displayUnitsSchema = z.union([

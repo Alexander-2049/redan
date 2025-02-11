@@ -4,7 +4,7 @@ import path from "path";
 import {
   overlaySettingsSchema,
   settingsFileSchema,
-} from "../schemas/settingsFileSchema";
+} from "../../schemas/settingsFileSchema";
 import { z } from "zod";
 
 export type OverlaySettings = z.infer<typeof overlaySettingsSchema>;
