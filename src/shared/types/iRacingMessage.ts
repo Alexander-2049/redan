@@ -1,5 +1,5 @@
-import { telemetryMessageSchema } from "../../schemas/iracingMessageSchema";
-import { sessionInfoSchema } from "../../schemas/sessionInfoSchema";
+import { telemetryMessageSchema } from "../schemas/iracingMessageSchema";
+import { sessionInfoSchema } from "../schemas/sessionInfoSchema";
 import { z } from "zod";
 
 export type iRacingMessage =

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { telemetrySchema } from "../../schemas/telemetrySchema";
+import { telemetrySchema } from "../../shared/schemas/telemetrySchema";
 import { dataSpeedSchema } from "../types/GamesAPI";
 import { iracingSteeringAngleToPercents } from "./iracingSteeringAngleToPercents";
 import { SpeedConverter } from "./speedConverter";
