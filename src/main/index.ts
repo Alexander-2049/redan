@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, globalShortcut } from "electron";
 import {
   createOverlaySettingsFile,
   createOverlaysFolder,
@@ -141,3 +141,31 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+let windowsHidden = false;
+
+app.whenReady().then(() => {
+  // Register a 'CommandOrControl+X' shortcut listener.
+  const ret = globalShortcut.register("CommandOrControl+Alt+H", () => {
+    for (let i = 1; i < windows.length; i++) {
+      const win = windows[i];
+      if (windowsHidden) {
+        win.show();
+      } else {
+        win.hide();
+      }
+      windowsHidden = !windowsHidden;
+    }
+  });
+
+  if (!ret) {
+    console.log("registration failed");
+  }
+
+  console.log(globalShortcut.isRegistered("CommandOrControl+Alt+H"));
+});
+
+app.on("will-quit", () => {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll();
+});
