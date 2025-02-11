@@ -1,6 +1,6 @@
-import { telemetryMessageSchema } from "../schemas/iracingMessageSchema";
 import { sessionInfoSchema } from "../schemas/sessionInfoSchema";
 import { z } from "zod";
+import { telemetrySchema } from "../schemas/telemetrySchema";
 
 export type iRacingMessage =
   | TelemetryMessage
@@ -9,7 +9,7 @@ export type iRacingMessage =
 
 export interface TelemetryMessage {
   type: "Telemetry";
-  data: z.infer<typeof telemetryMessageSchema> | null;
+  data: z.infer<typeof telemetrySchema> | null;
   timestamp: string;
 }
 

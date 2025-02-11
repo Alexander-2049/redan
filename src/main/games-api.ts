@@ -1,16 +1,17 @@
-import { TelemetryInterface } from "../shared/types/telemetry";
+import { z } from "zod";
 import { iRacingSDK } from "./games/iracing/iRacingSDK";
 import { GamesWebSocketServerAPI } from "./models/GamesWebSocketServerAPI";
 import { formatTelemetryData } from "./utils/formatTelemetryData";
-import { SessionInfo } from "../shared/types/sessionInfo";
+import { telemetrySchema } from "../shared/schemas/telemetrySchema";
+import { sessionInfoSchema } from "../shared/schemas/sessionInfoSchema";
 
 export const irsdkipc = new iRacingSDK();
 
 export const gamesWebSocketServerAPI = new GamesWebSocketServerAPI();
 
 const iracingData: {
-  telemetry: TelemetryInterface | null;
-  sessionInfo: SessionInfo | null;
+  telemetry: z.infer<typeof telemetrySchema> | null;
+  sessionInfo: z.infer<typeof sessionInfoSchema> | null;
 } = {
   telemetry: null,
   sessionInfo: null,
