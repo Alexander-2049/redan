@@ -143,10 +143,11 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 
 let windowsHidden = false;
+let windowsClickThrough = false;
 
 app.whenReady().then(() => {
   // Register a 'CommandOrControl+X' shortcut listener.
-  const ret = globalShortcut.register("CommandOrControl+Alt+H", () => {
+  let ret = globalShortcut.register("CommandOrControl+Alt+H", () => {
     for (let i = 1; i < windows.length; i++) {
       const win = windows[i];
       if (windowsHidden) {
@@ -162,7 +163,17 @@ app.whenReady().then(() => {
     console.log("registration failed");
   }
 
-  console.log(globalShortcut.isRegistered("CommandOrControl+Alt+H"));
+  ret = globalShortcut.register("CommandOrControl+Alt+I", () => {
+    for (let i = 1; i < windows.length; i++) {
+      const win = windows[i];
+      if (windowsClickThrough) {
+        win.setIgnoreMouseEvents(false);
+      } else {
+        win.setIgnoreMouseEvents(true);
+      }
+      windowsClickThrough = !windowsClickThrough;
+    }
+  });
 });
 
 app.on("will-quit", () => {
