@@ -7,15 +7,17 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
+    "jsx": "react-jsx",
     "paths": {
-      "*": ["node_modules/*"]
-    },
-    "jsx": "react-jsx"
+      "@main/*": ["src/main/*"],
+      "@renderer/*": ["src/renderer/*"],
+      "@models/*": ["src/main/models/*"]
+    }
   },
   "include": ["src/**/*"]
 }
