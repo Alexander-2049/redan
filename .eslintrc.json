@@ -7,13 +7,6 @@
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "import"],
-  "settings": {
-    "import/resolver": {
-      "typescript": {
-        "project": "./tsconfig.json"
-      }
-    }
-  },
   "rules": {
     "import/no-unresolved": "off" // Optional: Disable if still causing issues
   }
