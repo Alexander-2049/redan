@@ -18,3 +18,5 @@ body, button {
 #app {
   overflow: hidden;
 }
+
+@import "tailwindcss";
