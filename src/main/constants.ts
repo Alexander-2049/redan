@@ -11,5 +11,5 @@ export const OVERLAYS_PATH = path.join(app.getPath("userData"), "Overlays");
 export const OVERLAYS_SETTINGS_FILE_PATH = path.join(
   app.getPath("userData"),
   "Overlays",
-  "settings.json"
+  "settings.json",
 );
