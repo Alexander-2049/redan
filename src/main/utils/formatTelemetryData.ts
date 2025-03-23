@@ -5,7 +5,7 @@ import { iracingSteeringAngleToPercents } from "./iracingSteeringAngleToPercents
 import { SpeedConverter } from "./speedConverter";
 
 export function formatTelemetryData(
-  telemetry: z.infer<typeof telemetrySchema>
+  telemetry: z.infer<typeof telemetrySchema>,
 ) {
   const speed: z.infer<typeof dataSpeedSchema> = {
     displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
@@ -14,16 +14,16 @@ export function formatTelemetryData(
         SpeedConverter.convert(
           telemetry.Speed,
           "METERS_PER_SECOND",
-          "KILOMETERS_PER_HOUR"
-        ) * 100
+          "KILOMETERS_PER_HOUR",
+        ) * 100,
       ) / 100,
     speedMph:
       Math.floor(
         SpeedConverter.convert(
           telemetry.Speed,
           "METERS_PER_SECOND",
-          "MILES_PER_HOUR"
-        ) * 100
+          "MILES_PER_HOUR",
+        ) * 100,
       ) / 100,
   };
 
@@ -41,11 +41,11 @@ export function formatTelemetryData(
       steeringAnglePercents:
         Math.floor(
           iracingSteeringAngleToPercents(telemetry.SteeringWheelAngle * -1) *
-            1000
+            1000,
         ) / 1000,
       steeringAnglePercentsMax:
         Math.floor(
-          iracingSteeringAngleToPercents(telemetry.SteeringWheelAngleMax) * 100
+          iracingSteeringAngleToPercents(telemetry.SteeringWheelAngleMax) * 100,
         ) / 100,
       throttle: Math.floor(telemetry.Throttle * 1000) / 1000,
       gear: telemetry.Gear,

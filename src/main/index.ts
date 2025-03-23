@@ -118,8 +118,8 @@ app.on("ready", () => {
         {
           width: 500,
           height: 200,
-        }
-      )
+        },
+      ),
     );
 
     /* Getting an overlay from dev server */

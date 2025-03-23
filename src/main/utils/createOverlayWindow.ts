@@ -4,7 +4,7 @@ declare const OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 export const createOverlayWindow = (
   url: string,
-  options?: Electron.BrowserWindowConstructorOptions
+  options?: Electron.BrowserWindowConstructorOptions,
 ) => {
   // Create the browser window.
   const overlayWindow = new BrowserWindow({

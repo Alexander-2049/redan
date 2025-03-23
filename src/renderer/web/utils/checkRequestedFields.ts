@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default function checkRequestedFields(
   obj: any,
-  requestedFields: string[]
+  requestedFields: string[],
 ): boolean {
   // Helper function to check if a nested property exists
   const checkField = (fieldPath: string, obj: any): boolean => {

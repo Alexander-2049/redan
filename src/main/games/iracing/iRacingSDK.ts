@@ -67,7 +67,7 @@ export class iRacingSDK extends EventEmitter {
   on(event: "telemetry", callback: (message: TelemetryMessage) => void): this;
   on(
     event: "sessionInfo",
-    callback: (message: SessionInfoMessage) => void
+    callback: (message: SessionInfoMessage) => void,
   ): this;
   on(event: "connected", callback: (message: ConnectedMessage) => void): this;
   on(event: "close" | "spawn", callback: () => void): this;

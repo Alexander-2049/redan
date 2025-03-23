@@ -21,7 +21,7 @@ export class GamesWebSocketServerAPI {
 
   public get groupNamesLowercase(): Set<string> {
     return new Set(
-      Object.keys(this.connections).map((key) => key.toLowerCase())
+      Object.keys(this.connections).map((key) => key.toLowerCase()),
     );
   }
 
@@ -34,7 +34,7 @@ export class GamesWebSocketServerAPI {
 
       // Find the actual group name in its original case
       const actualGroupName = Object.keys(this.connections).find(
-        (key) => key.toLowerCase() === group
+        (key) => key.toLowerCase() === group,
       );
 
       if (actualGroupName) {

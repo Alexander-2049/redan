@@ -1,9 +1,7 @@
 import { OVERLAYS_PATH } from "../constants";
 import fs from "fs";
 import path from "path";
-import {
-  overlaySettingsSchema,
-} from "../../shared/schemas/settingsFileSchema";
+import { overlaySettingsSchema } from "../../shared/schemas/settingsFileSchema";
 import { z } from "zod";
 
 export type OverlaySettings = z.infer<typeof overlaySettingsSchema>;
@@ -20,6 +18,6 @@ export const createOverlaysFolder = () => {
 export const getOverlayNames = () => {
   const dir = fs.readdirSync(OVERLAYS_PATH);
   return dir.filter((item) =>
-    fs.statSync(path.join(OVERLAYS_PATH, item)).isDirectory()
+    fs.statSync(path.join(OVERLAYS_PATH, item)).isDirectory(),
   );
 };

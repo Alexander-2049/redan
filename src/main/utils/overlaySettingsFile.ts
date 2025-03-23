@@ -13,7 +13,7 @@ export const createOverlaySettingsFile = () => {
   if (!fs.existsSync(OVERLAYS_SETTINGS_FILE_PATH)) {
     fs.writeFileSync(
       OVERLAYS_SETTINGS_FILE_PATH,
-      JSON.stringify(settingsFileTemplate, null, 4)
+      JSON.stringify(settingsFileTemplate, null, 4),
     );
   }
 };

@@ -10,9 +10,17 @@ body {
   color: rgb(24, 24, 24);
 }
 
-body, button {
-  font-family: 'Open Sans Medium', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
+body,
+button {
+  font-family:
+    "Open Sans Medium",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
 
 #app {

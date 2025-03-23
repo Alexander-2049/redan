@@ -15,18 +15,24 @@ export const useGameAPIEvents = (events: string[]): Record<string, unknown> => {
 
   // The raw state for each event (updated as frequently as events occur).
   const rawStateRef = useRef<Record<string, unknown>>(
-    events.reduce((acc, event) => {
-      acc[event] = null;
-      return acc;
-    }, {} as Record<string, unknown>)
+    events.reduce(
+      (acc, event) => {
+        acc[event] = null;
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    ),
   );
 
   // The throttled state exposed to the consumer of the hook.
   const [state, setState] = useState<Record<string, unknown>>(() =>
-    events.reduce((acc, event) => {
-      acc[event] = null;
-      return acc;
-    }, {} as Record<string, unknown>)
+    events.reduce(
+      (acc, event) => {
+        acc[event] = null;
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    ),
   );
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 .app-wrapper {
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "title title"
     "selectGame content";
   grid-template-columns: 48px 1fr; /* Adjust the first column width as needed */
