@@ -1,8 +1,8 @@
 {
-  "name": "electron-iracing-overlay",
-  "productName": "RaceSync",
+  "name": "sim-racing-universe",
+  "productName": "SimRacingUniverse",
   "version": "1.0.0",
-  "description": "Overlay application for iRacing",
+  "description": "Utility application for Sim Racing Games",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
