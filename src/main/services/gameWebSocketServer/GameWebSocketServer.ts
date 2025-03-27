@@ -8,7 +8,15 @@ export class GameWebSocketServer {
 
   constructor() {
     this.wss.on("connection", (socket, request) => {
-      console.log(request.url);
+      try {
+        const url = new URL(
+          "ws://localhost:80" + request.url || "ws://localhost:80/",
+        );
+        console.log(url.searchParams.get("test"));
+        console.log(url.pathname);
+      } catch (error) {
+        console.error(error);
+      }
     });
   }
 }
