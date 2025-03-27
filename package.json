@@ -11,7 +11,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "dev-game-ws-server": "nodemon --exec ts-node -r tsconfig-paths/register ./src/main/dev/dev-game-ws-server.ts"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.1",
@@ -47,6 +48,7 @@
     "eslint-plugin-storybook": "^0.11.3",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
     "node-loader": "^2.0.0",
+    "nodemon": "^3.1.9",
     "postcss": "^8.5.2",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.5.3",
@@ -70,9 +72,10 @@
     "iracing-sdk-2025": "github:Alexander-2049/iracing-sdk-2025",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.1"
   },
-  "engines" : { 
-    "node" : ">=18.0.0 <=20.17.0"
+  "engines": {
+    "node": ">=18.0.0 <=20.17.0"
   }
 }
