@@ -13,6 +13,7 @@ client.addListener("open", (game) => {
     connected: game === "Assetto Corsa",
     game: "Assetto Corsa",
     realtime: {},
+    entrylist: [],
   });
 });
 
@@ -21,6 +22,7 @@ client.addListener("close", () => {
     connected: false,
     game: "Assetto Corsa",
     realtime: {},
+    entrylist: [],
   });
 });
 
