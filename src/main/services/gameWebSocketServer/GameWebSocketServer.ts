@@ -2,8 +2,9 @@ import { WEBSOCKET_SERVER_PORT } from "src/shared/constants";
 import WebSocket from "ws";
 import { ApiResponse } from "./apiResponse";
 import { IMappedGameData } from "./mapGameData";
-import { assettoCorsaStreamer } from "./assettoCorsa";
-import { accStreamer } from "./assettoCorsaCompetizione";
+import { assettoCorsaStreamer } from "./games/assettoCorsa";
+import { accStreamer } from "./games/assettoCorsaCompetizione";
+import { iracingStreamer } from "./games/iRacing";
 
 interface Listener {
   socket: WebSocket;
@@ -62,6 +63,10 @@ export class GameWebSocketServer {
     });
 
     accStreamer.on("data", (data) => {
+      this.updateAndSendGameDataUpdateToAllListeners(data);
+    });
+
+    iracingStreamer.on("data", (data) => {
       this.updateAndSendGameDataUpdateToAllListeners(data);
     });
   }

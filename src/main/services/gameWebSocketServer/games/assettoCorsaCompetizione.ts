@@ -1,6 +1,6 @@
 import AssettoCorsaSDK, { RealtimeCarAndEntryDataUpdate } from "ac-sdk-2025";
-import { mapDataFromAssettoCorsaCompetizione } from "./mapGameData";
-import { GameDataStreamer } from "./gameDataStreamer";
+import { mapDataFromAssettoCorsaCompetizione } from "../mapGameData";
+import { GameDataStreamer } from "../GameDataStreamer";
 import { IAssettoCorsaCompetizioneData } from "ac-sdk-2025/dist/types/broadcast/interfaces/AssettoCorsaCompetizioneData";
 import { RealtimeUpdate } from "ac-sdk-2025/dist/types/broadcast/interfaces/realtimeUpdate";
 import { TrackData } from "ac-sdk-2025/dist/types/broadcast/interfaces/trackData";

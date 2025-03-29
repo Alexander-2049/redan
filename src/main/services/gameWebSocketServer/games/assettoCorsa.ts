@@ -1,6 +1,6 @@
 import AssettoCorsaSDK from "ac-sdk-2025";
-import { mapDataFromAssettoCorsa } from "./mapGameData";
-import { GameDataStreamer } from "./gameDataStreamer";
+import { mapDataFromAssettoCorsa } from "../mapGameData";
+import { GameDataStreamer } from "../GameDataStreamer";
 
 const client = new AssettoCorsaSDK({
   updateIntervalMs: 1000 / 60,

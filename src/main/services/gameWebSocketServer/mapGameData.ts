@@ -1,9 +1,7 @@
 import { RealtimeCarAndEntryDataUpdate } from "ac-sdk-2025";
 import { IAssettoCorsaCompetizioneData } from "ac-sdk-2025/dist/types/broadcast/interfaces/AssettoCorsaCompetizioneData";
 import { IAssettoCorsaData } from "ac-sdk-2025/dist/types/broadcast/interfaces/AssettoCorsaData";
-// import { sessionInfoSchema } from "src/shared/schemas/sessionInfoSchema";
-import { telemetrySchema } from "src/shared/schemas/telemetrySchema";
-import { z } from "zod";
+import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
 
 export type Game =
   | "none"
@@ -19,6 +17,9 @@ export interface IRealtimeGameData {
 
 export interface IEntryListElement {
   position?: number;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
 }
 
 export interface IMappedGameData {
@@ -72,17 +73,44 @@ export function mapDataFromAssettoCorsaCompetizione(
 
 export function mapDataFromIRacing(
   c: boolean,
-  telemetry: z.infer<typeof telemetrySchema>,
-  // sessionInfo: z.infer<typeof sessionInfoSchema>,
+  telemetry: TelemetryValues,
+  sessionInfo: SessionInfoData,
 ): IMappedGameData {
+  const entrylist: IEntryListElement[] = [];
+  for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
+    const driver = sessionInfo.DriverInfo.Drivers[i];
+    telemetry;
+    const username = driver.UserName.split(" ");
+    let firstName = "";
+    let middleName = "";
+    let lastName = "";
+
+    if (username.length === 2) {
+      firstName = username[0];
+      lastName = username[1];
+    }
+    if (username.length === 3) {
+      firstName = username[0];
+      middleName = username[1];
+      lastName = username[2];
+    }
+
+    entrylist.push({
+      position: i + 1,
+      firstName,
+      middleName,
+      lastName,
+    });
+  }
+
   return {
     connected: c,
-    game: "Assetto Corsa Competizione",
+    game: "iRacing",
     realtime: {
       throttle: telemetry.Throttle,
       brake: telemetry.Brake,
       steeringAngle: telemetry.SteeringWheelAngle,
     },
-    entrylist: [],
+    entrylist,
   };
 }

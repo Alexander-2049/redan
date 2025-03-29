@@ -5,11 +5,15 @@ import {
   TelemetryEvent,
   TelemetryValues,
 } from "iracing-sdk-2025/src/JsIrSdk";
+import { GameDataStreamer } from "../GameDataStreamer";
+import { mapDataFromIRacing } from "../mapGameData";
 
 const iracingClient = IRacingSDK.init({
   telemetryUpdateInterval: 1000 / 60,
   sessionInfoUpdateInterval: 1000 / 60,
 });
+
+export const iracingStreamer = new GameDataStreamer();
 
 const data: {
   connected: boolean;
@@ -20,17 +24,17 @@ const data: {
 };
 
 iracingClient.addListener("Telemetry", (telemetryEvent: TelemetryEvent) => {
-  console.log("Telemetry received", telemetryEvent.data.Throttle);
   data.telemetry = telemetryEvent.data;
+  if (!data.telemetry || !data.sessionInfo) return;
+
+  iracingStreamer.updateGameData(
+    mapDataFromIRacing(true, data.telemetry, data.sessionInfo),
+  );
 });
 
 iracingClient.addListener(
   "SessionInfo",
   (sessionInfoEvent: SessionInfoEvent) => {
-    console.log(
-      "Session info received",
-      sessionInfoEvent.data.DriverInfo.Drivers.length,
-    );
     data.sessionInfo = sessionInfoEvent.data;
   },
 );
