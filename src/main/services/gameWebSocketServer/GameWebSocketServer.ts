@@ -1,6 +1,9 @@
 import { WEBSOCKET_SERVER_PORT } from "src/shared/constants";
 import WebSocket from "ws";
 import { ApiResponse } from "./apiResponse";
+import { IMappedGameData } from "./mapGameData";
+import { assettoCorsaStreamer } from "./assettoCorsa";
+import { accStreamer } from "./assettoCorsaCompetizione";
 
 interface Listener {
   socket: WebSocket;
@@ -10,6 +13,7 @@ interface Listener {
 export class GameWebSocketServer {
   private wss = new WebSocket.Server({ port: WEBSOCKET_SERVER_PORT });
   private listeners: Listener[] = [];
+  private gameData: IMappedGameData | null = null;
 
   constructor() {
     this.wss.on("connection", (socket, request) => {
@@ -52,6 +56,14 @@ export class GameWebSocketServer {
         socket.close();
       }
     });
+
+    assettoCorsaStreamer.on("data", (data) => {
+      this.updateAndSendGameDataUpdateToAllListeners(data);
+    });
+
+    accStreamer.on("data", (data) => {
+      this.updateAndSendGameDataUpdateToAllListeners(data);
+    });
   }
 
   private addListenerSocket(socket: WebSocket, fields: string[]) {
@@ -60,5 +72,23 @@ export class GameWebSocketServer {
 
   private removeListenerSocket(socket: WebSocket) {
     this.listeners = this.listeners.filter(({ socket: s }) => s !== socket);
+  }
+  private updateAndSendGameDataUpdateToAllListeners(data: IMappedGameData) {
+    this.gameData = data;
+    this.listeners.forEach((listener) => {
+      listener.socket.send(ApiResponse.success(data).toJSON());
+    });
+  }
+
+  private sendGameDataToListener<T>(listener: Listener, data: T) {
+    listener.socket.send(ApiResponse.success(data).toJSON());
+  }
+
+  public acceptGameData(data: IMappedGameData) {
+    this.gameData = data;
+  }
+
+  get game() {
+    return this.gameData?.game || "none";
   }
 }

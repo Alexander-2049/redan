@@ -1,25 +1,30 @@
 import AssettoCorsaSDK from "ac-sdk-2025";
-import { IAssettoCorsaData } from "ac-sdk-2025/dist/types/broadcast/interfaces/AssettoCorsaData";
+import { mapDataFromAssettoCorsa } from "./mapGameData";
+import { GameDataStreamer } from "./gameDataStreamer";
 
 const client = new AssettoCorsaSDK({
   updateIntervalMs: 1000 / 60,
 });
 
-const data: {
-  connected: boolean;
-  ac_shared_memory_update?: IAssettoCorsaData;
-} = {
-  connected: false,
-};
+export const assettoCorsaStreamer = new GameDataStreamer();
 
 client.addListener("open", (game) => {
-  data.connected = game === "Assetto Corsa";
+  assettoCorsaStreamer.updateGameData({
+    connected: game === "Assetto Corsa",
+    game: "Assetto Corsa",
+    realtime: {},
+  });
 });
 
 client.addListener("close", () => {
-  data.connected = false;
+  assettoCorsaStreamer.updateGameData({
+    connected: false,
+    game: "Assetto Corsa",
+    realtime: {},
+  });
 });
 
 client.addListener("ac_shared_memory_update", (ac_shared_memory_update) => {
-  data.ac_shared_memory_update = ac_shared_memory_update;
+  const mappedData = mapDataFromAssettoCorsa(true, ac_shared_memory_update);
+  assettoCorsaStreamer.updateGameData(mappedData);
 });
