@@ -81,11 +81,16 @@ export class GameWebSocketServer {
   private updateAndSendGameDataUpdateToAllListeners(data: IMappedGameData) {
     this.gameData = data;
     this.listeners.forEach((listener) => {
-      listener.socket.send(ApiResponse.success(data).toJSON());
+      this.sendGameDataToListener(listener, data);
     });
   }
 
   private sendGameDataToListener<T>(listener: Listener, data: T) {
+    /*
+     *
+     *
+     *
+     */
     listener.socket.send(ApiResponse.success(data).toJSON());
   }
 
