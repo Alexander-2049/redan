@@ -12,7 +12,7 @@
     "lint": "eslint --ext .ts,.tsx .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "dev-game-ws-server": "nodemon --exec ts-node -r tsconfig-paths/register ./src/main/dev/dev-game-ws-server.ts",
+    "dev-game-wss": "npm rebuild && nodemon --exec ts-node -r tsconfig-paths/register ./src/main/dev/dev-game-ws-server.ts",
     "test": "npx jest"
   },
   "devDependencies": {
