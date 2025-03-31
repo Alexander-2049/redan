@@ -14,11 +14,32 @@ interface Listener {
 }
 
 export class GameWebSocketServer {
-  private wss = new WebSocket.Server({ port: WEBSOCKET_SERVER_PORT });
+  private wss: WebSocket.Server | null = null;
   private listeners: Listener[] = [];
   private gameData: IMappedGameData | null = null;
 
   constructor() {
+    assettoCorsaStreamer.on("data", (data) => {
+      this.updateAndSendGameDataUpdateToAllListeners(data);
+    });
+
+    accStreamer.on("data", (data) => {
+      this.updateAndSendGameDataUpdateToAllListeners(data);
+    });
+
+    iracingStreamer.on("data", (data) => {
+      this.updateAndSendGameDataUpdateToAllListeners(data);
+    });
+  }
+
+  public start() {
+    if (this.wss) {
+      console.warn("WebSocket server is already running.");
+      return;
+    }
+
+    this.wss = new WebSocket.Server({ port: WEBSOCKET_SERVER_PORT });
+
     this.wss.on("connection", (socket, request) => {
       try {
         const url = new URL(
@@ -63,17 +84,22 @@ export class GameWebSocketServer {
       }
     });
 
-    assettoCorsaStreamer.on("data", (data) => {
-      this.updateAndSendGameDataUpdateToAllListeners(data);
+    console.log(`WebSocket server started on port ${WEBSOCKET_SERVER_PORT}`);
+  }
+
+  public stop() {
+    if (!this.wss) {
+      console.warn("WebSocket server is not running.");
+      return;
+    }
+
+    this.wss.close(() => {
+      console.log("WebSocket server stopped.");
     });
 
-    accStreamer.on("data", (data) => {
-      this.updateAndSendGameDataUpdateToAllListeners(data);
-    });
-
-    iracingStreamer.on("data", (data) => {
-      this.updateAndSendGameDataUpdateToAllListeners(data);
-    });
+    this.listeners.forEach(({ socket }) => socket.close());
+    this.listeners = [];
+    this.wss = null;
   }
 
   private addListenerSocket(socket: WebSocket, fields: string[]) {
@@ -83,6 +109,7 @@ export class GameWebSocketServer {
   private removeListenerSocket(socket: WebSocket) {
     this.listeners = this.listeners.filter(({ socket: s }) => s !== socket);
   }
+
   private updateAndSendGameDataUpdateToAllListeners(data: IMappedGameData) {
     this.listeners.forEach((listener) => {
       const oldData = this.gameData;
