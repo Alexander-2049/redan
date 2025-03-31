@@ -207,6 +207,67 @@ describe("getChangedFields", () => {
     expect(result).toEqual([["stats.speed", 120]]);
   });
 
+  it("should return changed fields when objects are not equal", () => {
+    const oldObj = {
+      realtime: {
+        throttle: 0,
+        brake: 0,
+        steeringAngle: 0,
+      },
+    };
+
+    const newObj = {
+      realtime: {
+        throttle: 0.5,
+        brake: 0,
+        steeringAngle: -15,
+      },
+    };
+
+    const fields = ["realtime"];
+
+    const result = getChangedFields(fields, oldObj, newObj);
+
+    expect(result).toEqual([
+      [
+        "realtime",
+        {
+          throttle: 0.5,
+          brake: 0,
+          steeringAngle: -15,
+        },
+      ],
+    ]);
+  });
+
+  it("should return empty array when objects are equal", () => {
+    const oldObj = {
+      realtime: {
+        throttle: 0.5,
+        brake: 0,
+        steeringAngle: -15,
+      },
+    };
+
+    const newObjWithSameFieldsAndValues = {
+      realtime: {
+        throttle: 0.5,
+        brake: 0,
+        steeringAngle: -15,
+      },
+    };
+
+    const fields = ["realtime"];
+
+    const result = getChangedFields(
+      fields,
+      oldObj,
+      newObjWithSameFieldsAndValues,
+    );
+
+    expect(result).toEqual([]);
+  });
+
   it("should handle a mix of null, undefined, and primitive values", () => {
     const oldObj = {
       data: {

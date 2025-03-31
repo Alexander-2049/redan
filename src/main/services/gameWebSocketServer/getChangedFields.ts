@@ -26,7 +26,8 @@ export function getChangedFields(
     const oldValue = oldFields.find(([key]) => key === field)?.[1];
     const newValue = newFields.find(([key]) => key === field)?.[1];
 
-    if (oldValue !== newValue) {
+    // Perform a deep equality check
+    if (!deepEqual(oldValue, newValue)) {
       changedFields.push([field, newValue]);
     }
   });
@@ -37,4 +38,29 @@ export function getChangedFields(
 // Helper function to check if a value is an object
 function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object";
+}
+
+// Helper function to perform deep equality check
+function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) {
+    return true;
+  }
+
+  if (isObject(a) && isObject(b)) {
+    const aKeys = Object.keys(a);
+    const bKeys = Object.keys(b);
+
+    if (aKeys.length !== bKeys.length) {
+      return false;
+    }
+
+    return aKeys.every((key) =>
+      deepEqual(
+        (a as Record<string, unknown>)[key],
+        (b as Record<string, unknown>)[key],
+      ),
+    );
+  }
+
+  return false;
 }
