@@ -29,7 +29,7 @@
 import "./index.css";
 
 import { createRoot } from "react-dom/client";
-import Main from "./web";
+import Main from ".";
 
 const app = document.getElementById("app");
 if (!app) throw new Error("root element with app id was not found");
