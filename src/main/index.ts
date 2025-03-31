@@ -1,6 +1,5 @@
 import { app, BrowserWindow, ipcMain, globalShortcut } from "electron";
 import { createOverlaysFolder, getOverlayNames } from "./utils/overlaysFolder";
-import { gamesWebSocketServerAPI, irsdkipc } from "./games-api";
 import { createOverlayWindow } from "./utils/createOverlayWindow";
 import path from "path";
 import { OVERLAYS_PATH } from "./constants";
@@ -60,33 +59,16 @@ const createWindow = (): BrowserWindow => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  irsdkipc.open();
-  gamesWebSocketServerAPI.setSelectedGame("IRACING");
-
   mainWindow.on("close", () => {
     windows.forEach((win) => {
       win.removeAllListeners("close"); // Remove the close prevention listener
       win.close(); // Close the overlay window
     });
 
-    if (irsdkipc) {
-      irsdkipc.removeAllListeners();
-      irsdkipc.kill(); // Ensuring child process is terminated
-    }
     app.quit();
   });
 
   ipcMain.on("main-message", (_, data) => {
-    if (data === "switch-to-iracing") {
-      irsdkipc.open();
-      gamesWebSocketServerAPI.setSelectedGame("IRACING");
-    }
-    // TODO: Remove/Replace "disconnect-from-iracing"
-    if (data === "disconnect-from-iracing") {
-      irsdkipc.kill();
-      gamesWebSocketServerAPI.setSelectedGame("NONE");
-    }
-
     if (data === "get-mod-names") {
       getOverlayNames();
     }
