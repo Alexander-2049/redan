@@ -5,6 +5,8 @@ import { IMappedGameData } from "./mapGameData";
 import { assettoCorsaStreamer } from "./games/assettoCorsa";
 import { accStreamer } from "./games/assettoCorsaCompetizione";
 import { iracingStreamer } from "./games/iRacing";
+import { extractFieldsFromObject } from "./extractFieldsFromObject";
+import { getChangedFields } from "./getChangedFields";
 
 interface Listener {
   socket: WebSocket;
@@ -47,7 +49,10 @@ export class GameWebSocketServer {
 
         socket.on("close", () => this.removeListenerSocket(socket));
 
-        socket.send(ApiResponse.success(fields).toJSON());
+        if (this.gameData) {
+          const data = extractFieldsFromObject(fields, this.gameData);
+          socket.send(ApiResponse.success(data).toJSON());
+        }
         this.addListenerSocket(socket, fields);
       } catch (error) {
         console.error(error);
@@ -79,18 +84,21 @@ export class GameWebSocketServer {
     this.listeners = this.listeners.filter(({ socket: s }) => s !== socket);
   }
   private updateAndSendGameDataUpdateToAllListeners(data: IMappedGameData) {
-    this.gameData = data;
     this.listeners.forEach((listener) => {
-      this.sendGameDataToListener(listener, data);
+      const oldData = this.gameData;
+      const updatedData = data;
+      const extractedFields = getChangedFields(
+        listener.fields,
+        oldData,
+        updatedData,
+      );
+      if (extractedFields.length !== 0)
+        this.sendGameDataToListener(listener, extractedFields);
     });
+    this.gameData = data;
   }
 
   private sendGameDataToListener<T>(listener: Listener, data: T) {
-    /*
-     *
-     *
-     *
-     */
     listener.socket.send(ApiResponse.success(data).toJSON());
   }
 
