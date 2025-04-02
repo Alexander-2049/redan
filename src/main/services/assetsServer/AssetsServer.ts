@@ -31,9 +31,3 @@ class AssetsServer {
 }
 
 export default AssetsServer;
-
-// Example usage
-if (require.main === module) {
-  const server = new AssetsServer(3000);
-  server.start();
-}
