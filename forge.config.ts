@@ -18,7 +18,6 @@ import {
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    extraResource: ["./assets/irsdk-ipc.exe"],
   },
   rebuildConfig: {},
   makers: [
