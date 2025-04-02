@@ -10,7 +10,10 @@ import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
 import { mainConfig } from "./webpack.main.config";
 import { rendererConfig } from "./webpack.renderer.config";
-import { WEBSOCKET_SERVER_PORT } from "./src/shared/constants";
+import {
+  ASSETS_SERVER_PORT,
+  WEBSOCKET_SERVER_PORT,
+} from "./src/shared/constants";
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -28,7 +31,7 @@ const config: ForgeConfig = {
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
       mainConfig,
-      devContentSecurityPolicy: `connect-src 'self' ws://localhost:${WEBSOCKET_SERVER_PORT} 'unsafe-eval'`,
+      devContentSecurityPolicy: `connect-src 'self' ws://localhost:${WEBSOCKET_SERVER_PORT} http://localhost:${ASSETS_SERVER_PORT} 'unsafe-eval'`,
       renderer: {
         config: rendererConfig,
         entryPoints: [
