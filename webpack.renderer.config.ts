@@ -40,5 +40,4 @@ export const rendererConfig: Configuration = {
       "@models": path.resolve(__dirname, "src/main/models"),
     },
   },
-  watch: true, // Enable watching for changes
 };
