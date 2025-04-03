@@ -1,4 +1,4 @@
-import { WEBSOCKET_SERVER_PORT } from "src/shared/constants";
+import { WEBSOCKET_SERVER_PORT } from "../../../shared/constants";
 import WebSocket from "ws";
 import { ApiResponse } from "./apiResponse";
 import { IMappedGameData } from "./mapGameData";
