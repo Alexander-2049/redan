@@ -88,14 +88,12 @@ export function mapDataFromIRacing(
     let middleName = "";
     let lastName = "";
 
-    if (username.length === 2) {
+    if (username.length > 0) {
       firstName = username[0];
-      lastName = username[1];
-    }
-    if (username.length === 3) {
-      firstName = username[0];
-      middleName = username[1];
-      lastName = username[2];
+      lastName = username[username.length - 1];
+      if (username.length > 2) {
+        middleName = username.slice(1, -1).join(" ");
+      }
     }
 
     entrylist.push({
