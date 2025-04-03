@@ -1,17 +1,19 @@
 {
-  "name": "electron-iracing-overlay",
-  "productName": "RaceSync",
+  "name": "sim-racing-universe",
+  "productName": "SimRacingUniverse",
   "version": "1.0.0",
-  "description": "Overlay application for iRacing",
+  "description": "Utility application for Sim Racing Games",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
-    "package": "cross-env NODE_OPTIONS=--disable-warning=DEP0174 electron-forge package",
+    "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "dev-game-wss": "npm rebuild && nodemon --exec ts-node -r tsconfig-paths/register ./src/main/dev/dev-game-ws-server.ts",
+    "test": "npx jest"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.1",
@@ -22,7 +24,7 @@
     "@electron-forge/maker-zip": "^7.4.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
-    "@electron-forge/plugin-webpack": "^7.4.0",
+    "@electron-forge/plugin-webpack": "^7.8.0",
     "@electron/fuses": "^1.8.0",
     "@storybook/addon-essentials": "^8.1.11",
     "@storybook/addon-interactions": "^8.1.11",
@@ -32,12 +34,15 @@
     "@storybook/react": "^8.1.11",
     "@storybook/react-webpack5": "^8.1.11",
     "@storybook/test": "^8.1.11",
+    "@types/cors": "^2.8.17",
+    "@types/jest": "^29.5.14",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.1",
     "autoprefixer": "^10.4.20",
+    "copy-webpack-plugin": "^13.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.11.0",
     "electron": "^31.7.7",
@@ -46,13 +51,17 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-storybook": "^0.11.3",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "jest": "^29.7.0",
     "node-loader": "^2.0.0",
+    "nodemon": "^3.1.9",
     "postcss": "^8.5.2",
     "postcss-loader": "^8.1.1",
-    "prettier": "^3.5.1",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "storybook": "^8.1.11",
     "style-loader": "^3.3.4",
     "tailwindcss": "^3.4.17",
+    "ts-jest": "^29.3.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
@@ -65,13 +74,19 @@
   "license": "MIT",
   "dependencies": {
     "ac-sdk-2025": "github:Alexander-2049/ac-sdk-2025",
+    "cors": "^2.8.5",
     "electron-squirrel-startup": "^1.0.1",
+    "i18next": "^24.2.3",
+    "i18next-browser-languagedetector": "^8.0.4",
+    "i18next-http-backend": "^3.0.2",
     "iracing-sdk-2025": "github:Alexander-2049/iracing-sdk-2025",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-i18next": "^15.4.1",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.1"
   },
-  "engines" : { 
-    "node" : ">=18.0.0 <=20.17.0"
+  "engines": {
+    "node": ">=18.0.0 <=20.17.0"
   }
 }

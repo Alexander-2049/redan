@@ -4,7 +4,10 @@ To initialize the development environment for this project, follow these steps:
    This project requires Node.js version `>=18.0.0` and `<=20.17.0`. If you use `nvm`, you can run the following command to switch to Node.js version 20:
 
    ```sh
-   nvm use 20
+   nvm install 18.20
+   nvm use 18.20
+   npm install -g node-gyp
+   npm install -g windows-build-tools
    ```
 
 2. Install dependencies:

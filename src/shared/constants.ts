@@ -1,2 +1,3 @@
 export const WEBSOCKET_SERVER_PORT = 49791;
 export const OVERLAY_SERVER_PORT = 48792;
+export const ASSETS_SERVER_PORT = 48793;
