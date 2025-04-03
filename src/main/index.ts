@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, globalShortcut } from "electron";
 import { createOverlaysFolder, getOverlayNames } from "./utils/overlaysFolder";
 import { createOverlayWindow } from "./utils/createOverlayWindow";
 import path from "path";
-import { OVERLAYS_PATH } from "./constants";
+import { IS_DEV, OVERLAYS_PATH } from "./constants";
 import overlayServer from "./overlay-server";
 import { ASSETS_SERVER_PORT, OVERLAY_SERVER_PORT } from "../shared/constants";
 import { createOverlaySettingsFile } from "./utils/overlaySettingsFile";
@@ -46,8 +46,10 @@ const createWindow = (): BrowserWindow => {
 
   mainWindow.webContents.setAudioMuted(true);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (IS_DEV) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+  }
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
