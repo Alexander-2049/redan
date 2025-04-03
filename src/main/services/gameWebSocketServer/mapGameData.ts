@@ -80,7 +80,10 @@ export function mapDataFromIRacing(
   for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
     const driver = sessionInfo.DriverInfo.Drivers[i];
     telemetry;
-    const username = driver.UserName.split(" ");
+
+    let username: string[] = [];
+    if (typeof driver.UserName === "string")
+      username = driver.UserName.split(" ");
     let firstName = "";
     let middleName = "";
     let lastName = "";
