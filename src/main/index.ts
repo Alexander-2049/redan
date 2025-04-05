@@ -4,7 +4,10 @@ import { createOverlayWindow } from "./utils/createOverlayWindow";
 import path from "path";
 import { IS_DEV, OVERLAYS_PATH } from "./constants";
 import overlayServer from "./overlay-server";
-import { ASSETS_SERVER_PORT, OVERLAY_SERVER_PORT } from "../shared/constants";
+import {
+  ASSETS_SERVER_PORT,
+  OVERLAY_SERVER_PORT,
+} from "../shared/shared-constants";
 import { createOverlaySettingsFile } from "./utils/overlaySettingsFile";
 import AssetsServer from "./services/assetsServer/AssetsServer";
 import { GameWebSocketServer } from "./services/gameWebSocketServer/GameWebSocketServer";
