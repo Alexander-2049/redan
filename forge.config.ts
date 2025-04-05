@@ -13,7 +13,7 @@ import { rendererConfig } from "./webpack.renderer.config";
 import {
   ASSETS_SERVER_PORT,
   WEBSOCKET_SERVER_PORT,
-} from "./src/shared/constants";
+} from "./src/shared/shared-constants";
 
 const config: ForgeConfig = {
   packagerConfig: {
