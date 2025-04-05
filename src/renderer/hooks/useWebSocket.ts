@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 type WebSocketData = Record<string, unknown>;
 
 const useWebSocket = (url: string, params: string[]) => {
-  const [data, setData] = useState<WebSocketData>({});
+  const [data, setData] = useState<WebSocketData>(
+    Object.fromEntries(params.map((param) => [param, null])),
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
