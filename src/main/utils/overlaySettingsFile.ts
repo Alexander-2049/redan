@@ -1,4 +1,4 @@
-import { OVERLAYS_SETTINGS_FILE_PATH } from "../constants";
+import { OVERLAYS_SETTINGS_FILE_PATH } from "../main-constants";
 import fs from "fs";
 import { settingsFileSchema } from "../../shared/schemas/settingsFileSchema";
 import { z } from "zod";

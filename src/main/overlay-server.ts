@@ -2,7 +2,7 @@ import express from "express";
 import { getOverlayNames } from "./utils/overlaysFolder";
 import fs from "fs";
 import path from "path";
-import { OVERLAYS_PATH } from "./constants";
+import { OVERLAYS_PATH } from "./main-constants";
 
 const app = express();
 

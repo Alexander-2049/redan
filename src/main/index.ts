@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, globalShortcut } from "electron";
 import { createOverlaysFolder, getOverlayNames } from "./utils/overlaysFolder";
 import { createOverlayWindow } from "./utils/createOverlayWindow";
 import path from "path";
-import { IS_DEV, OVERLAYS_PATH } from "./constants";
+import { IS_DEV, OVERLAYS_PATH } from "./main-constants";
 import overlayServer from "./overlay-server";
 import {
   ASSETS_SERVER_PORT,
