@@ -44,9 +44,10 @@ const createWindow = (): BrowserWindow => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
     },
-    frame: false,
+    // frame: false,
   });
 
+  mainWindow.setMenuBarVisibility(false);
   mainWindow.webContents.setAudioMuted(true);
 
   if (IS_DEV) {
