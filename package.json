@@ -73,6 +73,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@mynaui/icons-react": "^0.3.3",
     "ac-sdk-2025": "github:Alexander-2049/ac-sdk-2025",
     "cors": "^2.8.5",
     "electron-squirrel-startup": "^1.0.1",
