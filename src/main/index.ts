@@ -44,7 +44,8 @@ const createWindow = (): BrowserWindow => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
     },
-    // frame: false,
+    frame: false,
+    titleBarStyle: "hidden",
   });
 
   mainWindow.setMenuBarVisibility(false);

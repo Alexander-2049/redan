@@ -2,6 +2,14 @@
   overflow: hidden;
 }
 
+.drag {
+  -webkit-app-region: drag;
+  a,
+  button {
+    -webkit-app-region: no-drag;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
