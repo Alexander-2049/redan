@@ -3,7 +3,7 @@ interface MainWindowAPI {
   onMessage: (callback: (message: string) => void) => void;
 }
 interface TitleBarAction {
-  sendMessage: (message: "close" | "minimize") => void;
+  sendMessage: (message: "close" | "minimize" | "restore") => void;
 }
 
 declare global {

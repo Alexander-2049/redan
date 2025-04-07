@@ -79,6 +79,12 @@ const createWindow = (): BrowserWindow => {
       mainWindow.close();
     } else if (data === "minimize") {
       mainWindow.minimize();
+    } else if (data === "restore") {
+      if (mainWindow.isMaximized()) {
+        mainWindow.restore();
+      } else {
+        mainWindow.maximize();
+      }
     }
   });
 
