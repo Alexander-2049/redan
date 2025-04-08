@@ -1,3 +1,4 @@
+import { AccordionDemo } from "../components/AccordionDemo";
 import useWebSocket from "../hooks/useWebSocket";
 import { useEffect } from "react";
 
@@ -20,6 +21,7 @@ const DebugPage = () => {
       <pre>
         <code>{JSON.stringify(data, null, "  ")}</code>
       </pre>
+      <AccordionDemo />
     </div>
   );
 };

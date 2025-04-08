@@ -75,17 +75,23 @@
   "license": "MIT",
   "dependencies": {
     "@mynaui/icons-react": "^0.3.3",
+    "@radix-ui/react-accordion": "^1.2.3",
     "ac-sdk-2025": "github:Alexander-2049/ac-sdk-2025",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "electron-squirrel-startup": "^1.0.1",
     "i18next": "^24.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
     "i18next-http-backend": "^3.0.2",
     "iracing-sdk-2025": "github:Alexander-2049/iracing-sdk-2025",
+    "lucide-react": "^0.487.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.4.1",
+    "tailwind-merge": "^3.2.0",
     "tsconfig-paths": "^4.2.0",
+    "tw-animate-css": "^1.2.5",
     "zod": "^3.24.1"
   },
   "engines": {
