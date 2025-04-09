@@ -34,12 +34,12 @@ import Main from ".";
 
 import { createHashRouter } from "react-router-dom";
 import React from "react";
-import HomeRoute from "./routes/HomeRoute";
+import DashboardRoute from "./routes/DashboardRoute";
 
 export const router = createHashRouter([
   {
     path: "/",
-    element: <HomeRoute />,
+    element: <DashboardRoute />,
   },
 ]);
 

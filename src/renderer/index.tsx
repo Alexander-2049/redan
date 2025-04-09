@@ -2,7 +2,7 @@
 import "./i18n";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
-import HomeRoute from "./routes/HomeRoute";
+import DashboardRoute from "./routes/DashboardRoute";
 import DebugPage from "./routes/DebugRoute";
 import PageLayout from "./components/PageLayout";
 import NotFoundRoute from "./routes/NotFoundRoute";
@@ -19,7 +19,8 @@ const Main = () => {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route element={<PageLayout />}>
-            <Route index element={<HomeRoute />} />
+            <Route index element={<DashboardRoute />} />
+            <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugPage />} />
           </Route>
           <Route path="*" element={<PageLayout />}>

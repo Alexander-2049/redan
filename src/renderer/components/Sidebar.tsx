@@ -6,6 +6,7 @@ import {
   Gauge,
   HelpCircle,
   Layers,
+  LayoutDashboard,
   MonitorPlay,
   PlusCircle,
   Settings,
@@ -20,6 +21,7 @@ const sidebarLinks = [
   {
     group: "MAIN",
     links: [
+      { text: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
       { text: "My Overlays", path: "/my-overlays", icon: Layers },
       { text: "Live Preview", path: "/live-preview", icon: MonitorPlay },
       { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },
