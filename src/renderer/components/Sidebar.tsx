@@ -13,10 +13,55 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/renderer/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "./ui/scroll-area";
 
+const sidebarLinks = [
+  {
+    group: "MAIN",
+    links: [
+      { text: "My Overlays", path: "/my-overlays", icon: Layers },
+      { text: "Live Preview", path: "/live-preview", icon: MonitorPlay },
+      { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },
+    ],
+  },
+  {
+    group: "RACING DATA",
+    links: [
+      { text: "Lap Times", path: "/lap-times", icon: Timer },
+      { text: "Telemetry", path: "/telemetry", icon: Gauge },
+      { text: "Race Results", path: "/race-results", icon: Flag },
+      { text: "Competitors", path: "/competitors", icon: Users },
+    ],
+  },
+  {
+    group: "TEMPLATES",
+    links: [
+      { text: "Timing Screens", path: "/timing-screens", icon: Clock },
+      {
+        text: "Performance Graphs",
+        path: "/performance-graphs",
+        icon: BarChart3,
+      },
+      { text: "HUD Elements", path: "/hud-elements", icon: Layers },
+    ],
+  },
+  {
+    group: "DEVELOPER",
+    links: [{ text: "Debug", path: "/debug", icon: Bug }],
+  },
+  {
+    group: "OTHER",
+    links: [
+      { text: "Settings", path: "/settings", icon: Settings },
+      { text: "Help & Support", path: "/help-support", icon: HelpCircle },
+    ],
+  },
+];
 const Sidebar = () => {
+  const location = useLocation();
+  const { pathname } = location;
+
   return (
     <ScrollArea className="flex w-64 shrink-0 flex-col border-r bg-white">
       <div className="p-4">
@@ -26,96 +71,30 @@ const Sidebar = () => {
         </Button>
       </div>
 
-      <div className="p-2">
-        <div className="mb-1 px-2 text-xs font-medium text-gray-500">MAIN</div>
-        <Button
-          variant="ghost"
-          className="w-full justify-start bg-gray-100"
-          asChild
-        >
-          <Link to="/">
-            <Layers className="mr-2 h-4 w-4" />
-            My Overlays
-          </Link>
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <MonitorPlay className="mr-2 h-4 w-4" />
-          Live Preview
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <BarChart3 className="mr-2 h-4 w-4" />
-          Data Analysis
-        </Button>
-      </div>
-
-      <div className="p-2">
-        <div className="mb-1 px-2 text-xs font-medium text-gray-500">
-          RACING DATA
+      {sidebarLinks.map((group) => (
+        <div key={group.group} className="p-2">
+          <div className="mb-1 px-2 text-xs font-medium text-gray-500">
+            {group.group}
+          </div>
+          {group.links.map((link) => (
+            <Button
+              key={link.text}
+              variant="ghost"
+              className={`w-full justify-start ${
+                pathname.startsWith(link.path) ? "bg-gray-100" : ""
+              }`}
+              asChild
+            >
+              <Link to={link.path}>
+                <link.icon className="mr-2 h-4 w-4" />
+                {link.text}
+              </Link>
+            </Button>
+          ))}
         </div>
-        <Button variant="ghost" className="w-full justify-start">
-          <Timer className="mr-2 h-4 w-4" />
-          Lap Times
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <Gauge className="mr-2 h-4 w-4" />
-          Telemetry
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <Flag className="mr-2 h-4 w-4" />
-          Race Results
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <Users className="mr-2 h-4 w-4" />
-          Competitors
-        </Button>
-      </div>
-
-      <div className="p-2">
-        <div className="mb-1 px-2 text-xs font-medium text-gray-500">
-          TEMPLATES
-        </div>
-        <Button variant="ghost" className="w-full justify-start">
-          <Clock className="mr-2 h-4 w-4" />
-          Timing Screens
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <BarChart3 className="mr-2 h-4 w-4" />
-          Performance Graphs
-        </Button>
-        <Button variant="ghost" className="w-full justify-start">
-          <Layers className="mr-2 h-4 w-4" />
-          HUD Elements
-        </Button>
-      </div>
-
-      <div className="p-2">
-        <div className="mb-1 px-2 text-xs font-medium text-gray-500">
-          DEVELOPER
-        </div>
-
-        <Button
-          variant="ghost"
-          className="w-full justify-start bg-gray-100"
-          asChild
-        >
-          <Link to="/debug">
-            <Bug className="mr-2 h-4 w-4" />
-            Debug
-          </Link>
-        </Button>
-      </div>
+      ))}
 
       <div className="mt-auto">
-        <div className="p-2">
-          <Button variant="ghost" className="w-full justify-start">
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Button>
-          <Button variant="ghost" className="w-full justify-start">
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Help & Support
-          </Button>
-        </div>
         <div className="border-t p-4">
           <div className="flex items-center">
             <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
