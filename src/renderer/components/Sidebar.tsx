@@ -65,51 +65,53 @@ const Sidebar = () => {
   const { pathname } = location;
 
   return (
-    <ScrollArea className="flex w-64 shrink-0 flex-col border-r bg-white">
-      <div className="p-4">
-        <Button className="w-full justify-start bg-red-600 text-white hover:bg-red-700">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          New Overlay
-        </Button>
-      </div>
-
-      {sidebarLinks.map((group) => (
-        <div key={group.group} className="p-2">
-          <div className="mb-1 px-2 text-xs font-medium text-gray-500">
-            {group.group}
-          </div>
-          {group.links.map((link) => (
-            <Button
-              key={link.text}
-              variant="ghost"
-              className={`w-full justify-start ${
-                pathname.startsWith(link.path) ? "bg-gray-100" : ""
-              }`}
-              asChild
-            >
-              <Link to={link.path}>
-                <link.icon className="mr-2 h-4 w-4" />
-                {link.text}
-              </Link>
-            </Button>
-          ))}
+    <div className="flex h-full w-64 flex-col border-r bg-white">
+      {/* Scrollable Top Section */}
+      <ScrollArea className="flex-grow overflow-y-auto">
+        <div className="p-4">
+          <Button className="w-full justify-start bg-red-600 text-white hover:bg-red-700">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            New Overlay
+          </Button>
         </div>
-      ))}
 
-      <div className="mt-auto">
-        <div className="border-t p-4">
-          <div className="flex items-center">
-            <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-              JD
+        {sidebarLinks.map((group) => (
+          <div key={group.group} className="p-2">
+            <div className="mb-1 px-2 text-xs font-medium text-gray-500">
+              {group.group}
             </div>
-            <div>
-              <div className="text-sm font-medium">John Driver</div>
-              <div className="text-xs text-gray-500">Free Plan</div>
-            </div>
+            {group.links.map((link) => (
+              <Button
+                key={link.text}
+                variant="ghost"
+                className={`w-full justify-start ${
+                  pathname.startsWith(link.path) ? "bg-gray-100" : ""
+                }`}
+                asChild
+              >
+                <Link to={link.path}>
+                  <link.icon className="mr-2 h-4 w-4" />
+                  {link.text}
+                </Link>
+              </Button>
+            ))}
+          </div>
+        ))}
+      </ScrollArea>
+
+      {/* Always Visible Bottom Section */}
+      <div className="shrink-0 border-t p-4">
+        <div className="flex items-center">
+          <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
+            JD
+          </div>
+          <div>
+            <div className="text-sm font-medium">John Driver</div>
+            <div className="text-xs text-gray-500">Free Plan</div>
           </div>
         </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 };
 
