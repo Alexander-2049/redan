@@ -28,12 +28,16 @@ const Sidebar = () => {
 
       <div className="p-2">
         <div className="mb-1 px-2 text-xs font-medium text-gray-500">MAIN</div>
-        <Link to="/">
-          <Button variant="ghost" className="w-full justify-start bg-gray-100">
+        <Button
+          variant="ghost"
+          className="w-full justify-start bg-gray-100"
+          asChild
+        >
+          <Link to="/">
             <Layers className="mr-2 h-4 w-4" />
             My Overlays
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <Button variant="ghost" className="w-full justify-start">
           <MonitorPlay className="mr-2 h-4 w-4" />
           Live Preview
@@ -88,12 +92,17 @@ const Sidebar = () => {
         <div className="mb-1 px-2 text-xs font-medium text-gray-500">
           DEVELOPER
         </div>
-        <Link to="/debug">
-          <Button variant="ghost" className="w-full justify-start">
+
+        <Button
+          variant="ghost"
+          className="w-full justify-start bg-gray-100"
+          asChild
+        >
+          <Link to="/debug">
             <Bug className="mr-2 h-4 w-4" />
             Debug
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
       <div className="mt-auto">

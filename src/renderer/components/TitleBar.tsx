@@ -1,4 +1,5 @@
-import { Minus, X, Square } from "@mynaui/icons-react";
+import { Minus, X, Square, Home } from "@mynaui/icons-react";
+import { Link } from "react-router-dom";
 
 const TitleBar = () => {
   const buttonClassName =
@@ -9,7 +10,16 @@ const TitleBar = () => {
 
   return (
     <div className="drag flex h-9 w-full shrink-0 flex-row justify-between bg-slate-200">
-      <div className="grow"></div>
+      <div className="grow">
+        <Link
+          to="/"
+          className={[buttonClassName, buttonHoverEffect]
+            .join(" ")
+            .replace("w-12", "w-9")}
+        >
+          <Home width={iconSize} />
+        </Link>
+      </div>
       <div className="flex h-full flex-row">
         <button
           className={[buttonClassName, buttonHoverEffect].join(" ")}
