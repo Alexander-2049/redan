@@ -5,6 +5,7 @@ import AppLayout from "./components/AppLayout";
 import HomeRoute from "./routes/HomeRoute";
 import DebugPage from "./routes/DebugRoute";
 import PageLayout from "./components/PageLayout";
+import NotFoundRoute from "./routes/NotFoundRoute";
 
 const Main = () => {
   // const { t } = useTranslation();
@@ -21,7 +22,9 @@ const Main = () => {
             <Route index element={<HomeRoute />} />
             <Route path="/debug" element={<DebugPage />} />
           </Route>
-          <Route path="*" element={<PageLayout />} />
+          <Route path="*" element={<PageLayout />}>
+            <Route path="*" element={<NotFoundRoute />} />
+          </Route>
         </Route>
         <Route path="*" element={<AppLayout />} />
       </Routes>
