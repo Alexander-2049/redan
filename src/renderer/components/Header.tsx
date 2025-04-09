@@ -10,10 +10,10 @@ const Header = () => {
             <Gauge className="h-6 w-6 text-white" />
           </div>
           <div className="ml-2 text-xl font-bold tracking-wider text-gray-700">
-            RACE OVERLAY
+            SIM RACING UNIVERSE
           </div>
         </div>
-        <div className="text-sm text-gray-600">v2.5.0</div>
+        <div className="text-sm text-gray-600">v1.0.0</div>
       </div>
       <div className="flex items-center gap-2">
         <div className="flex items-center">
