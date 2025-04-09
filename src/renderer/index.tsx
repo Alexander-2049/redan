@@ -21,7 +21,9 @@ const Main = () => {
             <Route index element={<HomeRoute />} />
             <Route path="/debug" element={<DebugPage />} />
           </Route>
+          <Route path="*" element={<PageLayout />} />
         </Route>
+        <Route path="*" element={<AppLayout />} />
       </Routes>
     </HashRouter>
   );
