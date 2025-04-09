@@ -8,7 +8,7 @@ const TitleBar = () => {
   const iconSize = 16;
 
   return (
-    <div className="drag flex h-9 w-full flex-row justify-between bg-slate-200">
+    <div className="drag flex h-9 w-full shrink-0 flex-row justify-between bg-slate-200">
       <div className="grow"></div>
       <div className="flex h-full flex-row">
         <button

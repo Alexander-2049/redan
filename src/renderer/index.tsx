@@ -1,9 +1,10 @@
 // import { useTranslation } from "react-i18next";
 import "./i18n";
-import TitleBar from "./components/TitleBar";
-import DebugPage from "./pages/DebugPage";
-import Sidebar from "./components/Sidebar";
-import Header from "./components/Header";
+import { HashRouter, Route, Routes } from "react-router-dom";
+import AppLayout from "./components/AppLayout";
+import HomeRoute from "./routes/HomeRoute";
+import DebugPage from "./routes/DebugRoute";
+import PageLayout from "./components/PageLayout";
 
 const Main = () => {
   // const { t } = useTranslation();
@@ -13,18 +14,16 @@ const Main = () => {
   */
 
   return (
-    <div className="flex h-full flex-col">
-      <TitleBar />
-      <Header />
-      <div className="flex grow flex-col">
-        <div className="flex grow flex-row">
-          <Sidebar />
-          <div className="grow overflow-hidden">
-            <DebugPage />
-          </div>
-        </div>
-      </div>
-    </div>
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route element={<PageLayout />}>
+            <Route index element={<HomeRoute />} />
+            <Route path="/debug" element={<DebugPage />} />
+          </Route>
+        </Route>
+      </Routes>
+    </HashRouter>
   );
 };
 

@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Bug,
   Clock,
   Flag,
   Gauge,
@@ -12,10 +13,12 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/renderer/components/ui/button";
+import { Link } from "react-router-dom";
+import { ScrollArea } from "./ui/scroll-area";
 
 const Sidebar = () => {
   return (
-    <div className="flex w-64 shrink-0 flex-col border-r bg-white">
+    <ScrollArea className="flex w-64 shrink-0 flex-col border-r bg-white">
       <div className="p-4">
         <Button className="w-full justify-start bg-red-600 text-white hover:bg-red-700">
           <PlusCircle className="mr-2 h-4 w-4" />
@@ -25,10 +28,12 @@ const Sidebar = () => {
 
       <div className="p-2">
         <div className="mb-1 px-2 text-xs font-medium text-gray-500">MAIN</div>
-        <Button variant="ghost" className="w-full justify-start bg-gray-100">
-          <Layers className="mr-2 h-4 w-4" />
-          My Overlays
-        </Button>
+        <Link to="/">
+          <Button variant="ghost" className="w-full justify-start bg-gray-100">
+            <Layers className="mr-2 h-4 w-4" />
+            My Overlays
+          </Button>
+        </Link>
         <Button variant="ghost" className="w-full justify-start">
           <MonitorPlay className="mr-2 h-4 w-4" />
           Live Preview
@@ -79,6 +84,18 @@ const Sidebar = () => {
         </Button>
       </div>
 
+      <div className="p-2">
+        <div className="mb-1 px-2 text-xs font-medium text-gray-500">
+          DEVELOPER
+        </div>
+        <Link to="/debug">
+          <Button variant="ghost" className="w-full justify-start">
+            <Bug className="mr-2 h-4 w-4" />
+            Debug
+          </Button>
+        </Link>
+      </div>
+
       <div className="mt-auto">
         <div className="p-2">
           <Button variant="ghost" className="w-full justify-start">
@@ -102,7 +119,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 };
 

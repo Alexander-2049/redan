@@ -32,11 +32,27 @@ import "./styles/globals.css";
 import { createRoot } from "react-dom/client";
 import Main from ".";
 
+import { createHashRouter } from "react-router-dom";
+import React from "react";
+import HomeRoute from "./routes/HomeRoute";
+
+export const router = createHashRouter([
+  {
+    path: "/",
+    element: <HomeRoute />,
+  },
+]);
+
 const app = document.getElementById("app");
 if (!app) throw new Error("root element with app id was not found");
 
 const root = createRoot(app);
-root.render(<Main />);
+
+root.render(
+  <React.StrictMode>
+    <Main />
+  </React.StrictMode>,
+);
 
 console.log(
   '👋 This message is being logged by "renderer.js", included via webpack',
