@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron";
-import OverlayHandler from "./overlay/OverlayHandler";
+import OverlayHandler from "@/main/services/overlayService/OverlayHandler";
 
 const windows: BrowserWindow[] = [];
 
