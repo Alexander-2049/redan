@@ -1,5 +1,5 @@
 import express from "express";
-import { getOverlayNames } from "./utils/overlaysFolder";
+import { getOverlaysData } from "./utils/overlaysFolder";
 import fs from "fs";
 import path from "path";
 import { OVERLAYS_PATH } from "./main-constants";
@@ -7,7 +7,7 @@ import { OVERLAYS_PATH } from "./main-constants";
 const app = express();
 
 app.get("/", (req, res) => {
-  return res.json(getOverlayNames());
+  return res.json(getOverlaysData());
 });
 
 app.get("/*", (req, res) => {

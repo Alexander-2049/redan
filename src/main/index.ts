@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, globalShortcut } from "electron";
-import { createOverlaysFolder, getOverlayNames } from "./utils/overlaysFolder";
+import { createOverlaysFolder, getOverlaysData } from "./utils/overlaysFolder";
 import { createOverlayWindow } from "./utils/createOverlayWindow";
 import path from "path";
 import { IS_DEV, OVERLAYS_PATH } from "./main-constants";
@@ -72,7 +72,7 @@ const createWindow = (): BrowserWindow => {
 
   ipcMain.on("main-message", (_, data) => {
     if (data === "get-mod-names") {
-      getOverlayNames();
+      getOverlaysData();
     }
   });
 
@@ -99,12 +99,12 @@ const createWindow = (): BrowserWindow => {
 app.on("ready", () => {
   windows.push(createWindow());
 
-  const modFolders = getOverlayNames();
+  const modFolders = getOverlaysData();
 
   for (let i = 0; i < modFolders.length; i++) {
     windows.push(
       createOverlayWindow(
-        path.join(OVERLAYS_PATH, modFolders[i], "index.html"),
+        path.join(OVERLAYS_PATH, modFolders[i].folderName, "index.html"),
         {
           width: 500,
           height: 200,
