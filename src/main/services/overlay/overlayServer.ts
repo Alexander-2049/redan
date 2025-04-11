@@ -1,13 +1,13 @@
 import express from "express";
-import { getOverlaysData } from "./utils/overlaysFolder";
 import fs from "fs";
 import path from "path";
-import { OVERLAYS_PATH } from "./main-constants";
+import { OVERLAYS_PATH } from "../../main-constants";
+import OverlayHandler from "./OverlayHandler";
 
 const app = express();
 
 app.get("/", (req, res) => {
-  return res.json(getOverlaysData());
+  return res.json(OverlayHandler.getAll());
 });
 
 app.get("/*", (req, res) => {
