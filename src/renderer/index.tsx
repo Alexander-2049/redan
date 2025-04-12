@@ -1,10 +1,10 @@
 // import { useTranslation } from "react-i18next";
 import "./i18n";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import AppLayout from "./components/AppLayout";
+import AppLayout from "./components/layout/AppLayout";
 import DashboardRoute from "./routes/DashboardRoute";
 import DebugPage from "./routes/DebugRoute";
-import PageLayout from "./components/PageLayout";
+import PageLayout from "./components/layout/PageLayout";
 import NotFoundRoute from "./routes/NotFoundRoute";
 
 const Main = () => {
