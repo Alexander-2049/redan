@@ -82,6 +82,14 @@ export default class OverlayHandler {
               displayName: parsedManifest.data.displayName || folderName,
               folderName,
               author: parsedManifest.data.author || null,
+              category: parsedManifest.data.category || "unknown",
+              image:
+                parsedManifest.data.image ||
+                "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350",
+              description: parsedManifest.data.description || "",
+              downloads: 1,
+              rating: 5,
+              lastModified: 0,
             };
           }
         } catch (error) {
@@ -96,6 +104,13 @@ export default class OverlayHandler {
         displayName: folderName,
         folderName,
         author: null,
+        category: "unknown",
+        image:
+          "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350",
+        description: "",
+        downloads: 1,
+        rating: 5,
+        lastModified: 0,
       };
     });
 

@@ -65,7 +65,7 @@ const Sidebar = () => {
   const { pathname } = location;
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-white">
+    <div className="flex h-full w-64 shrink-0 flex-col border-r bg-white">
       {/* Scrollable Top Section */}
       <ScrollArea className="flex-grow overflow-y-auto">
         <div className="p-4">

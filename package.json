@@ -76,8 +76,9 @@
   "dependencies": {
     "@mynaui/icons-react": "^0.3.3",
     "@radix-ui/react-accordion": "^1.2.3",
+    "@radix-ui/react-dropdown-menu": "^2.1.7",
     "@radix-ui/react-scroll-area": "^1.2.4",
-    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-slot": "^1.2.0",
     "ac-sdk-2025": "github:Alexander-2049/ac-sdk-2025",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
