@@ -24,7 +24,7 @@ const TitleBar = () => {
         <button
           className={[buttonClassName, buttonHoverEffect].join(" ")}
           onClick={() => {
-            window.titleBar.sendMessage("minimize");
+            window.actions.minimize();
           }}
         >
           <Minus width={iconSize} />
@@ -32,7 +32,7 @@ const TitleBar = () => {
         <button
           className={[buttonClassName, buttonHoverEffect].join(" ")}
           onClick={() => {
-            window.titleBar.sendMessage("restore");
+            window.actions.restore();
           }}
         >
           <Square width={iconSize / 1.3} />
@@ -40,7 +40,7 @@ const TitleBar = () => {
         <button
           className={[buttonClassName, closeButtonHoverEffect].join(" ")}
           onClick={() => {
-            window.titleBar.sendMessage("close");
+            window.actions.close();
           }}
         >
           <X width={iconSize} />

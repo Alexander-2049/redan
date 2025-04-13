@@ -4,13 +4,24 @@
 // Preload (Isolated World)
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("MainWindowAPI", {
-  sendMessage: (message: string) => ipcRenderer.send("main-message", message),
-  onMessage: (callback: (data: unknown) => void) =>
-    ipcRenderer.on("main-data", (_, data) => callback(data)),
+contextBridge.exposeInMainWorld("electron", {
+  getOverlayList: async () => {
+    ipcRenderer.send("overlay-list-renderer-to-main");
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error("Main process did not respond in time."));
+      }, 5000);
+
+      ipcRenderer.once("overlay-list-main-to-renderer", (_, data) => {
+        clearTimeout(timeout); // Clear the timeout if the main process responds
+        resolve(data);
+      });
+    });
+  },
 });
 
-contextBridge.exposeInMainWorld("titleBar", {
-  sendMessage: (message: string) =>
-    ipcRenderer.send("title-bar-message", message),
+contextBridge.exposeInMainWorld("actions", {
+  minimize: () => ipcRenderer.send("title-bar-message", "minimize"),
+  restore: () => ipcRenderer.send("title-bar-message", "restore"),
+  close: () => ipcRenderer.send("title-bar-message", "close"),
 });

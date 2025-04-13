@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain } from "electron";
 import OverlayHandler from "@/main/services/overlayService/OverlayHandler";
+import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 
 const windows: BrowserWindow[] = [];
 
@@ -17,7 +18,7 @@ export const createWindow = (preload: string, entry: string): BrowserWindow => {
     titleBarStyle: "hidden",
   });
 
-  addMessageHandlers(mainWindow);
+  addMessageHandlers();
   mainWindow.setMenuBarVisibility(false);
   mainWindow.webContents.setAudioMuted(true);
 
@@ -37,23 +38,25 @@ export const createWindow = (preload: string, entry: string): BrowserWindow => {
   return mainWindow;
 };
 
-const addMessageHandlers = (w: BrowserWindow) => {
-  ipcMain.on("main-message", (_, data) => {
-    if (data === "get-mod-names") {
-      OverlayHandler.getAll();
-    }
+const addMessageHandlers = () => {
+  ipcMain.on("overlay-list-renderer-to-main", (event) => {
+    const replyMessage = OverlayHandler.getAll();
+    event.reply("overlay-list-main-to-renderer", replyMessage);
   });
 
-  ipcMain.on("title-bar-message", (_, data) => {
+  ipcMain.on("title-bar-message", (event, data: TitleBarEvent) => {
+    const window = BrowserWindow.fromId(event.sender.id);
+    if (!window) return;
+
     if (data === "close") {
-      w.close();
+      window.close();
     } else if (data === "minimize") {
-      w.minimize();
+      window.minimize();
     } else if (data === "restore") {
-      if (w.isMaximized()) {
-        w.restore();
+      if (window.isMaximized()) {
+        window.restore();
       } else {
-        w.maximize();
+        window.maximize();
       }
     }
   });

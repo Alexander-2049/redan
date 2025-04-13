@@ -8,12 +8,7 @@ import { overlayManifestFileSchema } from "./schemas/overlayManifest";
 import app from "./overlayServer";
 import { z } from "zod";
 import { overlaySettingsFileSchema } from "./schemas/overlaySettings";
-
-interface IOverlay {
-  displayName: string;
-  folderName: string;
-  author: string | null;
-}
+import { IOverlay } from "@/shared/types/IOverlay";
 
 export type ISettings = z.infer<typeof overlaySettingsFileSchema>;
 const settingsFileTemplate: ISettings = {

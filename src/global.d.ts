@@ -1,15 +1,18 @@
+import { IOverlay } from "./shared/types/IOverlay";
+
 interface MainWindowAPI {
-  sendMessage: (message: string) => void;
-  onMessage: (callback: (message: string) => void) => void;
+  getOverlayList: () => Promise<IOverlay[]>;
 }
-interface TitleBarAction {
-  sendMessage: (message: "close" | "minimize" | "restore") => void;
+interface WindowAction {
+  minimize: () => void;
+  restore: () => void;
+  close: () => void;
 }
 
 declare global {
   interface Window {
-    MainWindowAPI: MainWindowAPI;
-    titleBar: TitleBarAction;
+    electron: MainWindowAPI;
+    actions: WindowAction;
   }
 }
 

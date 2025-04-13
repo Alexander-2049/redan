@@ -3,9 +3,10 @@ import "./i18n";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import DashboardRoute from "./routes/DashboardRoute";
-import DebugPage from "./routes/DebugRoute";
+import DebugRoute from "./routes/DebugRoute";
 import PageLayout from "./components/layout/PageLayout";
 import NotFoundRoute from "./routes/NotFoundRoute";
+import MyOverlaysRoute from "./routes/MyOverlaysRoute";
 
 const Main = () => {
   // const { t } = useTranslation();
@@ -21,7 +22,8 @@ const Main = () => {
           <Route element={<PageLayout />}>
             <Route index element={<DashboardRoute />} />
             <Route path="/dashboard" element={<DashboardRoute />} />
-            <Route path="/debug" element={<DebugPage />} />
+            <Route path="/debug" element={<DebugRoute />} />
+            <Route path="/my-overlays" element={<MyOverlaysRoute />} />
           </Route>
           <Route path="*" element={<PageLayout />}>
             <Route path="*" element={<NotFoundRoute />} />
