@@ -120,9 +120,11 @@ const MyOverlaysRoute = () => {
                       height={200}
                       className="h-48 w-full object-cover"
                     />
-                    <Badge className="absolute top-3 right-3 bg-black/70">
-                      {overlay.category}
-                    </Badge>
+                    {overlay.category && (
+                      <Badge className="absolute top-3 right-3 bg-black/70">
+                        {overlay.category}
+                      </Badge>
+                    )}
                   </div>
                   <div className="p-4">
                     <div className="flex items-start justify-between">
@@ -164,9 +166,6 @@ const MyOverlaysRoute = () => {
                       {overlay.description}
                     </p>
                     <div className="mt-4 flex items-center justify-between">
-                      <div className="text-xs text-gray-500">
-                        Modified {overlay.lastModified}
-                      </div>
                       <Button size="sm">Preview</Button>
                     </div>
                   </div>
@@ -198,19 +197,20 @@ const MyOverlaysRoute = () => {
                           {overlay.description}
                         </p>
                       </div>
-                      <Badge>{overlay.category}</Badge>
+                      {overlay.category && <Badge>{overlay.category}</Badge>}
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="text-xs text-gray-500">
-                          Modified {overlay.lastModified}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {overlay.downloads} downloads
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Rating: {overlay.rating}/5
-                        </div>
+                        {overlay.downloads && (
+                          <div className="text-xs text-gray-500">
+                            {overlay.downloads} downloads
+                          </div>
+                        )}
+                        {overlay.rating && (
+                          <div className="text-xs text-gray-500">
+                            Rating: {overlay.rating}/5
+                          </div>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline">

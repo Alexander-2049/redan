@@ -67,6 +67,17 @@ export default class OverlayHandler {
     );
 
     const overlaysData: IOverlay[] = folders.map((folderName) => {
+      const data: IOverlay = {
+        displayName: folderName,
+        folderName,
+        author: null,
+        category: "unknown",
+        image: null,
+        description: null,
+        downloads: 0,
+        rating: 0,
+      };
+
       const folderPath = path.join(OVERLAYS_PATH, folderName);
       const manifestPath = path.join(folderPath, "manifest.json");
 
@@ -78,19 +89,15 @@ export default class OverlayHandler {
           const parsedManifest = overlayManifestFileSchema.safeParse(manifest);
 
           if (parsedManifest.success) {
-            return {
-              displayName: parsedManifest.data.displayName || folderName,
-              folderName,
-              author: parsedManifest.data.author || null,
-              category: parsedManifest.data.category || "unknown",
-              image:
-                parsedManifest.data.image ||
-                "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350",
-              description: parsedManifest.data.description || "",
-              downloads: 1,
-              rating: 5,
-              lastModified: 0,
-            };
+            data.author = parsedManifest.data.author || null;
+            data.category = parsedManifest.data.category || null;
+            data.description = parsedManifest.data.description || null;
+            data.displayName = parsedManifest.data.displayName || folderName;
+            data.image = parsedManifest.data.image || null;
+            data.downloads = null;
+            data.rating = null;
+
+            return data;
           }
         } catch (error) {
           console.error(
@@ -100,18 +107,7 @@ export default class OverlayHandler {
         }
       }
 
-      return {
-        displayName: folderName,
-        folderName,
-        author: null,
-        category: "unknown",
-        image:
-          "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350",
-        description: "",
-        downloads: 1,
-        rating: 5,
-        lastModified: 0,
-      };
+      return data;
     });
 
     return overlaysData;
