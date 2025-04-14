@@ -9,6 +9,7 @@ import {
   Search,
   Share2,
   SlidersHorizontal,
+  SquareArrowOutUpRight,
   Trash2,
 } from "lucide-react";
 import { Input } from "../components/ui/input";
@@ -52,9 +53,13 @@ const MyOverlaysRoute = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                <Download className="mr-1 h-4 w-4" />
-                Import
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={window.electron.openOverlaysFolder}
+              >
+                <SquareArrowOutUpRight className="mr-1 h-4 w-4" />
+                Open Overlays folder
               </Button>
               <Button variant="outline" size="sm">
                 <SlidersHorizontal className="mr-1 h-4 w-4" />
@@ -97,7 +102,6 @@ const MyOverlaysRoute = () => {
               />
             </div>
           </div>
-          Overlays Grid/List
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {overlays.map((overlay) => (

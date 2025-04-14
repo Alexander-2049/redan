@@ -18,6 +18,8 @@ contextBridge.exposeInMainWorld("electron", {
       });
     });
   },
+  openOverlaysFolder: () =>
+    ipcRenderer.send("open-overlays-folder-renderer-to-main"),
 });
 
 contextBridge.exposeInMainWorld("actions", {

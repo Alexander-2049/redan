@@ -1,6 +1,7 @@
 import { BrowserWindow, ipcMain } from "electron";
 import OverlayHandler from "@/main/services/overlayService/OverlayHandler";
 import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
+import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
 
 const windows: BrowserWindow[] = [];
 
@@ -59,6 +60,10 @@ const addMessageHandlers = () => {
         window.maximize();
       }
     }
+  });
+
+  ipcMain.on("open-overlays-folder-renderer-to-main", () => {
+    openOverlaysFolder();
   });
 };
 
