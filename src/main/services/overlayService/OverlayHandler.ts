@@ -1,32 +1,32 @@
 import {
   OVERLAYS_PATH,
-  OVERLAYS_SETTINGS_FILE_PATH,
+  OVERLAYS_LAYOUTS_FILE_PATH,
 } from "@/main/main-constants";
 import fs from "fs";
 import path from "path";
 import { overlayManifestFileSchema } from "./schemas/overlayManifest";
 import app from "./overlayServer";
 import { z } from "zod";
-import { overlaySettingsFileSchema } from "./schemas/overlaySettings";
+import { overlayLayoutsFileSchema } from "./schemas/overlaySettings";
 import { IOverlay } from "@/shared/types/IOverlay";
 
-export type ISettings = z.infer<typeof overlaySettingsFileSchema>;
-const settingsFileTemplate: ISettings = {
+export type ILayouts = z.infer<typeof overlayLayoutsFileSchema>;
+const layoutsFileTemplate: ILayouts = {
   version: "1.0",
   overlays: [],
 };
 
 export default class OverlayHandler {
   static setup() {
-    this.createSettingsFile();
+    this.createLayoutsFile();
     this.createOverlaysFolder();
   }
 
-  private static createSettingsFile() {
-    if (!fs.existsSync(OVERLAYS_SETTINGS_FILE_PATH)) {
+  private static createLayoutsFile() {
+    if (!fs.existsSync(OVERLAYS_LAYOUTS_FILE_PATH)) {
       fs.writeFileSync(
-        OVERLAYS_SETTINGS_FILE_PATH,
-        JSON.stringify(settingsFileTemplate, null, 4),
+        OVERLAYS_LAYOUTS_FILE_PATH,
+        JSON.stringify(layoutsFileTemplate, null, 4),
       );
     }
   }
@@ -41,14 +41,14 @@ export default class OverlayHandler {
   }
 
   static readSettings() {
-    if (!fs.existsSync(OVERLAYS_SETTINGS_FILE_PATH)) {
-      this.createSettingsFile();
+    if (!fs.existsSync(OVERLAYS_LAYOUTS_FILE_PATH)) {
+      this.createLayoutsFile();
     }
 
-    const fileContent = fs.readFileSync(OVERLAYS_SETTINGS_FILE_PATH, "utf-8");
+    const fileContent = fs.readFileSync(OVERLAYS_LAYOUTS_FILE_PATH, "utf-8");
     try {
       const parsedData = JSON.parse(fileContent);
-      const result = overlaySettingsFileSchema.safeParse(parsedData);
+      const result = overlayLayoutsFileSchema.safeParse(parsedData);
       if (!result.success) {
         console.error("Invalid settings file format:", result.error.format());
         return null;
