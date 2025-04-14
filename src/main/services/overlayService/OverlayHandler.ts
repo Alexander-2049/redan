@@ -13,7 +13,7 @@ import { IOverlay } from "@/shared/types/IOverlay";
 export type ILayouts = z.infer<typeof overlayLayoutsFileSchema>;
 const layoutsFileTemplate: ILayouts = {
   version: "1.0",
-  overlays: [],
+  layouts: [],
 };
 
 export default class OverlayHandler {
