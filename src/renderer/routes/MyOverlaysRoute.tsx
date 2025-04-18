@@ -6,11 +6,9 @@ import {
   Edit,
   LayoutGrid,
   List,
-  LoaderCircle,
   Search,
   Share2,
   SlidersHorizontal,
-  SquareArrowOutUpRight,
   Trash2,
 } from "lucide-react";
 import { Input } from "../components/ui/input";
