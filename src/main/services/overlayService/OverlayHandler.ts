@@ -61,6 +61,10 @@ export default class OverlayHandler {
   }
 
   static getAll() {
+    if (!fs.existsSync(OVERLAYS_LAYOUTS_FILE_PATH)) {
+      this.createOverlaysFolder();
+    }
+
     const dir = fs.readdirSync(OVERLAYS_PATH);
     const folders = dir.filter((item) =>
       fs.statSync(path.join(OVERLAYS_PATH, item)).isDirectory(),
