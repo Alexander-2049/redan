@@ -1,34 +1,13 @@
-import {
-  OVERLAYS_PATH,
-  OVERLAYS_LAYOUTS_FILE_PATH,
-} from "@/main/main-constants";
+import { OVERLAYS_PATH } from "@/main/main-constants";
 import fs from "fs";
 import path from "path";
 import { overlayManifestFileSchema } from "./schemas/overlayManifest";
 import app from "./overlayServer";
-import { z } from "zod";
-import { overlayLayoutsFileSchema } from "./schemas/overlaySettings";
 import { IOverlay } from "@/shared/types/IOverlay";
-
-export type ILayouts = z.infer<typeof overlayLayoutsFileSchema>;
-const layoutsFileTemplate: ILayouts = {
-  version: "1.0",
-  layouts: [],
-};
 
 export default class OverlayHandler {
   static setup() {
-    this.createLayoutsFile();
     this.createOverlaysFolder();
-  }
-
-  private static createLayoutsFile() {
-    if (!fs.existsSync(OVERLAYS_LAYOUTS_FILE_PATH)) {
-      fs.writeFileSync(
-        OVERLAYS_LAYOUTS_FILE_PATH,
-        JSON.stringify(layoutsFileTemplate, null, 4),
-      );
-    }
   }
 
   private static createOverlaysFolder() {
@@ -40,28 +19,8 @@ export default class OverlayHandler {
     }
   }
 
-  static readSettings() {
-    if (!fs.existsSync(OVERLAYS_LAYOUTS_FILE_PATH)) {
-      this.createLayoutsFile();
-    }
-
-    const fileContent = fs.readFileSync(OVERLAYS_LAYOUTS_FILE_PATH, "utf-8");
-    try {
-      const parsedData = JSON.parse(fileContent);
-      const result = overlayLayoutsFileSchema.safeParse(parsedData);
-      if (!result.success) {
-        console.error("Invalid settings file format:", result.error.format());
-        return null;
-      }
-      return result.data;
-    } catch (error) {
-      console.error("Error reading settings file:", error);
-      return null;
-    }
-  }
-
   static getAll() {
-    if (!fs.existsSync(OVERLAYS_LAYOUTS_FILE_PATH)) {
+    if (!fs.existsSync(OVERLAYS_PATH)) {
       this.createOverlaysFolder();
     }
 

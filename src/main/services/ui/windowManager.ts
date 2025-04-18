@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron";
-import OverlayHandler from "@/main/services/overlayService/OverlayHandler";
+import OverlayHandler from "@/main/services/overlayService/overlayHandler";
 import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
 

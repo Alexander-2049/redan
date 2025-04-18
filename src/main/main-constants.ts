@@ -8,8 +8,4 @@ export const RESOURCES_PATH = IS_DEV
   : path.join(process.resourcesPath);
 
 export const OVERLAYS_PATH = path.join(app.getPath("userData"), "Overlays");
-export const OVERLAYS_LAYOUTS_FILE_PATH = path.join(
-  app.getPath("userData"),
-  "Overlays",
-  "layouts.json",
-);
+export const LAYOUTS_PATH = path.join(app.getPath("userData"), "Layouts");

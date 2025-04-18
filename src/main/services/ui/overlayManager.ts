@@ -2,7 +2,7 @@ import { BrowserWindow } from "electron";
 import path from "path";
 import { OVERLAYS_PATH } from "../../main-constants";
 import { createOverlayWindow } from "../../utils/createOverlayWindow";
-import OverlayHandler from "../overlayService/OverlayHandler";
+import OverlayHandler from "../overlayService/overlayHandler";
 
 export const setupOverlays = (windows: BrowserWindow[]) => {
   OverlayHandler.setup();
