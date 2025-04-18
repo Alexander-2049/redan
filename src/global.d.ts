@@ -2,7 +2,7 @@ import { IOverlay } from "./shared/types/IOverlay";
 
 interface MainWindowAPI {
   getOverlayList: () => Promise<IOverlay[]>;
-  openOverlaysFolder: () => void;
+  openOverlaysFolder: () => Promise<boolean>;
 }
 interface WindowAction {
   minimize: () => void;

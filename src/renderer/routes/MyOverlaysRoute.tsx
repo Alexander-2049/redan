@@ -6,6 +6,7 @@ import {
   Edit,
   LayoutGrid,
   List,
+  LoaderCircle,
   Search,
   Share2,
   SlidersHorizontal,
@@ -20,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
+import OpenOverlaysFolderButton from "../components/OpenOverlaysFolderButton";
 
 const MyOverlaysRoute = () => {
   const [overlays, setOverlays] = useState<IOverlay[]>([]);
@@ -53,14 +55,7 @@ const MyOverlaysRoute = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={window.electron.openOverlaysFolder}
-              >
-                <SquareArrowOutUpRight className="mr-1 h-4 w-4" />
-                Open Overlays folder
-              </Button>
+              <OpenOverlaysFolderButton />
               <Button variant="outline" size="sm">
                 <SlidersHorizontal className="mr-1 h-4 w-4" />
                 Filter

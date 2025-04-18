@@ -18,8 +18,18 @@ contextBridge.exposeInMainWorld("electron", {
       });
     });
   },
-  openOverlaysFolder: () =>
-    ipcRenderer.send("open-overlays-folder-renderer-to-main"),
+  openOverlaysFolder: async () => {
+    ipcRenderer.send("open-overlays-folder-renderer-to-main");
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error("Main process did not respond in time."));
+      }, 5000);
+      ipcRenderer.once("open-overlays-folder-main-to-renderer", (_, data) => {
+        clearTimeout(timeout); // Clear the timeout if the main process responds
+        resolve(data);
+      });
+    });
+  },
 });
 
 contextBridge.exposeInMainWorld("actions", {

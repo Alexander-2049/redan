@@ -62,8 +62,14 @@ const addMessageHandlers = () => {
     }
   });
 
-  ipcMain.on("open-overlays-folder-renderer-to-main", () => {
-    openOverlaysFolder();
+  ipcMain.on("open-overlays-folder-renderer-to-main", (event) => {
+    openOverlaysFolder()
+      .then(() => {
+        event.reply("open-overlays-folder-main-to-renderer", true);
+      })
+      .catch(() => {
+        event.reply("open-overlays-folder-main-to-renderer", false);
+      });
   });
 };
 
