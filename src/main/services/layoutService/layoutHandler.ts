@@ -1,6 +1,6 @@
 import { LAYOUTS_PATH } from "@/main/main-constants";
 import fs from "fs";
-import { layoutSchema, LayoutType } from "./schemas/layoutSchema";
+import { layoutSchema, ILayout } from "./schemas/layoutSchema";
 
 export class LayoutHandler {
   public static setup() {
@@ -95,10 +95,7 @@ export class LayoutHandler {
     }
   }
 
-  public static modifyLayout(
-    fileName: string,
-    updatedData: Partial<LayoutType>,
-  ) {
+  public static modifyLayout(fileName: string, updatedData: Partial<ILayout>) {
     this.setup();
 
     try {

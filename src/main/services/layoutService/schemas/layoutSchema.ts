@@ -9,9 +9,9 @@ export const layoutSchema = z.object({
   screenHeight: z.number(),
 });
 
-export type LayoutType = z.infer<typeof layoutSchema>;
+export type ILayout = z.infer<typeof layoutSchema>;
 
-export const defaultLayout: LayoutType = {
+export const defaultLayout: ILayout = {
   name: "Layout #",
   description: "",
   overlays: [],

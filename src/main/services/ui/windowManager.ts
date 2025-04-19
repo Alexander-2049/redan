@@ -1,7 +1,8 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, screen } from "electron";
 import OverlayHandler from "@/main/services/overlayService/overlayHandler";
 import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
+import { LayoutHandler } from "../layoutService/layoutHandler";
 
 const windows: BrowserWindow[] = [];
 
@@ -71,6 +72,36 @@ const addMessageHandlers = () => {
         event.reply("open-overlays-folder-main-to-renderer", false);
       });
   });
+
+  ipcMain.on("get-layouts-renderer-to-main", (event) => {
+    const response = LayoutHandler.getAllLayouts();
+    if (response.success) {
+      event.reply("get-layouts-main-to-renderer", response.layouts);
+    } else {
+      event.reply("get-layouts-main-to-renderer", []);
+    }
+  });
+
+  ipcMain.on(
+    "create-empty-layout-renderer-to-main",
+    (event, filename: string) => {
+      const { width: screenWidth, height: screenHeight } =
+        screen.getPrimaryDisplay().workAreaSize;
+
+      LayoutHandler.createNewLayout({
+        fileName: filename,
+        screenWidth,
+        screenHeight,
+      });
+
+      const response = LayoutHandler.getAllLayouts();
+      if (response.success) {
+        event.reply("create-empty-layout-main-to-renderer", response.layouts);
+      } else {
+        event.reply("create-empty-layout-main-to-renderer", []);
+      }
+    },
+  );
 };
 
 export const getWindows = () => windows;
