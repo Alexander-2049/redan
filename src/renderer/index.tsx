@@ -7,6 +7,7 @@ import DebugRoute from "./routes/DebugRoute";
 import PageLayout from "./components/layout/PageLayout";
 import NotFoundRoute from "./routes/NotFoundRoute";
 import MyOverlaysRoute from "./routes/MyOverlaysRoute";
+import MyLayoutsRoute from "./routes/MyLayoutsRoute";
 
 const Main = () => {
   // const { t } = useTranslation();
@@ -24,6 +25,7 @@ const Main = () => {
             <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugRoute />} />
             <Route path="/my-overlays" element={<MyOverlaysRoute />} />
+            <Route path="/my-layouts" element={<MyLayoutsRoute />} />
           </Route>
           <Route path="*" element={<PageLayout />}>
             <Route path="*" element={<NotFoundRoute />} />
