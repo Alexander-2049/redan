@@ -11,6 +11,11 @@ export const layoutSchema = z.object({
 
 export type ILayout = z.infer<typeof layoutSchema>;
 
+export interface LayoutDataAndFilename {
+  data: ILayout;
+  filename: string;
+}
+
 export const defaultLayout: ILayout = {
   name: "Layout #",
   description: "",

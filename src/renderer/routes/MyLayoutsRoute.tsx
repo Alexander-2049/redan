@@ -1,11 +1,33 @@
+import { useCallback, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../components/ui/accordion";
+import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
 const MyLayoutsRoute = () => {
+  const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
+  const [newLayoutFileName, setNewLayoutFileName] = useState("");
+
+  const updateLayoutList = useCallback(() => {
+    window.electron
+      .getLayouts()
+      .then((data) => setLayouts(data))
+      .catch((error) => console.error(error));
+  }, [setLayouts]);
+
+  useEffect(() => {
+    window.addEventListener("focus", updateLayoutList);
+    updateLayoutList();
+    return () => {
+      window.removeEventListener("focus", updateLayoutList);
+    };
+  }, []);
+
   return (
     <>
       <div className="flex-1 overflow-auto">
@@ -21,19 +43,40 @@ const MyLayoutsRoute = () => {
           </div>
           {/* Content */}
           <div>
-            <Accordion
-              type="multiple"
-              className="overflow-hidden rounded-md border-2"
+            <Input
+              value={newLayoutFileName}
+              onChange={(event) => setNewLayoutFileName(event.target.value)}
+            />
+            <Button
+              onClick={() => {
+                window.electron
+                  .createEmptyLayout(newLayoutFileName)
+                  .then((list) => {
+                    setLayouts(list);
+                  })
+                  .catch((error) => {
+                    console.error("Error in createEmtpyLayout:", error);
+                  });
+              }}
             >
-              <AccordionItem value="item-1" className="bg-card px-2">
-                <AccordionTrigger className="hover:cursor-pointer">
-                  Is it accessible?
-                </AccordionTrigger>
-                <AccordionContent>
-                  Yes. It adheres to the WAI-ARIA design pattern.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+              Create new layout
+            </Button>
+            {layouts.map((layout) => (
+              <Accordion
+                type="multiple"
+                className="overflow-hidden rounded-md border-2"
+                key={layout.filename}
+              >
+                <AccordionItem value="item-1" className="bg-card px-2">
+                  <AccordionTrigger className="hover:cursor-pointer">
+                    {layout.data.name || "No layout name"}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
           </div>
         </div>
       </div>

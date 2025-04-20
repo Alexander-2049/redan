@@ -1,6 +1,10 @@
 import { LAYOUTS_PATH } from "@/main/main-constants";
 import fs from "fs";
-import { layoutSchema, ILayout } from "./schemas/layoutSchema";
+import {
+  layoutSchema,
+  ILayout,
+  LayoutDataAndFilename,
+} from "./schemas/layoutSchema";
 
 export class LayoutHandler {
   public static setup() {
@@ -58,12 +62,15 @@ export class LayoutHandler {
 
     try {
       const files = fs.readdirSync(LAYOUTS_PATH);
-      const layouts = files
+      const layouts: LayoutDataAndFilename[] = files
         .filter((file) => file.endsWith(".json"))
         .map((file) => {
           const filePath = `${LAYOUTS_PATH}/${file}`;
           const content = fs.readFileSync(filePath, "utf-8");
-          return layoutSchema.parse(JSON.parse(content));
+          return {
+            filename: file,
+            data: layoutSchema.parse(JSON.parse(content)),
+          };
         });
       return { success: true, layouts };
     } catch (error) {
