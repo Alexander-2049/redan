@@ -35,6 +35,7 @@ import Main from ".";
 import { createHashRouter } from "react-router-dom";
 import React from "react";
 import DashboardRoute from "./routes/DashboardRoute";
+import { Toaster } from "./components/ui/sonner";
 
 export const router = createHashRouter([
   {
@@ -51,6 +52,7 @@ const root = createRoot(app);
 root.render(
   <React.StrictMode>
     <Main />
+    <Toaster />
   </React.StrictMode>,
 );
 

@@ -8,10 +8,11 @@ import {
 import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { toast } from "sonner";
 
 const MyLayoutsRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
-  const [newLayoutFileName, setNewLayoutFileName] = useState("");
+  const [newLayoutName, setNewLayoutName] = useState("");
 
   const updateLayoutList = useCallback(() => {
     window.electron
@@ -19,6 +20,31 @@ const MyLayoutsRoute = () => {
       .then((data) => setLayouts(data))
       .catch((error) => console.error(error));
   }, [setLayouts]);
+
+  const handleCreateNewLayout = useCallback(() => {
+    if (newLayoutName.length === 0) {
+      return toast("Please enter a name for the new layout.");
+    }
+
+    window.electron
+      .createEmptyLayout(newLayoutName)
+      .then((response) => {
+        if (response.success) {
+          updateLayoutList();
+        } else {
+          toast("Event has been created", {
+            description: "Sunday, December 03, 2023 at 9:00 AM",
+            action: {
+              label: "Undo",
+              onClick: () => console.log("Undo"),
+            },
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error in createEmtpyLayout:", error);
+      });
+  }, [newLayoutName]);
 
   useEffect(() => {
     window.addEventListener("focus", updateLayoutList);
@@ -44,23 +70,13 @@ const MyLayoutsRoute = () => {
           {/* Content */}
           <div>
             <Input
-              value={newLayoutFileName}
-              onChange={(event) => setNewLayoutFileName(event.target.value)}
+              value={newLayoutName}
+              onChange={(event) => setNewLayoutName(event.target.value)}
+              className="bg-white"
+              placeholder="File name"
+              maxLength={64}
             />
-            <Button
-              onClick={() => {
-                window.electron
-                  .createEmptyLayout(newLayoutFileName)
-                  .then((list) => {
-                    setLayouts(list);
-                  })
-                  .catch((error) => {
-                    console.error("Error in createEmtpyLayout:", error);
-                  });
-              }}
-            >
-              Create new layout
-            </Button>
+            <Button onClick={handleCreateNewLayout}>Create new layout</Button>
             {layouts.map((layout) => (
               <Accordion
                 type="multiple"
@@ -72,7 +88,7 @@ const MyLayoutsRoute = () => {
                     {layout.data.name || "No layout name"}
                   </AccordionTrigger>
                   <AccordionContent>
-                    Yes. It adheres to the WAI-ARIA design pattern.
+                    <pre>{JSON.stringify(layout, null, "  ")}</pre>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

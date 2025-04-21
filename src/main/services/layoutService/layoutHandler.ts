@@ -5,6 +5,13 @@ import {
   ILayout,
   LayoutDataAndFilename,
 } from "./schemas/layoutSchema";
+import sanitize from "sanitize-filename";
+
+export interface ICreateNewLayoutOutput {
+  success: boolean;
+  filePath?: string;
+  error?: string;
+}
 
 export class LayoutHandler {
   public static setup() {
@@ -21,18 +28,29 @@ export class LayoutHandler {
   }
 
   public static createNewLayout({
-    fileName,
+    layoutName,
     screenWidth,
     screenHeight,
   }: {
-    fileName: string;
+    layoutName: string;
     screenWidth: number;
     screenHeight: number;
-  }) {
+  }): ICreateNewLayoutOutput {
     this.setup();
 
+    let sanitizedFileName = sanitize(layoutName);
+    let filePath = `${LAYOUTS_PATH}/${sanitizedFileName}.json`;
+    let counter = 1;
+
+    // Check if file already exists and append a postfix if necessary
+    while (fs.existsSync(filePath)) {
+      sanitizedFileName = `${sanitize(layoutName)}(${counter})`;
+      filePath = `${LAYOUTS_PATH}/${sanitizedFileName}.json`;
+      counter++;
+    }
+
     const newLayout = {
-      name: `Layout ${fileName}`,
+      name: layoutName,
       description: "",
       overlays: [],
       screenWidth,
@@ -41,7 +59,6 @@ export class LayoutHandler {
 
     try {
       const parsedLayout = layoutSchema.parse(newLayout);
-      const filePath = `${LAYOUTS_PATH}/${fileName}.json`;
       fs.writeFileSync(
         filePath,
         JSON.stringify(parsedLayout, null, 2),

@@ -84,22 +84,17 @@ const addMessageHandlers = () => {
 
   ipcMain.on(
     "create-empty-layout-renderer-to-main",
-    (event, filename: string) => {
+    (event, layoutName: string) => {
       const { width: screenWidth, height: screenHeight } =
-        screen.getPrimaryDisplay().workAreaSize;
+        screen.getPrimaryDisplay().size;
 
-      LayoutHandler.createNewLayout({
-        fileName: filename,
+      const response = LayoutHandler.createNewLayout({
+        layoutName: layoutName,
         screenWidth,
         screenHeight,
       });
 
-      const response = LayoutHandler.getAllLayouts();
-      if (response.success) {
-        event.reply("create-empty-layout-main-to-renderer", response.layouts);
-      } else {
-        event.reply("create-empty-layout-main-to-renderer", []);
-      }
+      event.reply("create-empty-layout-main-to-renderer", response);
     },
   );
 };
