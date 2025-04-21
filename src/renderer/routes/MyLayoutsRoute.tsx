@@ -77,22 +77,24 @@ const MyLayoutsRoute = () => {
               maxLength={64}
             />
             <Button onClick={handleCreateNewLayout}>Create new layout</Button>
-            {layouts.map((layout) => (
-              <Accordion
-                type="multiple"
-                className="overflow-hidden rounded-md border-2"
-                key={layout.filename}
-              >
-                <AccordionItem value="item-1" className="bg-card px-2">
-                  <AccordionTrigger className="hover:cursor-pointer">
-                    {layout.data.name || "No layout name"}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <pre>{JSON.stringify(layout, null, "  ")}</pre>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            ))}
+            {layouts
+              .sort((a, b) => (b.data.createdAt || 0) - (a.data.createdAt || 0))
+              .map((layout) => (
+                <Accordion
+                  type="multiple"
+                  className="overflow-hidden rounded-md border-2"
+                  key={layout.filename}
+                >
+                  <AccordionItem value="item-1" className="bg-card px-2">
+                    <AccordionTrigger className="hover:cursor-pointer">
+                      {layout.data.name || "No layout name"}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <pre>{JSON.stringify(layout, null, "  ")}</pre>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ))}
           </div>
         </div>
       </div>

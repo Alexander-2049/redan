@@ -7,6 +7,7 @@ export const layoutSchema = z.object({
   overlays: z.array(overlaySchema),
   screenWidth: z.number(),
   screenHeight: z.number(),
+  createdAt: z.number().optional(),
 });
 
 export type ILayout = z.infer<typeof layoutSchema>;
@@ -15,11 +16,3 @@ export interface LayoutDataAndFilename {
   data: ILayout;
   filename: string;
 }
-
-export const defaultLayout: ILayout = {
-  name: "Layout #",
-  description: "",
-  overlays: [],
-  screenWidth: 0,
-  screenHeight: 0,
-};

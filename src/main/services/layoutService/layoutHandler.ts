@@ -49,12 +49,13 @@ export class LayoutHandler {
       counter++;
     }
 
-    const newLayout = {
+    const newLayout: ILayout = {
       name: layoutName,
       description: "",
       overlays: [],
       screenWidth,
       screenHeight,
+      createdAt: Date.now(),
     };
 
     try {
