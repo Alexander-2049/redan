@@ -1,13 +1,13 @@
-import * as React from "react"
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
+import * as React from "react";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
-import { cn } from "@/renderer/lib/utils"
-import { buttonVariants } from "@/renderer/components/ui/button"
+import { cn } from "@/renderer/lib/utils";
+import { buttonVariants } from "@/renderer/components/ui/button";
 
 function AlertDialog({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
 
 function AlertDialogTrigger({
@@ -15,7 +15,7 @@ function AlertDialogTrigger({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
   return (
     <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
-  )
+  );
 }
 
 function AlertDialogPortal({
@@ -23,43 +23,45 @@ function AlertDialogPortal({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
   return (
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
-  )
+  );
 }
 
-function AlertDialogOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
+const AlertDialogOverlay = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof AlertDialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => {
   return (
     <AlertDialogPrimitive.Overlay
-      data-slot="alert-dialog-overlay"
+      ref={ref}
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
-        className
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
+        className,
       )}
       {...props}
     />
-  )
-}
+  );
+});
+AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
-function AlertDialogContent({
-  className,
-  ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
+const AlertDialogContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof AlertDialogPrimitive.Content>
+>(({ className, ...props }, ref) => {
   return (
-    <AlertDialogPortal>
+    <AlertDialogPrimitive.Portal>
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
-        data-slot="alert-dialog-content"
+        ref={ref}
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
-          className
+          "focus-visible:ring-ring data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg bg-white p-6 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:bg-gray-800",
+          className,
         )}
         {...props}
       />
-    </AlertDialogPortal>
-  )
-}
+    </AlertDialogPrimitive.Portal>
+  );
+});
+AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 
 function AlertDialogHeader({
   className,
@@ -71,7 +73,7 @@ function AlertDialogHeader({
       className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogFooter({
@@ -83,11 +85,11 @@ function AlertDialogFooter({
       data-slot="alert-dialog-footer"
       className={cn(
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogTitle({
@@ -100,7 +102,7 @@ function AlertDialogTitle({
       className={cn("text-lg font-semibold", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogDescription({
@@ -113,7 +115,7 @@ function AlertDialogDescription({
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogAction({
@@ -125,7 +127,7 @@ function AlertDialogAction({
       className={cn(buttonVariants(), className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogCancel({
@@ -137,7 +139,7 @@ function AlertDialogCancel({
       className={cn(buttonVariants({ variant: "outline" }), className)}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -152,4 +154,4 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
-}
+};

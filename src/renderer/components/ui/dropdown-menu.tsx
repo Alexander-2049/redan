@@ -57,17 +57,21 @@ function DropdownMenuGroup({
   );
 }
 
-function DropdownMenuItem({
-  className,
-  inset,
-  variant = "default",
-  ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
-  inset?: boolean;
-  variant?: "default" | "destructive";
-}) {
+function DropdownMenuItem(
+  {
+    className,
+    inset,
+    variant = "default",
+    ...props
+  }: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
+    inset?: boolean;
+    variant?: "default" | "destructive";
+  },
+  ref: React.Ref<HTMLDivElement>,
+) {
   return (
     <DropdownMenuPrimitive.Item
+      ref={ref}
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}
@@ -79,6 +83,9 @@ function DropdownMenuItem({
     />
   );
 }
+
+const ForwardedDropdownMenuItem = React.forwardRef(DropdownMenuItem);
+ForwardedDropdownMenuItem.displayName = "DropdownMenuItem";
 
 function DropdownMenuCheckboxItem({
   className,
@@ -243,7 +250,7 @@ export {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
-  DropdownMenuItem,
+  ForwardedDropdownMenuItem as DropdownMenuItem,
   DropdownMenuCheckboxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
