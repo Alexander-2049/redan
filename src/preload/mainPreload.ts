@@ -38,6 +38,10 @@ contextBridge.exposeInMainWorld("electron", {
     );
     return withTimeout("create-empty-layout-main-to-renderer");
   },
+  deleteLayout: async (fileName: string) => {
+    ipcRenderer.send("delete-layout-renderer-to-main", fileName);
+    return withTimeout("delete-layout-main-to-renderer");
+  },
 });
 
 contextBridge.exposeInMainWorld("actions", {

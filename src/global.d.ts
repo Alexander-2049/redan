@@ -1,4 +1,7 @@
-import { ICreateNewLayoutOutput } from "./main/services/layoutService/layoutHandler";
+import {
+  ICreateNewLayoutResponse,
+  IDeleteLayoutResponse,
+} from "./main/services/layoutService/layoutHandler";
 import { LayoutDataAndFilename } from "./main/services/layoutService/schemas/layoutSchema";
 import { IOverlay } from "./shared/types/IOverlay";
 
@@ -9,7 +12,8 @@ interface MainWindowAPI {
   createEmptyLayout: (
     layoutName: string,
     layoutDescription: string,
-  ) => Promise<ICreateNewLayoutOutput>;
+  ) => Promise<ICreateNewLayoutResponse>;
+  deleteLayout: (fileName: string) => Promise<IDeleteLayoutResponse>;
 }
 
 interface WindowAction {

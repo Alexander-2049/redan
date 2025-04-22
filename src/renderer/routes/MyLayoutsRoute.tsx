@@ -111,6 +111,28 @@ const MyLayoutsRoute = () => {
       });
   }, [newLayoutName, newLayoutDescription]);
 
+  const handleDeleteLayout = useCallback((fileName: string) => {
+    window.electron
+      .deleteLayout(fileName)
+      .then((response) => {
+        if (response.success) {
+          updateLayoutAndOverlayLists();
+          handleCloseCreateNewLayout();
+          toast(`Layout "${fileName}" has been successfully deleted.`);
+        } else {
+          toast(`Something went wrong during "${fileName}" deletion`, {
+            description: response.error,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error in deleteLayout:", error);
+        toast(`Error caught during ${fileName} deletion`, {
+          description: error.message,
+        });
+      });
+  }, []);
+
   useEffect(() => {
     window.addEventListener("focus", updateLayoutAndOverlayLists);
     updateLayoutAndOverlayLists();
@@ -210,10 +232,10 @@ const MyLayoutsRoute = () => {
                   Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction
-                  // onClick={() =>
-                  //   layoutToDelete &&
-                  //   handleDeleteLayout(layoutToDelete.filename)
-                  // }
+                  onClick={() =>
+                    layoutToDelete &&
+                    handleDeleteLayout(layoutToDelete.filename)
+                  }
                   className="bg-destructive hover:bg-destructive/90 text-white"
                 >
                   Delete

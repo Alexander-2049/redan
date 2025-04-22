@@ -98,6 +98,12 @@ const addMessageHandlers = () => {
       event.reply("create-empty-layout-main-to-renderer", response);
     },
   );
+
+  ipcMain.on("delete-layout-renderer-to-main", (event, fileName: string) => {
+    const response = LayoutHandler.deleteLayout(fileName);
+
+    event.reply("delete-layout-main-to-renderer", response);
+  });
 };
 
 export const getWindows = () => windows;

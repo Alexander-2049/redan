@@ -7,9 +7,14 @@ import {
 } from "./schemas/layoutSchema";
 import sanitize from "sanitize-filename";
 
-export interface ICreateNewLayoutOutput {
+export interface ICreateNewLayoutResponse {
   success: boolean;
   filePath?: string;
+  error?: string;
+}
+
+export interface IDeleteLayoutResponse {
+  success: boolean;
   error?: string;
 }
 
@@ -37,7 +42,7 @@ export class LayoutHandler {
     description: string;
     screenWidth: number;
     screenHeight: number;
-  }): ICreateNewLayoutOutput {
+  }): ICreateNewLayoutResponse {
     this.setup();
 
     let sanitizedFileName = sanitize(layoutName);
@@ -152,11 +157,11 @@ export class LayoutHandler {
     }
   }
 
-  public static deleteLayout(fileName: string) {
+  public static deleteLayout(fileName: string): IDeleteLayoutResponse {
     this.setup();
 
     try {
-      const filePath = `${LAYOUTS_PATH}/${fileName}.json`;
+      const filePath = `${LAYOUTS_PATH}/${fileName}`;
       if (!fs.existsSync(filePath)) {
         throw new Error("Layout file does not exist");
       }
