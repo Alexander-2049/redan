@@ -84,7 +84,7 @@ const addMessageHandlers = () => {
 
   ipcMain.on(
     "create-empty-layout-renderer-to-main",
-    (event, layoutName: string) => {
+    (event, layoutName: string, layoutDescription: string) => {
       const { width: screenWidth, height: screenHeight } =
         screen.getPrimaryDisplay().size;
 
@@ -92,6 +92,7 @@ const addMessageHandlers = () => {
         layoutName: layoutName,
         screenWidth,
         screenHeight,
+        description: layoutDescription,
       });
 
       event.reply("create-empty-layout-main-to-renderer", response);

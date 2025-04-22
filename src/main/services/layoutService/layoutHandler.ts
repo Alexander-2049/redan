@@ -29,10 +29,12 @@ export class LayoutHandler {
 
   public static createNewLayout({
     layoutName,
+    description,
     screenWidth,
     screenHeight,
   }: {
     layoutName: string;
+    description: string;
     screenWidth: number;
     screenHeight: number;
   }): ICreateNewLayoutOutput {
@@ -51,11 +53,12 @@ export class LayoutHandler {
 
     const newLayout: ILayout = {
       name: layoutName,
-      description: "",
+      description,
       overlays: [],
       screenWidth,
       screenHeight,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
     try {

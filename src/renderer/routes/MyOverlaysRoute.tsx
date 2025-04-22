@@ -108,20 +108,20 @@ const MyOverlaysRoute = () => {
                         overlay.image ||
                         "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350"
                       }
-                      alt={overlay.displayName}
+                      alt={overlay.name}
                       width={350}
                       height={200}
                       className="h-48 w-full object-cover"
                     />
-                    {overlay.category && (
+                    {overlay.type && (
                       <Badge className="absolute top-3 right-3 bg-black/70">
-                        {overlay.category}
+                        {overlay.type}
                       </Badge>
                     )}
                   </div>
                   <div className="p-4">
                     <div className="flex items-start justify-between">
-                      <h3 className="font-bold">{overlay.displayName}</h3>
+                      <h3 className="font-bold">{overlay.name}</h3>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -177,7 +177,7 @@ const MyOverlaysRoute = () => {
                       overlay.image ||
                       "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350"
                     }
-                    alt={overlay.displayName}
+                    alt={overlay.name}
                     width={120}
                     height={80}
                     className="h-20 w-32 rounded object-cover"
@@ -185,12 +185,12 @@ const MyOverlaysRoute = () => {
                   <div className="ml-4 flex-1">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-bold">{overlay.displayName}</h3>
+                        <h3 className="font-bold">{overlay.name}</h3>
                         <p className="text-sm text-gray-500">
                           {overlay.description}
                         </p>
                       </div>
-                      {overlay.category && <Badge>{overlay.category}</Badge>}
+                      {overlay.type && <Badge>{overlay.type}</Badge>}
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-4">

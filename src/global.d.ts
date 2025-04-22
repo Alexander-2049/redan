@@ -6,7 +6,10 @@ interface MainWindowAPI {
   getOverlayList: () => Promise<IOverlay[]>;
   openOverlaysFolder: () => Promise<boolean>;
   getLayouts: () => Promise<LayoutDataAndFilename[]>;
-  createEmptyLayout: (filename: string) => Promise<ICreateNewLayoutOutput>;
+  createEmptyLayout: (
+    layoutName: string,
+    layoutDescription: string,
+  ) => Promise<ICreateNewLayoutOutput>;
 }
 
 interface WindowAction {

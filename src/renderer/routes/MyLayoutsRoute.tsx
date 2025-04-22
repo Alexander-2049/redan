@@ -9,17 +9,81 @@ import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/lay
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import {
+  Badge,
+  Edit,
+  Layers,
+  MoreVertical,
+  Plus,
+  Settings,
+  Trash2,
+} from "lucide-react";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
+import { IOverlay } from "@/shared/types/IOverlay";
 
 const MyLayoutsRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
-  const [newLayoutName, setNewLayoutName] = useState("");
+  const [overlays, setOverlays] = useState<IOverlay[]>([]);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [layoutToDelete, setLayoutToDelete] =
+    useState<LayoutDataAndFilename | null>(null);
 
-  const updateLayoutList = useCallback(() => {
+  const [newLayoutName, setNewLayoutName] = useState("");
+  const [newLayoutDescription, setNewLayoutDescription] = useState("");
+
+  const updateLayoutAndOverlayLists = useCallback(() => {
     window.electron
       .getLayouts()
       .then((data) => setLayouts(data))
       .catch((error) => console.error(error));
+    window.electron
+      .getOverlayList()
+      .then((data) => setOverlays(data))
+      .catch((error) => console.error(error));
   }, [setLayouts]);
+
+  const handleCloseCreateNewLayout = useCallback(() => {
+    setIsCreateDialogOpen(false);
+    setNewLayoutName("");
+    setNewLayoutDescription("");
+  }, []);
 
   const handleCreateNewLayout = useCallback(() => {
     if (newLayoutName.length === 0) {
@@ -27,10 +91,11 @@ const MyLayoutsRoute = () => {
     }
 
     window.electron
-      .createEmptyLayout(newLayoutName)
+      .createEmptyLayout(newLayoutName, newLayoutDescription)
       .then((response) => {
         if (response.success) {
-          updateLayoutList();
+          updateLayoutAndOverlayLists();
+          handleCloseCreateNewLayout();
         } else {
           toast("Event has been created", {
             description: "Sunday, December 03, 2023 at 9:00 AM",
@@ -44,13 +109,13 @@ const MyLayoutsRoute = () => {
       .catch((error) => {
         console.error("Error in createEmtpyLayout:", error);
       });
-  }, [newLayoutName]);
+  }, [newLayoutName, newLayoutDescription]);
 
   useEffect(() => {
-    window.addEventListener("focus", updateLayoutList);
-    updateLayoutList();
+    window.addEventListener("focus", updateLayoutAndOverlayLists);
+    updateLayoutAndOverlayLists();
     return () => {
-      window.removeEventListener("focus", updateLayoutList);
+      window.removeEventListener("focus", updateLayoutAndOverlayLists);
     };
   }, []);
 
@@ -66,9 +131,289 @@ const MyLayoutsRoute = () => {
                 Manage and customize your overlay layouts
               </p>
             </div>
+
+            {/* Create new layout button */}
+            <Dialog
+              open={isCreateDialogOpen}
+              onOpenChange={setIsCreateDialogOpen}
+            >
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <Plus size={16} />
+                  Create New Layout
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Layout</DialogTitle>
+                  <DialogDescription>
+                    Create a new layout to organize your stream overlays.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <label htmlFor="name" className="text-sm font-medium">
+                      Layout Name
+                    </label>
+                    <Input
+                      id="name"
+                      value={newLayoutName}
+                      onChange={(e) => setNewLayoutName(e.target.value)}
+                      placeholder="My Stream Layout"
+                      maxLength={64}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="description"
+                      className="text-sm font-medium"
+                    >
+                      Description (optional)
+                    </label>
+                    <Textarea
+                      id="description"
+                      value={newLayoutDescription}
+                      onChange={(e) => setNewLayoutDescription(e.target.value)}
+                      placeholder="Describe what this layout is for..."
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleCloseCreateNewLayout}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreateNewLayout}>Create Layout</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
+
+          {/* Delete Layout AlertDialog */}
+          <AlertDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the "{layoutToDelete?.data.name}"
+                  layout and all its overlays. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  // onClick={() =>
+                  //   layoutToDelete &&
+                  //   handleDeleteLayout(layoutToDelete.filename)
+                  // }
+                  className="bg-destructive hover:bg-destructive/90 text-white"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           {/* Content */}
-          <div>
+
+          {/* Layouts grid */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {layouts
+              .sort((a, b) => (b.data.updatedAt || 0) - (a.data.updatedAt || 0))
+              .map((layout) => (
+                <Card key={layout.filename} className="overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle>{layout.data.name}</CardTitle>
+                        <CardDescription className="mt-1">
+                          {layout.data.description || "No description"}
+                        </CardDescription>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical size={16} />
+                            <span className="sr-only">Menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                          // onClick={() => {
+                          //   setEditingLayout(layout);
+                          //   setIsEditDialogOpen(true);
+                          // }}
+                          >
+                            <Edit size={16} className="mr-2" />
+                            Edit Layout
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setIsDeleteDialogOpen(true);
+                              setLayoutToDelete(layout);
+                            }}
+                          >
+                            <Trash2 size={16} className="mr-2" />
+                            Delete Layout
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pb-2">
+                    <div className="text-muted-foreground mb-4 flex items-center gap-2 text-sm">
+                      <Layers size={16} />
+                      <span>{layout.data.overlays.length} overlays</span>
+                    </div>
+
+                    {layout.data.overlays.length > 0 ? (
+                      <Accordion type="multiple" className="w-full">
+                        {layout.data.overlays.map((layoutOverlay) => {
+                          const manifestOverlay =
+                            overlays.filter(
+                              (overlay) =>
+                                overlay.folderName === layoutOverlay.folderName,
+                            )[0] || {};
+
+                          return (
+                            <AccordionItem
+                              key={layoutOverlay.folderName}
+                              value={layoutOverlay.folderName}
+                            >
+                              <AccordionTrigger className="px-1 py-2 text-sm hover:no-underline">
+                                <div className="flex items-center gap-2">
+                                  <span>{}</span>
+                                  <Badge
+                                    /* variant="outline" */ className="ml-2"
+                                  >
+                                    {manifestOverlay.type}
+                                  </Badge>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                <div className="space-y-3 pt-1 pb-2">
+                                  <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <div className="text-muted-foreground">
+                                      Position:
+                                    </div>
+                                    <div>
+                                      x: {layoutOverlay.position.x}, y:{" "}
+                                      {layoutOverlay.position.y}
+                                    </div>
+                                    <div className="text-muted-foreground">
+                                      Size:
+                                    </div>
+                                    <div>
+                                      {layoutOverlay.position.width} ×{" "}
+                                      {layoutOverlay.position.height}
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center justify-between pt-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="gap-1"
+                                    >
+                                      <Settings size={14} />
+                                      Settings
+                                    </Button>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="text-destructive hover:text-destructive"
+                                        >
+                                          <Trash2 size={14} className="mr-1" />
+                                          Remove
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Remove overlay?
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This will remove the "
+                                            {manifestOverlay.name}" overlay from
+                                            this layout.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>
+                                            Cancel
+                                          </AlertDialogCancel>
+                                          <AlertDialogAction
+                                          // onClick={() =>
+                                          //   handleDeleteOverlay(
+                                          //     layout.filename,
+                                          //     layoutOverlay.id,
+                                          //   )
+                                          // }
+                                          >
+                                            Remove
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          );
+                        })}
+                      </Accordion>
+                    ) : (
+                      <div className="text-muted-foreground py-6 text-center">
+                        <p>No overlays added yet</p>
+                        <p className="mt-1 text-sm">
+                          Add overlays to customize this layout
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                  <CardFooter className="text-muted-foreground flex justify-between pt-2 text-xs">
+                    <span>
+                      Created:{" "}
+                      {new Date(layout.data.createdAt).toLocaleDateString()}
+                    </span>
+                    <span>
+                      Updated:{" "}
+                      {new Date(layout.data.updatedAt).toLocaleDateString()}
+                    </span>
+                  </CardFooter>
+                </Card>
+              ))}
+          </div>
+
+          {layouts.length === 0 && (
+            <div className="py-12 text-center">
+              <h3 className="text-lg font-medium">No layouts found</h3>
+              <p className="text-muted-foreground mt-1">
+                Create your first layout to get started
+              </p>
+              <Button
+                className="mt-4 gap-2"
+                onClick={() => setIsCreateDialogOpen(true)}
+              >
+                <Plus size={16} />
+                Create New Layout
+              </Button>
+            </div>
+          )}
+
+          {/* <div>
             <Input
               value={newLayoutName}
               onChange={(event) => setNewLayoutName(event.target.value)}
@@ -95,7 +440,7 @@ const MyLayoutsRoute = () => {
                   </AccordionItem>
                 </Accordion>
               ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </>

@@ -7,7 +7,8 @@ export const layoutSchema = z.object({
   overlays: z.array(overlaySchema),
   screenWidth: z.number(),
   screenHeight: z.number(),
-  createdAt: z.number().optional(),
+  createdAt: z.number(),
+  updatedAt: z.number(),
 });
 
 export type ILayout = z.infer<typeof layoutSchema>;

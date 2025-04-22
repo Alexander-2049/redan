@@ -29,10 +29,10 @@ export default class OverlayHandler {
 
     const overlaysData: IOverlay[] = folders.map((folderName) => {
       const data: IOverlay = {
-        displayName: folderName,
+        name: folderName,
         folderName,
         author: null,
-        category: "unknown",
+        type: "unknown",
         image: null,
         description: null,
         downloads: 0,
@@ -51,9 +51,9 @@ export default class OverlayHandler {
 
           if (parsedManifest.success) {
             data.author = parsedManifest.data.author || null;
-            data.category = parsedManifest.data.category || null;
+            data.type = parsedManifest.data.type || null;
             data.description = parsedManifest.data.description || null;
-            data.displayName = parsedManifest.data.displayName || folderName;
+            data.name = parsedManifest.data.name || folderName;
             data.image = parsedManifest.data.image || null;
             data.downloads = null;
             data.rating = null;

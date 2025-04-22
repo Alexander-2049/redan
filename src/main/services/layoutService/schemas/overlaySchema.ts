@@ -36,14 +36,18 @@ export const overlayOptionSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
+export const overlayPositionSchema = z.object({
+  width: z.number(),
+  height: z.number(),
+  x: z.number(),
+  y: z.number(),
+});
+
 export const overlaySchema = z.object({
   folderName: z.string(),
   options: z.array(overlayOptionSchema),
   isVisible: z.boolean(),
   isDraggable: z.boolean(),
   isResizable: z.boolean(),
-  width: z.number(),
-  height: z.number(),
-  x: z.number(),
-  y: z.number(),
+  position: overlayPositionSchema,
 });

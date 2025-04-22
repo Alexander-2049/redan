@@ -30,8 +30,12 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.send("get-layouts-renderer-to-main");
     return withTimeout("get-layouts-main-to-renderer");
   },
-  createEmptyLayout: async (filename: string) => {
-    ipcRenderer.send("create-empty-layout-renderer-to-main", filename);
+  createEmptyLayout: async (layoutName: string, layoutDescription: string) => {
+    ipcRenderer.send(
+      "create-empty-layout-renderer-to-main",
+      layoutName,
+      layoutDescription,
+    );
     return withTimeout("create-empty-layout-main-to-renderer");
   },
 });
