@@ -7,7 +7,7 @@ import {
   ILayout,
   LayoutDataAndFilename,
 } from "./main/services/layoutService/schemas/layoutSchema";
-import { IOverlayAndFolderName } from "./shared/types/IOverlay";
+import { IOverlayAndFolderName } from "./shared/types/IOverlayAndFolderName";
 
 interface MainWindowAPI {
   getOverlayList: () => Promise<IOverlayAndFolderName[]>;

@@ -1,4 +1,4 @@
-import { IOverlayAndFolderName } from "@/shared/types/IOverlay";
+import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import {

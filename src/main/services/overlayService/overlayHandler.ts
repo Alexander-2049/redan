@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { overlayManifestFileSchema } from "./schemas/overlayManifest";
 import app from "./overlayServer";
-import { IOverlayAndFolderName } from "@/shared/types/IOverlay";
+import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 
 export default class OverlayHandler {
   static setup() {

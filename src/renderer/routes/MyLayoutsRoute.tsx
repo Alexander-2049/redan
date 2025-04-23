@@ -55,7 +55,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
-import { IOverlayAndFolderName } from "@/shared/types/IOverlay";
+import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 
 const MyLayoutsRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
