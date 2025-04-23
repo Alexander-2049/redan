@@ -1,10 +1,7 @@
-export interface IOverlay {
-  name: string;
-  description: string | null;
+import { overlayManifestFileSchema } from "@/main/services/overlayService/schemas/overlayManifest";
+import { z } from "zod";
+
+export interface IOverlayAndFolderName {
   folderName: string;
-  author: string | null;
-  image: string | null;
-  downloads: number | null;
-  rating: number | null;
-  type: string | null;
+  data: z.infer<typeof overlayManifestFileSchema>;
 }

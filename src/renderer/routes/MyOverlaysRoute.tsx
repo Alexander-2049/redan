@@ -1,4 +1,4 @@
-import { IOverlay } from "@/shared/types/IOverlay";
+import { IOverlayAndFolderName } from "@/shared/types/IOverlay";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import {
@@ -22,7 +22,7 @@ import { Badge } from "../components/ui/badge";
 import OpenOverlaysFolderButton from "../components/OpenOverlaysFolderButton";
 
 const MyOverlaysRoute = () => {
-  const [overlays, setOverlays] = useState<IOverlay[]>([]);
+  const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const updateOverlayList = useCallback(() => {
@@ -105,23 +105,23 @@ const MyOverlaysRoute = () => {
                   <div className="relative">
                     <img
                       src={
-                        overlay.image ||
+                        overlay.data.image ||
                         "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350"
                       }
-                      alt={overlay.name}
+                      alt={overlay.data.name}
                       width={350}
                       height={200}
                       className="h-48 w-full object-cover"
                     />
-                    {overlay.type && (
+                    {overlay.data.type && (
                       <Badge className="absolute top-3 right-3 bg-black/70">
-                        {overlay.type}
+                        {overlay.data.type}
                       </Badge>
                     )}
                   </div>
                   <div className="p-4">
                     <div className="flex items-start justify-between">
-                      <h3 className="font-bold">{overlay.name}</h3>
+                      <h3 className="font-bold">{overlay.data.name}</h3>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -156,7 +156,7 @@ const MyOverlaysRoute = () => {
                       </DropdownMenu>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
-                      {overlay.description}
+                      {overlay.data.description}
                     </p>
                     <div className="mt-4 flex items-center justify-between">
                       <Button size="sm">Preview</Button>
@@ -174,10 +174,10 @@ const MyOverlaysRoute = () => {
                 >
                   <img
                     src={
-                      overlay.image ||
+                      overlay.data.image ||
                       "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350"
                     }
-                    alt={overlay.name}
+                    alt={overlay.data.name}
                     width={120}
                     height={80}
                     className="h-20 w-32 rounded object-cover"
@@ -185,16 +185,16 @@ const MyOverlaysRoute = () => {
                   <div className="ml-4 flex-1">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-bold">{overlay.name}</h3>
+                        <h3 className="font-bold">{overlay.data.name}</h3>
                         <p className="text-sm text-gray-500">
-                          {overlay.description}
+                          {overlay.data.description}
                         </p>
                       </div>
-                      {overlay.type && <Badge>{overlay.type}</Badge>}
+                      {overlay.data.type && <Badge>{overlay.data.type}</Badge>}
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        {overlay.downloads && (
+                      {/* <div className="flex items-center gap-4">
+                        {overlay.data.downloads && (
                           <div className="text-xs text-gray-500">
                             {overlay.downloads} downloads
                           </div>
@@ -204,7 +204,7 @@ const MyOverlaysRoute = () => {
                             Rating: {overlay.rating}/5
                           </div>
                         )}
-                      </div>
+                      </div> */}
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline">
                           Edit

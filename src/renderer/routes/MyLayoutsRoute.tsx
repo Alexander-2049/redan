@@ -55,11 +55,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
-import { IOverlay } from "@/shared/types/IOverlay";
+import { IOverlayAndFolderName } from "@/shared/types/IOverlay";
 
 const MyLayoutsRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
-  const [overlays, setOverlays] = useState<IOverlay[]>([]);
+  const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [layoutToDelete, setLayoutToDelete] =
@@ -423,7 +423,7 @@ const MyLayoutsRoute = () => {
                                   <Badge
                                     /* variant="outline" */ className="ml-2"
                                   >
-                                    {manifestOverlay.type}
+                                    {manifestOverlay.data.type}
                                   </Badge>
                                 </div>
                               </AccordionTrigger>
@@ -473,8 +473,8 @@ const MyLayoutsRoute = () => {
                                           </AlertDialogTitle>
                                           <AlertDialogDescription>
                                             This will remove the "
-                                            {manifestOverlay.name}" overlay from
-                                            this layout.
+                                            {manifestOverlay.data.name}" overlay
+                                            from this layout.
                                           </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>

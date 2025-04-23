@@ -7,10 +7,10 @@ import {
   ILayout,
   LayoutDataAndFilename,
 } from "./main/services/layoutService/schemas/layoutSchema";
-import { IOverlay } from "./shared/types/IOverlay";
+import { IOverlayAndFolderName } from "./shared/types/IOverlay";
 
 interface MainWindowAPI {
-  getOverlayList: () => Promise<IOverlay[]>;
+  getOverlayList: () => Promise<IOverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;
   getLayouts: () => Promise<LayoutDataAndFilename[]>;
   createEmptyLayout: (

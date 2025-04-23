@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { overlayManifestFileSchema } from "./schemas/overlayManifest";
 import app from "./overlayServer";
-import { IOverlay } from "@/shared/types/IOverlay";
+import { IOverlayAndFolderName } from "@/shared/types/IOverlay";
 
 export default class OverlayHandler {
   static setup() {
@@ -27,16 +27,10 @@ export default class OverlayHandler {
       fs.statSync(path.join(OVERLAYS_PATH, item)).isDirectory(),
     );
 
-    const overlaysData: IOverlay[] = folders.map((folderName) => {
-      const data: IOverlay = {
-        name: folderName,
+    const overlaysData: IOverlayAndFolderName[] = folders.map((folderName) => {
+      const overlay: IOverlayAndFolderName = {
         folderName,
-        author: null,
-        type: "unknown",
-        image: null,
-        description: null,
-        downloads: 0,
-        rating: 0,
+        data: {},
       };
 
       const folderPath = path.join(OVERLAYS_PATH, folderName);
@@ -50,15 +44,9 @@ export default class OverlayHandler {
           const parsedManifest = overlayManifestFileSchema.safeParse(manifest);
 
           if (parsedManifest.success) {
-            data.author = parsedManifest.data.author || null;
-            data.type = parsedManifest.data.type || null;
-            data.description = parsedManifest.data.description || null;
-            data.name = parsedManifest.data.name || folderName;
-            data.image = parsedManifest.data.image || null;
-            data.downloads = null;
-            data.rating = null;
+            overlay.data = parsedManifest.data;
 
-            return data;
+            return overlay;
           }
         } catch (error) {
           console.error(
@@ -68,7 +56,7 @@ export default class OverlayHandler {
         }
       }
 
-      return data;
+      return overlay;
     });
 
     return overlaysData;

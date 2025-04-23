@@ -1,5 +1,40 @@
 {
   "author": "Jason Stathem",
-  "displayName": "Best Overlay",
-  "description": "some simple description"
+  "name": "Best Overlay",
+  "description": "some simple description",
+  "settings": [
+    {
+      "id": "slider1",
+      "type": "slider",
+      "name": "Volume Control",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "percentage"
+    },
+    {
+      "id": "toggle1",
+      "type": "toggle",
+      "name": "Enable Feature",
+      "state": "ON"
+    },
+    {
+      "id": "select1",
+      "type": "select",
+      "name": "Theme Selector",
+      "selectList": ["Light", "Dark", "System Default"]
+    },
+    {
+      "id": "integer1",
+      "type": "integer",
+      "name": "Max Retries",
+      "value": 3
+    },
+    {
+      "id": "string1",
+      "type": "string",
+      "name": "Custom Message",
+      "value": "Hello, World!"
+    }
+  ]
 }
