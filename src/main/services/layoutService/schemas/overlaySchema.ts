@@ -1,41 +1,5 @@
 import { z } from "zod";
 
-export const overlayOptionSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("range"),
-    name: z.string(),
-    min: z.number(),
-    max: z.number(),
-    step: z.number(),
-    unit: z.enum(["number", "percentage"]).optional(),
-    group: z.string().optional(),
-  }),
-  z.object({
-    type: z.literal("toggle"),
-    name: z.string(),
-    state: z.enum(["ON", "OFF"]),
-    group: z.string().optional(),
-  }),
-  z.object({
-    type: z.literal("select"),
-    name: z.string(),
-    selectList: z.array(z.string()),
-    group: z.string().optional(),
-  }),
-  z.object({
-    type: z.literal("integer"),
-    name: z.string(),
-    value: z.number().int().optional(),
-    group: z.string().optional(),
-  }),
-  z.object({
-    type: z.literal("string"),
-    name: z.string(),
-    value: z.string().optional(),
-    group: z.string().optional(),
-  }),
-]);
-
 export const overlayPositionSchema = z.object({
   width: z.number(),
   height: z.number(),
@@ -43,9 +7,14 @@ export const overlayPositionSchema = z.object({
   y: z.number(),
 });
 
+export const overlaySettingSchema = z.object({
+  id: z.string(),
+  value: z.union([z.number(), z.string(), z.boolean()]),
+});
+
 export const overlaySchema = z.object({
   folderName: z.string(),
-  options: z.array(overlayOptionSchema),
+  settings: z.array(overlaySettingSchema),
   isVisible: z.boolean(),
   isDraggable: z.boolean(),
   isResizable: z.boolean(),
