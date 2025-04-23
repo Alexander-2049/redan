@@ -3,6 +3,7 @@ import OverlayHandler from "@/main/services/overlayService/overlayHandler";
 import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
 import { LayoutHandler } from "../layoutService/layoutHandler";
+import { ILayout } from "../layoutService/schemas/layoutSchema";
 
 const windows: BrowserWindow[] = [];
 
@@ -104,6 +105,15 @@ const addMessageHandlers = () => {
 
     event.reply("delete-layout-main-to-renderer", response);
   });
+
+  ipcMain.on(
+    "modify-layout-renderer-to-main",
+    (event, fileName: string, updatedData: Partial<ILayout>) => {
+      const response = LayoutHandler.modifyLayout(fileName, updatedData);
+
+      event.reply("modify-layout-main-to-renderer", response);
+    },
+  );
 };
 
 export const getWindows = () => windows;

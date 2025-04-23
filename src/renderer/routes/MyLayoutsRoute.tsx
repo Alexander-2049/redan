@@ -64,6 +64,9 @@ const MyLayoutsRoute = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [layoutToDelete, setLayoutToDelete] =
     useState<LayoutDataAndFilename | null>(null);
+  const [editingLayout, setEditingLayout] =
+    useState<LayoutDataAndFilename | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const [newLayoutName, setNewLayoutName] = useState("");
   const [newLayoutDescription, setNewLayoutDescription] = useState("");
@@ -87,7 +90,7 @@ const MyLayoutsRoute = () => {
 
   const handleCreateNewLayout = useCallback(() => {
     if (newLayoutName.length === 0) {
-      return toast("Please enter a name for the new layout.");
+      return toast.info("Please enter a name for the new layout.");
     }
 
     window.electron
@@ -97,16 +100,18 @@ const MyLayoutsRoute = () => {
           updateLayoutAndOverlayLists();
           handleCloseCreateNewLayout();
         } else {
-          toast("Event has been created", {
-            description: "Sunday, December 03, 2023 at 9:00 AM",
+          toast.error("Something went wrong...", {
+            description: "Error: " + response.error /*
             action: {
               label: "Undo",
               onClick: () => console.log("Undo"),
             },
+          */,
           });
         }
       })
       .catch((error) => {
+        toast.error("Error...", { description: error.message });
         console.error("Error in createEmtpyLayout:", error);
       });
   }, [newLayoutName, newLayoutDescription]);
@@ -118,20 +123,50 @@ const MyLayoutsRoute = () => {
         if (response.success) {
           updateLayoutAndOverlayLists();
           handleCloseCreateNewLayout();
-          toast(`Layout "${fileName}" has been successfully deleted.`);
+          toast.success(`Layout "${fileName}" has been successfully deleted.`);
         } else {
-          toast(`Something went wrong during "${fileName}" deletion`, {
+          toast.error(`Something went wrong during "${fileName}" deletion.`, {
             description: response.error,
           });
         }
       })
       .catch((error) => {
         console.error("Error in deleteLayout:", error);
-        toast(`Error caught during ${fileName} deletion`, {
+        toast.error(`Error caught during ${fileName} deletion.`, {
           description: error.message,
         });
       });
   }, []);
+
+  const handleUpdateLayout = useCallback(() => {
+    if (!editingLayout) return;
+
+    if ((editingLayout.data.name || "").trim().length === 0) {
+      return toast.info("Layout name cannot be empty.");
+    }
+
+    window.electron
+      .modifyLayout(editingLayout.filename, editingLayout.data)
+      .then((response) => {
+        if (response.success) {
+          toast.success("Layout updated", {
+            description: "Your changes have been saved",
+          });
+          updateLayoutAndOverlayLists();
+
+          setIsEditDialogOpen(false);
+          setEditingLayout(null);
+        } else {
+          toast.error("Something went wrong...", {
+            description: response.error,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Error occured...", { description: error.message });
+      });
+  }, [editingLayout]);
 
   useEffect(() => {
     window.addEventListener("focus", updateLayoutAndOverlayLists);
@@ -214,6 +249,71 @@ const MyLayoutsRoute = () => {
             </Dialog>
           </div>
 
+          {/* Edit layout dialog */}
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Layout</DialogTitle>
+                <DialogDescription>
+                  Update your layout information.
+                </DialogDescription>
+              </DialogHeader>
+              {editingLayout && (
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <label htmlFor="edit-name" className="text-sm font-medium">
+                      Layout Name
+                    </label>
+                    <Input
+                      id="edit-name"
+                      value={editingLayout.data.name}
+                      onChange={(e) =>
+                        setEditingLayout({
+                          ...editingLayout,
+                          data: { ...editingLayout.data, name: e.target.value },
+                        })
+                      }
+                      placeholder="Layout Name"
+                      maxLength={64}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="edit-description"
+                      className="text-sm font-medium"
+                    >
+                      Description
+                    </label>
+                    <Textarea
+                      id="edit-description"
+                      value={editingLayout.data.description}
+                      onChange={(e) =>
+                        setEditingLayout({
+                          ...editingLayout,
+                          data: {
+                            ...editingLayout.data,
+                            description: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="Describe what this layout is for..."
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateLayout}>Save Changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           {/* Delete Layout AlertDialog */}
           <AlertDialog
             open={isDeleteDialogOpen}
@@ -271,10 +371,10 @@ const MyLayoutsRoute = () => {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                          // onClick={() => {
-                          //   setEditingLayout(layout);
-                          //   setIsEditDialogOpen(true);
-                          // }}
+                            onClick={() => {
+                              setEditingLayout(layout);
+                              setIsEditDialogOpen(true);
+                            }}
                           >
                             <Edit size={16} className="mr-2" />
                             Edit Layout

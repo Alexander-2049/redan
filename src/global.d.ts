@@ -1,8 +1,12 @@
 import {
   ICreateNewLayoutResponse,
   IDeleteLayoutResponse,
+  IModifyLayoutResponse,
 } from "./main/services/layoutService/layoutHandler";
-import { LayoutDataAndFilename } from "./main/services/layoutService/schemas/layoutSchema";
+import {
+  ILayout,
+  LayoutDataAndFilename,
+} from "./main/services/layoutService/schemas/layoutSchema";
 import { IOverlay } from "./shared/types/IOverlay";
 
 interface MainWindowAPI {
@@ -14,6 +18,10 @@ interface MainWindowAPI {
     layoutDescription: string,
   ) => Promise<ICreateNewLayoutResponse>;
   deleteLayout: (fileName: string) => Promise<IDeleteLayoutResponse>;
+  modifyLayout: (
+    fileName: string,
+    updatedData: Partial<ILayout>,
+  ) => Promise<IModifyLayoutResponse>;
 }
 
 interface WindowAction {

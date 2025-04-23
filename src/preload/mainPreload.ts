@@ -2,6 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 // Preload (Isolated World)
+import { ILayout } from "@/main/services/layoutService/schemas/layoutSchema";
 import { contextBridge, ipcRenderer } from "electron";
 
 function withTimeout<T>(channel: string, timeoutMs = 5000): Promise<T> {
@@ -41,6 +42,10 @@ contextBridge.exposeInMainWorld("electron", {
   deleteLayout: async (fileName: string) => {
     ipcRenderer.send("delete-layout-renderer-to-main", fileName);
     return withTimeout("delete-layout-main-to-renderer");
+  },
+  modifyLayout: async (fileName: string, updatedData: Partial<ILayout>) => {
+    ipcRenderer.send("modify-layout-renderer-to-main", fileName, updatedData);
+    return withTimeout("modify-layout-main-to-renderer");
   },
 });
 

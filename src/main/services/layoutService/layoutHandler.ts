@@ -18,6 +18,11 @@ export interface IDeleteLayoutResponse {
   error?: string;
 }
 
+export interface IModifyLayoutResponse {
+  success: boolean;
+  error?: string;
+}
+
 export class LayoutHandler {
   public static setup() {
     this.createLayoutsFolder();
@@ -128,11 +133,14 @@ export class LayoutHandler {
     }
   }
 
-  public static modifyLayout(fileName: string, updatedData: Partial<ILayout>) {
+  public static modifyLayout(
+    fileName: string,
+    updatedData: Partial<ILayout>,
+  ): IModifyLayoutResponse {
     this.setup();
 
     try {
-      const filePath = `${LAYOUTS_PATH}/${fileName}.json`;
+      const filePath = `${LAYOUTS_PATH}/${fileName}`;
       if (!fs.existsSync(filePath)) {
         throw new Error("Layout file does not exist");
       }
@@ -147,7 +155,7 @@ export class LayoutHandler {
         JSON.stringify(updatedLayout, null, 2),
         "utf-8",
       );
-      return { success: true, filePath };
+      return { success: true };
     } catch (error) {
       console.error("Error modifying layout:", error);
       return {
