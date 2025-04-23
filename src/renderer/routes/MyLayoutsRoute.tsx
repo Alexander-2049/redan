@@ -71,15 +71,20 @@ const MyLayoutsRoute = () => {
   const [newLayoutName, setNewLayoutName] = useState("");
   const [newLayoutDescription, setNewLayoutDescription] = useState("");
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const updateLayoutAndOverlayLists = useCallback(() => {
-    window.electron
-      .getLayouts()
-      .then((data) => setLayouts(data))
-      .catch((error) => console.error(error));
-    window.electron
-      .getOverlayList()
-      .then((data) => setOverlays(data))
-      .catch((error) => console.error(error));
+    setIsLoading(true);
+    Promise.all([
+      window.electron.getLayouts(),
+      window.electron.getOverlayList(),
+    ])
+      .then(([layoutsData, overlaysData]) => {
+        setLayouts(layoutsData);
+        setOverlays(overlaysData);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
   }, [setLayouts]);
 
   const handleCloseCreateNewLayout = useCallback(() => {
@@ -519,7 +524,7 @@ const MyLayoutsRoute = () => {
               ))}
           </div>
 
-          {layouts.length === 0 && (
+          {layouts.length === 0 && !isLoading && (
             <div className="py-12 text-center">
               <h3 className="text-lg font-medium">No layouts found</h3>
               <p className="text-muted-foreground mt-1">
