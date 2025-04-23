@@ -6,6 +6,8 @@ import {
   LayoutDataAndFilename,
 } from "./schemas/layoutSchema";
 import sanitize from "sanitize-filename";
+import { overlaySchema } from "./schemas/overlaySchema";
+import { z } from "zod";
 
 export interface ICreateNewLayoutResponse {
   success: boolean;
@@ -177,6 +179,58 @@ export class LayoutHandler {
       return { success: true };
     } catch (error) {
       console.error("Error deleting layout:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  public static addOverlay(
+    layoutFolderName: string,
+    overlayFolderName: string,
+  ) {
+    this.setup();
+
+    try {
+      const layoutFilePath = `${LAYOUTS_PATH}/${layoutFolderName}.json`;
+      if (!fs.existsSync(layoutFilePath)) {
+        throw new Error("Layout file does not exist");
+      }
+
+      const content = fs.readFileSync(layoutFilePath, "utf-8");
+      const existingLayout = layoutSchema.parse(JSON.parse(content));
+
+      const newOverlay: z.infer<typeof overlaySchema> = {
+        id: crypto.randomUUID(),
+        folderName: overlayFolderName,
+        settings: [],
+        isVisible: true,
+        isDraggable: true,
+        isResizable: true,
+        position: {
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0,
+        },
+      };
+
+      const updatedLayout = layoutSchema.parse({
+        ...existingLayout,
+        overlays: [...existingLayout.overlays, newOverlay],
+        updatedAt: Date.now(),
+      });
+
+      fs.writeFileSync(
+        layoutFilePath,
+        JSON.stringify(updatedLayout, null, 2),
+        "utf-8",
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error adding overlay:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
