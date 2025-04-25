@@ -4,6 +4,7 @@ import path from "path";
 import { overlayManifestFileSchema } from "./schemas/overlayManifest";
 import app from "./overlayServer";
 import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
+import { z } from "zod";
 
 export default class OverlayHandler {
   static setup() {
@@ -19,7 +20,7 @@ export default class OverlayHandler {
     }
   }
 
-  static getAll() {
+  static loadAllOverlays() {
     this.setup();
 
     const dir = fs.readdirSync(OVERLAYS_PATH);
@@ -60,6 +61,37 @@ export default class OverlayHandler {
     });
 
     return overlaysData;
+  }
+
+  static loadOverlayManifest(
+    folderName: string,
+  ): z.infer<typeof overlayManifestFileSchema> | null {
+    this.setup();
+
+    const folderPath = path.join(OVERLAYS_PATH, folderName);
+    const manifestPath = path.join(folderPath, "manifest.json");
+
+    if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
+      if (fs.existsSync(manifestPath)) {
+        try {
+          const manifestContent = fs.readFileSync(manifestPath, "utf-8");
+          const manifest = JSON.parse(manifestContent);
+
+          const parsedManifest = overlayManifestFileSchema.safeParse(manifest);
+
+          if (parsedManifest.success) {
+            return parsedManifest.data;
+          }
+        } catch (error) {
+          console.error(
+            `Error parsing manifest.json in folder ${folderName}:`,
+            error,
+          );
+        }
+      }
+    }
+
+    return null;
   }
 
   static get server() {

@@ -7,7 +7,7 @@ import OverlayHandler from "../overlayService/overlayHandler";
 export const setupOverlays = (windows: BrowserWindow[]) => {
   OverlayHandler.setup();
 
-  const modFolders = OverlayHandler.getAll();
+  const modFolders = OverlayHandler.loadAllOverlays();
   for (const mod of modFolders) {
     const overlayWindow = createOverlayWindow(
       path.join(OVERLAYS_PATH, mod.folderName, "index.html"),

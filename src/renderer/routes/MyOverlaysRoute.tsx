@@ -20,6 +20,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
 import OpenOverlaysFolderButton from "../components/OpenOverlaysFolderButton";
+import { toast } from "sonner";
 
 const MyOverlaysRoute = () => {
   const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
@@ -31,6 +32,25 @@ const MyOverlaysRoute = () => {
       .then((data) => setOverlays(data))
       .catch((error) => console.error(error));
   }, [setOverlays]);
+
+  // const handleAddOverlayToLayout = useCallback(
+  //   (layoutFileName: string, overlayFolderName: string) => {
+  //     window.electron
+  //       .addOverlayToLayout(layoutFileName, overlayFolderName)
+  //       .then((response) => {
+  //         if (response.success) {
+  //           updateOverlayList();
+  //         } else {
+  //           toast.error("Error occured...", { description: response.error });
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error(error);
+  //         toast.error("Error occured...", { description: error.message });
+  //       });
+  //   },
+  //   [],
+  // );
 
   useEffect(() => {
     window.addEventListener("focus", updateOverlayList);

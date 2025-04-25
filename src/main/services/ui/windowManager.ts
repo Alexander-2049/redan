@@ -43,7 +43,7 @@ export const createWindow = (preload: string, entry: string): BrowserWindow => {
 
 const addMessageHandlers = () => {
   ipcMain.on("overlay-list-renderer-to-main", (event) => {
-    const replyMessage = OverlayHandler.getAll();
+    const replyMessage = OverlayHandler.loadAllOverlays();
     event.reply("overlay-list-main-to-renderer", replyMessage);
   });
 
@@ -112,6 +112,18 @@ const addMessageHandlers = () => {
       const response = LayoutHandler.modifyLayout(fileName, updatedData);
 
       event.reply("modify-layout-main-to-renderer", response);
+    },
+  );
+
+  ipcMain.on(
+    "add-overlay-to-layout-renderer-to-main",
+    (event, layoutFileName: string, overlayFolderName: string) => {
+      const response = LayoutHandler.addOverlay(
+        layoutFileName,
+        overlayFolderName,
+      );
+
+      event.reply("add-overlay-to-layout-main-to-renderer", response);
     },
   );
 };

@@ -1,6 +1,6 @@
 import {
   ICreateNewLayoutResponse,
-  IDeleteLayoutResponse,
+  IResponse,
   IModifyLayoutResponse,
 } from "./main/services/layoutService/layoutHandler";
 import {
@@ -17,11 +17,15 @@ interface MainWindowAPI {
     layoutName: string,
     layoutDescription: string,
   ) => Promise<ICreateNewLayoutResponse>;
-  deleteLayout: (fileName: string) => Promise<IDeleteLayoutResponse>;
+  deleteLayout: (fileName: string) => Promise<IResponse>;
   modifyLayout: (
     fileName: string,
     updatedData: Partial<ILayout>,
   ) => Promise<IModifyLayoutResponse>;
+  addOverlayToLayout: (
+    layoutFileName: string,
+    overlayFolderName: string,
+  ) => Promise<IResponse>;
 }
 
 interface WindowAction {

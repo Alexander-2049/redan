@@ -8,6 +8,7 @@ import {
 import sanitize from "sanitize-filename";
 import { overlaySchema } from "./schemas/overlaySchema";
 import { z } from "zod";
+import OverlayHandler from "../overlayService/overlayHandler";
 
 export interface ICreateNewLayoutResponse {
   success: boolean;
@@ -15,10 +16,14 @@ export interface ICreateNewLayoutResponse {
   error?: string;
 }
 
-export interface IDeleteLayoutResponse {
-  success: boolean;
-  error?: string;
-}
+export type IResponse =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      error: string;
+    };
 
 export interface IModifyLayoutResponse {
   success: boolean;
@@ -167,7 +172,7 @@ export class LayoutHandler {
     }
   }
 
-  public static deleteLayout(fileName: string): IDeleteLayoutResponse {
+  public static deleteLayout(fileName: string): IResponse {
     this.setup();
 
     try {
@@ -187,13 +192,22 @@ export class LayoutHandler {
   }
 
   public static addOverlay(
-    layoutFolderName: string,
+    layoutFileName: string,
     overlayFolderName: string,
-  ) {
+  ): IResponse {
     this.setup();
 
+    const overlayManifest =
+      OverlayHandler.loadOverlayManifest(overlayFolderName);
+    if (!overlayManifest) {
+      return {
+        success: false,
+        error: "Overlay manifest could not be loaded",
+      };
+    }
+
     try {
-      const layoutFilePath = `${LAYOUTS_PATH}/${layoutFolderName}.json`;
+      const layoutFilePath = `${LAYOUTS_PATH}/${layoutFileName}.json`;
       if (!fs.existsSync(layoutFilePath)) {
         throw new Error("Layout file does not exist");
       }
@@ -209,12 +223,22 @@ export class LayoutHandler {
         isDraggable: true,
         isResizable: true,
         position: {
-          width: 100,
-          height: 100,
-          x: 0,
-          y: 0,
+          width: overlayManifest.defaultWindowWidth || 320,
+          height: overlayManifest.defaultWindowHeight || 180,
+          x: 128,
+          y: 72,
         },
       };
+
+      if (overlayManifest.settings) {
+        for (let i = 0; i < (overlayManifest.settings.length || 0); i++) {
+          const setting = overlayManifest.settings[i];
+          newOverlay.settings.push({
+            id: setting.id,
+            value: setting.defaultValue,
+          });
+        }
+      }
 
       const updatedLayout = layoutSchema.parse({
         ...existingLayout,

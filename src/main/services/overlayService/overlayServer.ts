@@ -7,7 +7,7 @@ import OverlayHandler from "./overlayHandler";
 const app = express();
 
 app.get("/", (req, res) => {
-  return res.json(OverlayHandler.getAll());
+  return res.json(OverlayHandler.loadAllOverlays());
 });
 
 app.get("/*", (req, res) => {

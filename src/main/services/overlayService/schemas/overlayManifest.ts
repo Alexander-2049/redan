@@ -12,27 +12,34 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
     step: z.number(),
     unit: z.enum(["number", "percentage"]).optional(),
     group: z.string().optional(),
+    defaultValue: z.number(),
   }),
   z.object({
     id: z.string(),
     type: z.literal("toggle"),
     name: z.string(),
-    state: z.enum(["ON", "OFF"]),
     group: z.string().optional(),
+    defaultValue: z.boolean(),
   }),
   z.object({
     id: z.string(),
     type: z.literal("select"),
     name: z.string(),
-    selectList: z.array(z.string()),
+    selectList: z.array(
+      z.object({
+        id: z.string(),
+        value: z.string(),
+      }),
+    ),
     group: z.string().optional(),
+    defaultValue: z.string(), // id
   }),
   z.object({
     id: z.string(),
-    type: z.literal("integer"),
+    type: z.literal("number"),
     name: z.string(),
-    value: z.number().int().optional(),
     group: z.string().optional(),
+    defaultValue: z.number(),
   }),
   z.object({
     id: z.string(),
@@ -40,6 +47,7 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
     name: z.string(),
     value: z.string().optional(),
     group: z.string().optional(),
+    defaultValue: z.string(),
   }),
 ]);
 
