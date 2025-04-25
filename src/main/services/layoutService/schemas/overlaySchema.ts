@@ -15,6 +15,7 @@ export const overlaySettingSchema = z.object({
 export const overlaySchema = z.object({
   id: z.string(),
   folderName: z.string(),
+  name: z.string(),
   settings: z.array(overlaySettingSchema),
   isVisible: z.boolean(),
   isDraggable: z.boolean(),

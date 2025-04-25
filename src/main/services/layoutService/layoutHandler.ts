@@ -217,6 +217,7 @@ export class LayoutHandler {
 
       const newOverlay: z.infer<typeof overlaySchema> = {
         id: crypto.randomUUID(),
+        name: overlayManifest.name || overlayFolderName,
         folderName: overlayFolderName,
         settings: [],
         isVisible: true,
