@@ -28,37 +28,37 @@ export default class OverlayHandler {
       fs.statSync(path.join(OVERLAYS_PATH, item)).isDirectory(),
     );
 
-    const overlaysData: IOverlayAndFolderName[] = folders.map((folderName) => {
-      const overlay: IOverlayAndFolderName = {
-        folderName,
-        data: {},
-      };
+    const overlaysData: IOverlayAndFolderName[] = folders.reduce(
+      (acc: IOverlayAndFolderName[], folderName) => {
+        const folderPath = path.join(OVERLAYS_PATH, folderName);
+        const manifestPath = path.join(folderPath, "manifest.json");
 
-      const folderPath = path.join(OVERLAYS_PATH, folderName);
-      const manifestPath = path.join(folderPath, "manifest.json");
+        if (fs.existsSync(manifestPath)) {
+          try {
+            const manifestContent = fs.readFileSync(manifestPath, "utf-8");
+            const manifest = JSON.parse(manifestContent);
 
-      if (fs.existsSync(manifestPath)) {
-        try {
-          const manifestContent = fs.readFileSync(manifestPath, "utf-8");
-          const manifest = JSON.parse(manifestContent);
+            const parsedManifest =
+              overlayManifestFileSchema.safeParse(manifest);
 
-          const parsedManifest = overlayManifestFileSchema.safeParse(manifest);
-
-          if (parsedManifest.success) {
-            overlay.data = parsedManifest.data;
-
-            return overlay;
+            if (parsedManifest.success) {
+              acc.push({
+                folderName,
+                data: parsedManifest.data,
+              });
+            }
+          } catch (error) {
+            console.error(
+              `Error parsing manifest.json in folder ${folderName}:`,
+              error,
+            );
           }
-        } catch (error) {
-          console.error(
-            `Error parsing manifest.json in folder ${folderName}:`,
-            error,
-          );
         }
-      }
 
-      return overlay;
-    });
+        return acc;
+      },
+      [],
+    );
 
     return overlaysData;
   }

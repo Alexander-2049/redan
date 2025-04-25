@@ -2,7 +2,7 @@ import { z } from "zod";
 import { overlaySchema } from "./overlaySchema";
 
 export const layoutSchema = z.object({
-  name: z.string().optional(),
+  name: z.string(),
   description: z.string().optional(),
   overlays: z.array(overlaySchema),
   screenWidth: z.number(),

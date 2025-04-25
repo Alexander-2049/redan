@@ -21,44 +21,65 @@ import {
 import { Badge } from "../components/ui/badge";
 import OpenOverlaysFolderButton from "../components/OpenOverlaysFolderButton";
 import { toast } from "sonner";
+import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 
 const MyOverlaysRoute = () => {
   const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
+  const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [, setIsLoading] = useState<boolean>(true);
 
   const updateOverlayList = useCallback(() => {
+    setIsLoading(true);
     window.electron
       .getOverlayList()
-      .then((data) => setOverlays(data))
-      .catch((error) => console.error(error));
+      .then((data) => {
+        setOverlays(data);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
   }, [setOverlays]);
 
-  // const handleAddOverlayToLayout = useCallback(
-  //   (layoutFileName: string, overlayFolderName: string) => {
-  //     window.electron
-  //       .addOverlayToLayout(layoutFileName, overlayFolderName)
-  //       .then((response) => {
-  //         if (response.success) {
-  //           updateOverlayList();
-  //         } else {
-  //           toast.error("Error occured...", { description: response.error });
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error(error);
-  //         toast.error("Error occured...", { description: error.message });
-  //       });
-  //   },
-  //   [],
-  // );
+  const updateLayoutList = useCallback(() => {
+    setIsLoading(true);
+    window.electron
+      .getLayouts()
+      .then((data) => {
+        setLayouts(data);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
+  }, [setLayouts]);
+
+  const handleAddOverlayToLayout = useCallback(
+    (layoutFileName: string, overlayFolderName: string) => {
+      window.electron
+        .addOverlayToLayout(layoutFileName, overlayFolderName)
+        .then((response) => {
+          if (response.success) {
+            toast.success("Overlay successfully added to layout!");
+          } else {
+            toast.error("Error occured...", { description: response.error });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error("Error occured...", { description: error.message });
+        });
+    },
+    [updateOverlayList],
+  );
 
   useEffect(() => {
     window.addEventListener("focus", updateOverlayList);
+    window.addEventListener("focus", updateLayoutList);
     updateOverlayList();
+    updateLayoutList();
     return () => {
       window.removeEventListener("focus", updateOverlayList);
+      window.removeEventListener("focus", updateLayoutList);
     };
-  }, []);
+  }, [updateOverlayList, updateLayoutList]);
 
   return (
     <>
@@ -126,7 +147,9 @@ const MyOverlaysRoute = () => {
                     <img
                       src={
                         overlay.data.image ||
-                        "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350"
+                        "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
+                        "/placeholder.svg" ||
+                        "/placeholder.svg"
                       }
                       alt={overlay.data.name}
                       width={350}
@@ -180,6 +203,28 @@ const MyOverlaysRoute = () => {
                     </p>
                     <div className="mt-4 flex items-center justify-between">
                       <Button size="sm">Preview</Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <span className="mr-1">+</span> Add to Layout
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          {layouts.map((layout) => (
+                            <DropdownMenuItem
+                              key={layout.filename}
+                              onClick={() =>
+                                handleAddOverlayToLayout(
+                                  layout.filename,
+                                  overlay.folderName,
+                                )
+                              }
+                            >
+                              {layout.data.name}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </div>
@@ -195,7 +240,9 @@ const MyOverlaysRoute = () => {
                   <img
                     src={
                       overlay.data.image ||
-                      "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350"
+                      "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
+                      "/placeholder.svg" ||
+                      "/placeholder.svg"
                     }
                     alt={overlay.data.name}
                     width={120}
@@ -230,6 +277,28 @@ const MyOverlaysRoute = () => {
                           Edit
                         </Button>
                         <Button size="sm">Preview</Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="sm" variant="outline">
+                              <span className="mr-1">+</span> Add to Layout
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            {layouts.map((layout) => (
+                              <DropdownMenuItem
+                                key={layout.filename}
+                                onClick={() =>
+                                  handleAddOverlayToLayout(
+                                    layout.filename,
+                                    overlay.folderName,
+                                  )
+                                }
+                              >
+                                {layout.data.name}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
                   </div>

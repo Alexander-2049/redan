@@ -207,7 +207,7 @@ export class LayoutHandler {
     }
 
     try {
-      const layoutFilePath = `${LAYOUTS_PATH}/${layoutFileName}.json`;
+      const layoutFilePath = `${LAYOUTS_PATH}/${layoutFileName}`;
       if (!fs.existsSync(layoutFilePath)) {
         throw new Error("Layout file does not exist");
       }

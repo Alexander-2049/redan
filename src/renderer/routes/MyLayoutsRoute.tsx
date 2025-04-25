@@ -19,7 +19,6 @@ import {
   DialogTrigger,
 } from "../components/ui/dialog";
 import {
-  Badge,
   Edit,
   Layers,
   MoreVertical,
@@ -56,6 +55,7 @@ import {
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
 import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
+import { Badge } from "../components/ui/badge";
 
 const MyLayoutsRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
@@ -414,17 +414,18 @@ const MyLayoutsRoute = () => {
 
                           return (
                             <AccordionItem
-                              key={layoutOverlay.folderName}
+                              key={layoutOverlay.id}
                               value={layoutOverlay.folderName}
                             >
                               <AccordionTrigger className="px-1 py-2 text-sm hover:no-underline">
                                 <div className="flex items-center gap-2">
-                                  <span>{}</span>
-                                  <Badge
-                                    /* variant="outline" */ className="ml-2"
-                                  >
-                                    {manifestOverlay.data.type}
-                                  </Badge>
+                                  <span>
+                                    {manifestOverlay.data.name ||
+                                      manifestOverlay.folderName}
+                                  </span>
+                                  {manifestOverlay.data.type && (
+                                    <Badge>{manifestOverlay.data.type}</Badge>
+                                  )}
                                 </div>
                               </AccordionTrigger>
                               <AccordionContent>
