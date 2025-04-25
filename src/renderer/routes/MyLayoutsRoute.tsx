@@ -56,6 +56,7 @@ import {
 } from "../components/ui/alert-dialog";
 import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { Badge } from "../components/ui/badge";
+import { Link } from "react-router-dom";
 
 const MyLayoutsRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
@@ -67,10 +68,8 @@ const MyLayoutsRoute = () => {
   const [editingLayout, setEditingLayout] =
     useState<LayoutDataAndFilename | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
   const [newLayoutName, setNewLayoutName] = useState("");
   const [newLayoutDescription, setNewLayoutDescription] = useState("");
-
   const [isLoading, setIsLoading] = useState(true);
 
   const updateLayoutAndOverlayLists = useCallback(() => {
@@ -142,6 +141,35 @@ const MyLayoutsRoute = () => {
         });
       });
   }, []);
+
+  const handleRemoveOverlayFromLayout = useCallback(
+    (layoutFileName: string, overlayId: string) => {
+      window.electron
+        .removeOverlayFromLayout(layoutFileName, overlayId)
+        .then((response) => {
+          if (response.success) {
+            updateLayoutAndOverlayLists();
+            toast.success(
+              `Overlay has been successfully deleted from ${layoutFileName}.`,
+            );
+          } else {
+            toast.error(
+              `Something went wrong during "${overlayId}" deletion.`,
+              {
+                description: response.error,
+              },
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error in deleteLayout:", error);
+          toast.error(`Error caught during ${overlayId} deletion.`, {
+            description: error.message,
+          });
+        });
+    },
+    [],
+  );
 
   const handleUpdateLayout = useCallback(() => {
     if (!editingLayout) return;
@@ -483,12 +511,12 @@ const MyLayoutsRoute = () => {
                                             Cancel
                                           </AlertDialogCancel>
                                           <AlertDialogAction
-                                          // onClick={() =>
-                                          //   handleDeleteOverlay(
-                                          //     layout.filename,
-                                          //     layoutOverlay.id,
-                                          //   )
-                                          // }
+                                            onClick={() =>
+                                              handleRemoveOverlayFromLayout(
+                                                layout.filename,
+                                                layoutOverlay.id,
+                                              )
+                                            }
                                           >
                                             Remove
                                           </AlertDialogAction>
@@ -506,7 +534,13 @@ const MyLayoutsRoute = () => {
                       <div className="text-muted-foreground py-6 text-center">
                         <p>No overlays added yet</p>
                         <p className="mt-1 text-sm">
-                          Add overlays to customize this layout
+                          <Link
+                            to="/my-overlays"
+                            className="text-blue-400 hover:cursor-pointer hover:underline"
+                          >
+                            Add overlays
+                          </Link>{" "}
+                          to customize this layout
                         </p>
                       </div>
                     )}

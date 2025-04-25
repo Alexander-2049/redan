@@ -58,6 +58,17 @@ contextBridge.exposeInMainWorld("electron", {
     );
     return withTimeout("add-overlay-to-layout-main-to-renderer");
   },
+  removeOverlayFromLayout: async (
+    layoutFileName: string,
+    overlayId: string,
+  ) => {
+    ipcRenderer.send(
+      "remove-overlay-from-layout-renderer-to-main",
+      layoutFileName,
+      overlayId,
+    );
+    return withTimeout("remove-overlay-from-layout-main-to-renderer");
+  },
 });
 
 contextBridge.exposeInMainWorld("actions", {

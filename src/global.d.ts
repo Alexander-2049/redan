@@ -26,6 +26,10 @@ interface MainWindowAPI {
     layoutFileName: string,
     overlayFolderName: string,
   ) => Promise<IResponse>;
+  removeOverlayFromLayout: (
+    layoutFileName: string,
+    overlayId: string,
+  ) => Promise<IResponse>;
 }
 
 interface WindowAction {

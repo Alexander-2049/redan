@@ -22,8 +22,10 @@ import { Badge } from "../components/ui/badge";
 import OpenOverlaysFolderButton from "../components/OpenOverlaysFolderButton";
 import { toast } from "sonner";
 import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import { useNavigate } from "react-router-dom";
 
 const MyOverlaysRoute = () => {
+  const navigate = useNavigate();
   const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -57,7 +59,14 @@ const MyOverlaysRoute = () => {
         .addOverlayToLayout(layoutFileName, overlayFolderName)
         .then((response) => {
           if (response.success) {
-            toast.success("Overlay successfully added to layout!");
+            toast.success("Overlay successfully added to layout!", {
+              action: {
+                label: "View Layouts",
+                onClick: () => {
+                  navigate("/my-layouts");
+                },
+              },
+            });
           } else {
             toast.error("Error occured...", { description: response.error });
           }

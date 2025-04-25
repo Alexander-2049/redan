@@ -261,4 +261,49 @@ export class LayoutHandler {
       };
     }
   }
+
+  public static removeOverlay(layoutFileName: string, overlayId: string) {
+    this.setup();
+
+    try {
+      const layoutFilePath = `${LAYOUTS_PATH}/${layoutFileName}`;
+      if (!fs.existsSync(layoutFilePath)) {
+        throw new Error("Layout file does not exist");
+      }
+
+      const content = fs.readFileSync(layoutFilePath, "utf-8");
+      const existingLayout = layoutSchema.parse(JSON.parse(content));
+
+      const updatedOverlays = existingLayout.overlays.filter(
+        (overlay) => overlay.id !== overlayId,
+      );
+
+      if (updatedOverlays.length === existingLayout.overlays.length) {
+        return {
+          success: false,
+          error: "Overlay not found in the layout",
+        };
+      }
+
+      const updatedLayout = layoutSchema.parse({
+        ...existingLayout,
+        overlays: updatedOverlays,
+        updatedAt: Date.now(),
+      });
+
+      fs.writeFileSync(
+        layoutFilePath,
+        JSON.stringify(updatedLayout, null, 2),
+        "utf-8",
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error removing overlay:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
 }
