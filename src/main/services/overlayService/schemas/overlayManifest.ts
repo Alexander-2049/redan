@@ -2,6 +2,10 @@ import { z } from "zod";
 
 const versionRegex = /^\d+\.\d+(\.\d+)?$/;
 
+export type IOverlaySettingDescription = z.infer<
+  typeof overlaySettingDescriptionSchema
+>;
+
 export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   z.object({
     id: z.string(),
@@ -39,6 +43,8 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
     type: z.literal("number"),
     name: z.string(),
     group: z.string().optional(),
+    min: z.number().optional(),
+    max: z.number().optional(),
     defaultValue: z.number(),
   }),
   z.object({

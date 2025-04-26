@@ -22,3 +22,6 @@ export const overlaySchema = z.object({
   isResizable: z.boolean(),
   position: overlayPositionSchema,
 });
+
+export type ILayoutOverlay = z.infer<typeof overlaySchema>;
+export type ILayoutOverlaySetting = z.infer<typeof overlaySettingSchema>;
