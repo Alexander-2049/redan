@@ -1,4 +1,3 @@
-import { AccordionDemo } from "../components/AccordionDemo";
 import useWebSocket from "../hooks/useWebSocket";
 import { useEffect } from "react";
 
@@ -21,7 +20,6 @@ const DebugRoute = () => {
       <pre>
         <code>{JSON.stringify(data, null, "  ")}</code>
       </pre>
-      <AccordionDemo />
     </>
   );
 };

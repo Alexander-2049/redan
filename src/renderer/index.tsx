@@ -1,13 +1,13 @@
 // import { useTranslation } from "react-i18next";
 import "./i18n";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import AppLayout from "./components/layout/AppLayout";
-import DashboardRoute from "./routes/DashboardRoute";
-import DebugRoute from "./routes/DebugRoute";
-import PageLayout from "./components/layout/PageLayout";
-import NotFoundRoute from "./routes/NotFoundRoute";
-import MyOverlaysRoute from "./routes/MyOverlaysRoute";
-import MyLayoutsRoute from "./routes/MyLayoutsRoute";
+import AppLayout from "./components/layout/app-layout";
+import DashboardRoute from "./routes/dashboard-route";
+import DebugRoute from "./routes/debug-route";
+import PageLayout from "./components/layout/page-layout";
+import NotFoundRoute from "./routes/not-found-route";
+import MyOverlaysRoute from "./routes/my-overlays-route";
+import MyLayoutsRoute from "./routes/my-layouts-route";
 
 const Main = () => {
   // const { t } = useTranslation();

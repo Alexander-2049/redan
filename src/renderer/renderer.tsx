@@ -34,7 +34,7 @@ import Main from ".";
 
 import { createHashRouter } from "react-router-dom";
 import React from "react";
-import DashboardRoute from "./routes/DashboardRoute";
+import DashboardRoute from "./routes/dashboard-route";
 import { Toaster } from "./components/ui/sonner";
 
 export const router = createHashRouter([

@@ -1,5 +1,5 @@
-import Header from "../Header";
-import Sidebar from "../Sidebar";
+import Header from "../header";
+import Sidebar from "../side-bar";
 import { Outlet } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 

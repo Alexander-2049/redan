@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
-import OpenOverlaysFolderButton from "../components/OpenOverlaysFolderButton";
+import OpenOverlaysFolderButton from "../components/open-overlays-folder-button";
 import { toast } from "sonner";
 import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import { useNavigate } from "react-router-dom";
