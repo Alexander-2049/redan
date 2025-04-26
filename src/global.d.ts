@@ -22,6 +22,7 @@ interface MainWindowAPI {
     fileName: string,
     updatedData: Partial<ILayout>,
   ) => Promise<IModifyLayoutResponse>;
+  setActiveLayout: (fileName: string) => Promise<IResponse>;
   addOverlayToLayout: (
     layoutFileName: string,
     overlayFolderName: string,

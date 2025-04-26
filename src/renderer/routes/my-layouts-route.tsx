@@ -197,6 +197,28 @@ const MyLayoutsRoute = () => {
       });
   }, [selectedOverlay, layouts, updateLayoutAndOverlayLists]);
 
+  const handleSetActiveLayout = useCallback((layout: LayoutDataAndFilename) => {
+    window.electron
+      .setActiveLayout(layout.filename)
+      .then((response) => {
+        if (response.success) {
+          toast.success("Active layout has been updated");
+        } else {
+          console.error("Failed to set active layout:", response.error);
+          toast.error("Failed to set active layout", {
+            description: response.error,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error in setActiveLayout:", error);
+        toast.error("An error occurred while setting the active layout", {
+          description: error.message,
+        });
+      })
+      .finally(() => updateLayoutAndOverlayLists());
+  }, []);
+
   useEffect(() => {
     window.addEventListener("focus", updateLayoutAndOverlayLists);
     updateLayoutAndOverlayLists();
@@ -292,6 +314,7 @@ const MyLayoutsRoute = () => {
                   onRemoveOverlay={(overlayId) =>
                     handleRemoveOverlayFromLayout(layout.filename, overlayId)
                   }
+                  onSetActiveLayout={handleSetActiveLayout}
                 />
               ))}
           </div>

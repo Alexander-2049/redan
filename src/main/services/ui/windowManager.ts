@@ -134,6 +134,14 @@ const addMessageHandlers = () => {
       event.reply("remove-overlay-from-layout-main-to-renderer", response);
     },
   );
+  ipcMain.on(
+    "set-active-layout-renderer-to-main",
+    (event, layoutFileName: string) => {
+      const response = LayoutHandler.setActiveLayout(layoutFileName);
+
+      event.reply("set-active-layout-main-to-renderer", response);
+    },
+  );
 };
 
 export const getWindows = () => windows;

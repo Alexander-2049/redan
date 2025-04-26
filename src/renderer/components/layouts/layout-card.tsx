@@ -49,6 +49,7 @@ interface LayoutCardProps {
     manifestOverlay: IOverlayAndFolderName,
   ) => void;
   onRemoveOverlay: (overlayId: string) => void;
+  onSetActiveLayout: (layoutFolderName: LayoutDataAndFilename) => void;
 }
 
 export function LayoutCard({
@@ -58,9 +59,15 @@ export function LayoutCard({
   onDelete,
   onOpenOverlaySettings,
   onRemoveOverlay,
+  onSetActiveLayout,
 }: LayoutCardProps) {
   return (
-    <Card key={layout.filename} className="overflow-hidden">
+    <Card
+      key={layout.filename}
+      className={`overflow-hidden transition-all duration-200 ${
+        layout.data.active ? "border-primary shadow-primary/20 shadow-md" : ""
+      }`}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div>
@@ -207,13 +214,23 @@ export function LayoutCard({
           </div>
         )}
       </CardContent>
-      <CardFooter className="text-muted-foreground flex justify-between pt-2 text-xs">
-        <span>
-          Created: {new Date(layout.data.createdAt).toLocaleDateString()}
-        </span>
-        <span>
-          Updated: {new Date(layout.data.updatedAt).toLocaleDateString()}
-        </span>
+      <CardFooter className="flex flex-col gap-3 pt-2">
+        <div className="text-muted-foreground flex w-full justify-between text-xs">
+          <span>
+            Created: {new Date(layout.data.createdAt).toLocaleDateString()}
+          </span>
+          <span>
+            Updated: {new Date(layout.data.updatedAt).toLocaleDateString()}
+          </span>
+        </div>
+        <Button
+          className="w-full"
+          variant={layout.data.active ? "default" : "outline"}
+          onClick={() => onSetActiveLayout(layout)}
+          disabled={layout.data.active}
+        >
+          {layout.data.active ? "Active Layout" : "Set as Active"}
+        </Button>
       </CardFooter>
     </Card>
   );

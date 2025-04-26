@@ -47,6 +47,10 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.send("modify-layout-renderer-to-main", fileName, updatedData);
     return withTimeout("modify-layout-main-to-renderer");
   },
+  setActiveLayout: async (fileName: string) => {
+    ipcRenderer.send("set-active-layout-renderer-to-main", fileName);
+    return withTimeout("set-active-layout-main-to-renderer");
+  },
   addOverlayToLayout: async (
     layoutFileName: string,
     overlayFolderName: string,

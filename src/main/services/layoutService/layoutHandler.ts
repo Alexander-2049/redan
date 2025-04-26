@@ -70,6 +70,7 @@ export class LayoutHandler {
 
     const newLayout: ILayout = {
       name: layoutName,
+      active: false,
       description,
       overlays: [],
       screenWidth,
@@ -100,16 +101,23 @@ export class LayoutHandler {
 
     try {
       const files = fs.readdirSync(LAYOUTS_PATH);
-      const layouts: LayoutDataAndFilename[] = files
+      const layouts: LayoutDataAndFilename[] = [];
+
+      files
         .filter((file) => file.endsWith(".json"))
-        .map((file) => {
+        .forEach((file) => {
           const filePath = `${LAYOUTS_PATH}/${file}`;
-          const content = fs.readFileSync(filePath, "utf-8");
-          return {
-            filename: file,
-            data: layoutSchema.parse(JSON.parse(content)),
-          };
+          try {
+            const content = fs.readFileSync(filePath, "utf-8");
+            layouts.push({
+              filename: file,
+              data: layoutSchema.parse(JSON.parse(content)),
+            });
+          } catch (error) {
+            console.warn(`Skipping invalid layout file: ${file}`, error);
+          }
         });
+
       return { success: true, layouts };
     } catch (error) {
       console.error("Error reading all layouts:", error);
@@ -301,6 +309,41 @@ export class LayoutHandler {
       return { success: true };
     } catch (error) {
       console.error("Error removing overlay:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  public static setActiveLayout(layoutFileName: string): IResponse {
+    this.setup();
+
+    try {
+      const layouts = this.getAllLayouts();
+      if (!layouts.success || !layouts.layouts) {
+        throw new Error(layouts.error || "Failed to retrieve layouts");
+      }
+
+      layouts.layouts.forEach(({ filename, data }) => {
+        const isActive = filename === layoutFileName;
+        const updatedLayout = layoutSchema.parse({
+          ...data,
+          active: isActive,
+          updatedAt: Date.now(),
+        });
+
+        const filePath = `${LAYOUTS_PATH}/${filename}`;
+        fs.writeFileSync(
+          filePath,
+          JSON.stringify(updatedLayout, null, 2),
+          "utf-8",
+        );
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error setting active layout:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
