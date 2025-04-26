@@ -12,7 +12,7 @@ export const setupOverlays = (windows: BrowserWindow[]) => {
   const activeLayouts = layouts.layouts?.filter(
     (layout) => layout.data.active === true,
   );
-  if (!activeLayouts || activeLayouts.length || 0 < 1) return;
+  if (!activeLayouts || activeLayouts.length < 1) return;
   const activeLayout = activeLayouts[0];
 
   const overlayFolders = activeLayout.data.overlays;
