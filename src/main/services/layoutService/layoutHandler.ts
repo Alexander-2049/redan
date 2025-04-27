@@ -164,6 +164,7 @@ export class LayoutHandler {
       const updatedLayout = layoutSchema.parse({
         ...existingLayout,
         ...updatedData,
+        updatedAt: Date.now(),
       });
       fs.writeFileSync(
         filePath,
