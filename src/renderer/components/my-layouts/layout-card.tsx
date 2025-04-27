@@ -27,7 +27,7 @@ import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName
 import { Edit, Layers, MoreVertical, Settings, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ILayoutOverlay } from "@/main/services/layoutService/schemas/overlaySchema";
-import { RemoveOverlayButton } from "@/renderer/components/layouts/remove-overlay-button";
+import { RemoveOverlayButton } from "@/renderer/components/my-layouts/remove-overlay-button";
 
 interface LayoutCardProps {
   layout: LayoutDataAndFilename;

@@ -6,11 +6,11 @@ import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName
 import { Plus } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
-import { LayoutCard } from "../components/layouts/layout-card";
-import { CreateLayoutDialog } from "../components/layouts/create-layout-dialog";
-import { EditLayoutDialog } from "../components/layouts/edit-layout-dialog";
-import { DeleteLayoutDialog } from "../components/layouts/delete-layout-dialog";
-import { OverlaySettingsDialog } from "../components/layouts/overlay-settings-dialog";
+import { LayoutCard } from "../components/my-layouts/layout-card";
+import { CreateLayoutDialog } from "../components/my-layouts/create-layout-dialog";
+import { EditLayoutDialog } from "../components/my-layouts/edit-layout-dialog";
+import { DeleteLayoutDialog } from "../components/my-layouts/delete-layout-dialog";
+import { OverlaySettingsDialog } from "../components/my-layouts/overlay-settings-dialog";
 import { ILayoutOverlay } from "@/main/services/layoutService/schemas/overlaySchema";
 
 const MyLayoutsRoute = () => {
