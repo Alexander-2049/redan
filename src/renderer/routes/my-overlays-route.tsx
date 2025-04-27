@@ -1,4 +1,4 @@
-import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
+import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import {
@@ -21,7 +21,7 @@ import {
 import { Badge } from "../components/ui/badge";
 import OpenOverlaysFolderButton from "../components/open-overlays-folder-button";
 import { toast } from "sonner";
-import { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import { useNavigate } from "react-router-dom";
 
 const MyOverlaysRoute = () => {
@@ -158,6 +158,7 @@ const MyOverlaysRoute = () => {
                         overlay.data.image ||
                         "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
                         "/placeholder.svg" ||
+                        "/placeholder.svg" ||
                         "/placeholder.svg"
                       }
                       alt={overlay.data.name}
@@ -219,19 +220,39 @@ const MyOverlaysRoute = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          {layouts.map((layout) => (
-                            <DropdownMenuItem
-                              key={layout.filename}
-                              onClick={() =>
-                                handleAddOverlayToLayout(
-                                  layout.filename,
-                                  overlay.folderName,
-                                )
-                              }
-                            >
-                              {layout.data.name}
-                            </DropdownMenuItem>
-                          ))}
+                          {layouts
+                            .sort((a, b) => {
+                              // Sort active layouts to the top
+                              if (a.data.active && !b.data.active) return -1;
+                              if (!a.data.active && b.data.active) return 1;
+                              return 0;
+                            })
+                            .map((layout) => {
+                              return (
+                                <DropdownMenuItem
+                                  key={layout.filename}
+                                  onClick={() =>
+                                    handleAddOverlayToLayout(
+                                      layout.filename,
+                                      overlay.folderName,
+                                    )
+                                  }
+                                  className={
+                                    layout.data.active ? "font-medium" : ""
+                                  }
+                                >
+                                  {layout.data.name}
+                                  {layout.data.active && (
+                                    <Badge
+                                      variant="outline"
+                                      className="bg-primary/5 ml-2 text-xs"
+                                    >
+                                      Active
+                                    </Badge>
+                                  )}
+                                </DropdownMenuItem>
+                              );
+                            })}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -251,6 +272,7 @@ const MyOverlaysRoute = () => {
                       overlay.data.image ||
                       "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
                       "/placeholder.svg" ||
+                      "/placeholder.svg" ||
                       "/placeholder.svg"
                     }
                     alt={overlay.data.name}
@@ -269,18 +291,6 @@ const MyOverlaysRoute = () => {
                       {overlay.data.type && <Badge>{overlay.data.type}</Badge>}
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      {/* <div className="flex items-center gap-4">
-                        {overlay.data.downloads && (
-                          <div className="text-xs text-gray-500">
-                            {overlay.downloads} downloads
-                          </div>
-                        )}
-                        {overlay.rating && (
-                          <div className="text-xs text-gray-500">
-                            Rating: {overlay.rating}/5
-                          </div>
-                        )}
-                      </div> */}
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline">
                           Edit
@@ -293,19 +303,41 @@ const MyOverlaysRoute = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            {layouts.map((layout) => (
-                              <DropdownMenuItem
-                                key={layout.filename}
-                                onClick={() =>
-                                  handleAddOverlayToLayout(
-                                    layout.filename,
-                                    overlay.folderName,
-                                  )
-                                }
-                              >
-                                {layout.data.name}
-                              </DropdownMenuItem>
-                            ))}
+                            {layouts
+                              .sort((a, b) => {
+                                // Sort active layouts to the top
+                                if (a.data.active && !b.data.active) return -1;
+                                if (!a.data.active && b.data.active) return 1;
+                                return 0;
+                              })
+                              .map((layout) => {
+                                return (
+                                  <DropdownMenuItem
+                                    key={layout.filename}
+                                    onClick={() =>
+                                      handleAddOverlayToLayout(
+                                        layout.filename,
+                                        overlay.folderName,
+                                      )
+                                    }
+                                    className={
+                                      layout.data.active
+                                        ? "bg-primary/10 font-medium"
+                                        : ""
+                                    }
+                                  >
+                                    {layout.data.name}
+                                    {layout.data.active && (
+                                      <Badge
+                                        variant="outline"
+                                        className="bg-primary/20 ml-2 text-xs"
+                                      >
+                                        Active
+                                      </Badge>
+                                    )}
+                                  </DropdownMenuItem>
+                                );
+                              })}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
