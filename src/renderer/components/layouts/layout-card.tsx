@@ -4,17 +4,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/renderer/components/ui/accordion";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/renderer/components/ui/alert-dialog";
 import { Badge } from "@/renderer/components/ui/badge";
 import { Button } from "@/renderer/components/ui/button";
 import {
@@ -38,6 +27,7 @@ import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName
 import { Edit, Layers, MoreVertical, Settings, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ILayoutOverlay } from "@/main/services/layoutService/schemas/overlaySchema";
+import { RemoveOverlayButton } from "@/renderer/components/layouts/remove-overlay-button";
 
 interface LayoutCardProps {
   layout: LayoutDataAndFilename;
@@ -127,7 +117,53 @@ export function LayoutCard({
               const manifestOverlay =
                 overlays.filter(
                   (overlay) => overlay.folderName === layoutOverlay.folderName,
-                )[0] || {};
+                )[0] || null;
+
+              if (manifestOverlay === null) {
+                return (
+                  <AccordionItem
+                    key={layoutOverlay.id}
+                    value={layoutOverlay.folderName}
+                    className="border-muted/60 border-b"
+                  >
+                    <AccordionTrigger className="px-1 py-2 text-sm hover:no-underline">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">
+                          {layoutOverlay.name || layoutOverlay.folderName}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className="h-5 border-red-200 bg-red-50 px-2 text-[10px] font-normal text-red-600"
+                        >
+                          Missing
+                        </Badge>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-3 pt-1 pb-2">
+                        <div className="rounded-md border border-red-100 bg-red-50/30 p-3 text-sm">
+                          <div className="text-muted-foreground mb-1">
+                            This overlay is missing or could not be found in
+                            your overlays directory.
+                          </div>
+                          <div className="text-muted-foreground/80 text-xs">
+                            It may have been deleted or renamed. You can safely
+                            remove it from this layout.
+                          </div>
+                        </div>
+                        <div className="flex justify-end pt-2">
+                          <RemoveOverlayButton
+                            overlayName={
+                              layoutOverlay.name || layoutOverlay.folderName
+                            }
+                            onRemove={() => onRemoveOverlay(layoutOverlay.id)}
+                          />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              }
 
               return (
                 <AccordionItem
@@ -186,41 +222,14 @@ export function LayoutCard({
                           <Settings size={14} />
                           Settings
                         </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash2 size={14} className="mr-1" />
-                              Remove
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Remove overlay?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will remove the "
-                                {manifestOverlay.data?.name}" overlay from this
-                                layout.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() =>
-                                  onRemoveOverlay(layoutOverlay.id)
-                                }
-                                className="bg-destructive hover:bg-destructive/90"
-                              >
-                                Remove
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <RemoveOverlayButton
+                          overlayName={
+                            layoutOverlay.name ||
+                            manifestOverlay.data?.name ||
+                            manifestOverlay.folderName
+                          }
+                          onRemove={() => onRemoveOverlay(layoutOverlay.id)}
+                        />
                       </div>
                     </div>
                   </AccordionContent>
