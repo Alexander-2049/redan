@@ -330,7 +330,6 @@ export class LayoutHandler {
         const updatedLayout = layoutSchema.parse({
           ...data,
           active: isActive,
-          updatedAt: Date.now(),
         });
 
         const filePath = `${LAYOUTS_PATH}/${filename}`;
