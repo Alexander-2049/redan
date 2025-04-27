@@ -1,28 +1,12 @@
-import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../components/ui/button";
-import {
-  Download,
-  Edit,
-  LayoutGrid,
-  List,
-  Search,
-  Share2,
-  SlidersHorizontal,
-  Trash2,
-} from "lucide-react";
-import { Input } from "../components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import { Badge } from "../components/ui/badge";
-import OpenOverlaysFolderButton from "../components/open-overlays-folder-button";
-import { toast } from "sonner";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
+import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import { OverlaysHeader } from "@/renderer/components/my-overlays/overlays-header";
+import { OverlaysToolbar } from "@/renderer/components/my-overlays/overlays-toolbar";
+import { OverlaysGrid } from "@/renderer/components/my-overlays/overlays-grid";
+import { OverlaysList } from "@/renderer/components/my-overlays/overlays-list";
 
 const MyOverlaysRoute = () => {
   const navigate = useNavigate();
@@ -30,6 +14,17 @@ const MyOverlaysRoute = () => {
   const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [, setIsLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredOverlays = overlays.filter(
+    (overlay) =>
+      (overlay.data.name || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      overlay.data.description
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()),
+  );
 
   const updateOverlayList = useCallback(() => {
     setIsLoading(true);
@@ -76,7 +71,7 @@ const MyOverlaysRoute = () => {
           toast.error("Error occured...", { description: error.message });
         });
     },
-    [updateOverlayList],
+    [navigate],
   );
 
   useEffect(() => {
@@ -91,265 +86,33 @@ const MyOverlaysRoute = () => {
   }, [updateOverlayList, updateLayoutList]);
 
   return (
-    <>
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">My Overlays</h1>
-              <p className="text-gray-500">
-                Manage and customize your racing overlays
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <OpenOverlaysFolderButton />
-              <Button variant="outline" size="sm">
-                <SlidersHorizontal className="mr-1 h-4 w-4" />
-                Filter
-              </Button>
-            </div>
-          </div>
-          {/* View Toggle and Search */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center overflow-hidden rounded-md border">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="sm"
-                  className="rounded-none"
-                  onClick={() => setViewMode("grid")}
-                >
-                  <LayoutGrid className="mr-1 h-4 w-4" />
-                  Grid
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
-                  size="sm"
-                  className="rounded-none"
-                  onClick={() => setViewMode("list")}
-                >
-                  <List className="mr-1 h-4 w-4" />
-                  List
-                </Button>
-              </div>
-              <div className="text-sm text-gray-500">
-                Showing {overlays.length} overlays
-              </div>
-            </div>
-            <div className="relative w-64">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-              <Input
-                placeholder="Search overlays..."
-                className="bg-white pl-9"
-              />
-            </div>
-          </div>
-          {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {overlays.map((overlay) => (
-                <div
-                  key={overlay.folderName}
-                  className="overflow-hidden rounded-lg bg-white shadow-sm"
-                >
-                  <div className="relative">
-                    <img
-                      src={
-                        overlay.data.image ||
-                        "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
-                        "/placeholder.svg" ||
-                        "/placeholder.svg" ||
-                        "/placeholder.svg"
-                      }
-                      alt={overlay.data.name}
-                      width={350}
-                      height={200}
-                      className="h-48 w-full object-cover"
-                    />
-                    {overlay.data.type && (
-                      <Badge className="absolute top-3 right-3 bg-black/70">
-                        {overlay.data.type}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between">
-                      <h3 className="font-bold">{overlay.data.name}</h3>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <SlidersHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Share2 className="mr-2 h-4 w-4" />
-                            Share
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Download className="mr-2 h-4 w-4" />
-                            Export
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2
-                              className="mr-2 h-4 w-4"
-                              color="var(--color-red-600)"
-                            />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {overlay.data.description}
-                    </p>
-                    <div className="mt-4 flex items-center justify-between">
-                      <Button size="sm">Preview</Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button size="sm" variant="outline">
-                            <span className="mr-1">+</span> Add to Layout
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          {layouts
-                            .sort((a, b) => {
-                              // Sort active layouts to the top
-                              if (a.data.active && !b.data.active) return -1;
-                              if (!a.data.active && b.data.active) return 1;
-                              return 0;
-                            })
-                            .map((layout) => {
-                              return (
-                                <DropdownMenuItem
-                                  key={layout.filename}
-                                  onClick={() =>
-                                    handleAddOverlayToLayout(
-                                      layout.filename,
-                                      overlay.folderName,
-                                    )
-                                  }
-                                  className={
-                                    layout.data.active ? "font-medium" : ""
-                                  }
-                                >
-                                  {layout.data.name}
-                                  {layout.data.active && (
-                                    <Badge
-                                      variant="outline"
-                                      className="bg-primary/5 ml-2 text-xs"
-                                    >
-                                      Active
-                                    </Badge>
-                                  )}
-                                </DropdownMenuItem>
-                              );
-                            })}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {overlays.map((overlay) => (
-                <div
-                  key={overlay.folderName}
-                  className="flex rounded-lg bg-white p-4 shadow-sm"
-                >
-                  <img
-                    src={
-                      overlay.data.image ||
-                      "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
-                      "/placeholder.svg" ||
-                      "/placeholder.svg" ||
-                      "/placeholder.svg"
-                    }
-                    alt={overlay.data.name}
-                    width={120}
-                    height={80}
-                    className="h-20 w-32 rounded object-cover"
-                  />
-                  <div className="ml-4 flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-bold">{overlay.data.name}</h3>
-                        <p className="text-sm text-gray-500">
-                          {overlay.data.description}
-                        </p>
-                      </div>
-                      {overlay.data.type && <Badge>{overlay.data.type}</Badge>}
-                    </div>
-                    <div className="mt-2 flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          Edit
-                        </Button>
-                        <Button size="sm">Preview</Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="sm" variant="outline">
-                              <span className="mr-1">+</span> Add to Layout
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            {layouts
-                              .sort((a, b) => {
-                                // Sort active layouts to the top
-                                if (a.data.active && !b.data.active) return -1;
-                                if (!a.data.active && b.data.active) return 1;
-                                return 0;
-                              })
-                              .map((layout) => {
-                                return (
-                                  <DropdownMenuItem
-                                    key={layout.filename}
-                                    onClick={() =>
-                                      handleAddOverlayToLayout(
-                                        layout.filename,
-                                        overlay.folderName,
-                                      )
-                                    }
-                                    className={
-                                      layout.data.active
-                                        ? "bg-primary/10 font-medium"
-                                        : ""
-                                    }
-                                  >
-                                    {layout.data.name}
-                                    {layout.data.active && (
-                                      <Badge
-                                        variant="outline"
-                                        className="bg-primary/20 ml-2 text-xs"
-                                      >
-                                        Active
-                                      </Badge>
-                                    )}
-                                  </DropdownMenuItem>
-                                );
-                              })}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="flex-1 overflow-auto">
+      <div className="p-6">
+        <OverlaysHeader />
+
+        <OverlaysToolbar
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          overlayCount={filteredOverlays.length}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+
+        {viewMode === "grid" ? (
+          <OverlaysGrid
+            overlays={filteredOverlays}
+            layouts={layouts}
+            onAddToLayout={handleAddOverlayToLayout}
+          />
+        ) : (
+          <OverlaysList
+            overlays={filteredOverlays}
+            layouts={layouts}
+            onAddToLayout={handleAddOverlayToLayout}
+          />
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
