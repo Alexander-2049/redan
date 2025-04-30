@@ -9,13 +9,13 @@ import {
 } from "@/renderer/components/ui/dialog";
 import { Input } from "@/renderer/components/ui/input";
 import { Textarea } from "@/renderer/components/ui/textarea";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 
 interface EditLayoutDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  layout: LayoutDataAndFilename | null;
-  onLayoutChange: (layout: LayoutDataAndFilename | null) => void;
+  layout: ILayoutDataAndFilename | null;
+  onLayoutChange: (layout: ILayoutDataAndFilename | null) => void;
   onSave: () => void;
 }
 

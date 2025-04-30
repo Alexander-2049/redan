@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import { OverlaysHeader } from "@/renderer/components/my-overlays/overlays-header";
 import { OverlaysToolbar } from "@/renderer/components/my-overlays/overlays-toolbar";
 import { OverlaysGrid } from "@/renderer/components/my-overlays/overlays-grid";
@@ -11,7 +11,7 @@ import { OverlaysList } from "@/renderer/components/my-overlays/overlays-list";
 const MyOverlaysRoute = () => {
   const navigate = useNavigate();
   const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
-  const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
+  const [layouts, setLayouts] = useState<ILayoutDataAndFilename[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");

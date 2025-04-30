@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/renderer/components/ui/dropdown-menu";
 import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import {
   Download,
   Edit,
@@ -18,7 +18,7 @@ import {
 
 interface OverlayCardProps {
   overlay: IOverlayAndFolderName;
-  layouts: LayoutDataAndFilename[];
+  layouts: ILayoutDataAndFilename[];
   onAddToLayout: (layoutFileName: string, overlayFolderName: string) => void;
 }
 
@@ -98,7 +98,7 @@ export const OverlayCard = ({
 };
 
 interface LayoutDropdownProps {
-  layouts: LayoutDataAndFilename[];
+  layouts: ILayoutDataAndFilename[];
   overlayFolderName: string;
   onAddToLayout: (layoutFileName: string, overlayFolderName: string) => void;
 }

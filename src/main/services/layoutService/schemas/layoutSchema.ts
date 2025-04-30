@@ -14,7 +14,7 @@ export const layoutSchema = z.object({
 
 export type ILayout = z.infer<typeof layoutSchema>;
 
-export interface LayoutDataAndFilename {
+export interface ILayoutDataAndFilename {
   data: ILayout;
   filename: string;
 }

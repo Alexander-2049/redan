@@ -22,7 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/renderer/components/ui/dropdown-menu";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { Edit, Layers, MoreVertical, Settings, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -30,7 +30,7 @@ import type { ILayoutOverlay } from "@/main/services/layoutService/schemas/overl
 import { RemoveOverlayButton } from "@/renderer/components/my-layouts/remove-overlay-button";
 
 interface LayoutCardProps {
-  layout: LayoutDataAndFilename;
+  layout: ILayoutDataAndFilename;
   overlays: IOverlayAndFolderName[];
   onEdit: () => void;
   onDelete: () => void;
@@ -39,7 +39,7 @@ interface LayoutCardProps {
     manifestOverlay: IOverlayAndFolderName,
   ) => void;
   onRemoveOverlay: (overlayId: string) => void;
-  onSetActiveLayout: (layoutFolderName: LayoutDataAndFilename) => void;
+  onSetActiveLayout: (layoutFolderName: ILayoutDataAndFilename) => void;
 }
 
 export function LayoutCard({

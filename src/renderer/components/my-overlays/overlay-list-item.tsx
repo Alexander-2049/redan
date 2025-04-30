@@ -7,11 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@/renderer/components/ui/dropdown-menu";
 import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 
 interface OverlayListItemProps {
   overlay: IOverlayAndFolderName;
-  layouts: LayoutDataAndFilename[];
+  layouts: ILayoutDataAndFilename[];
   onAddToLayout: (layoutFileName: string, overlayFolderName: string) => void;
 }
 

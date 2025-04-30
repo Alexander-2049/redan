@@ -5,14 +5,14 @@ import {
 } from "./main/services/layoutService/layoutHandler";
 import {
   ILayout,
-  LayoutDataAndFilename,
+  ILayoutDataAndFilename,
 } from "./main/services/layoutService/schemas/layoutSchema";
 import { IOverlayAndFolderName } from "./shared/types/IOverlayAndFolderName";
 
 interface MainWindowAPI {
   getOverlayList: () => Promise<IOverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;
-  getLayouts: () => Promise<LayoutDataAndFilename[]>;
+  getLayouts: () => Promise<ILayoutDataAndFilename[]>;
   createEmptyLayout: (
     layoutName: string,
     layoutDescription: string,

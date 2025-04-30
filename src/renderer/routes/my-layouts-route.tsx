@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { Plus } from "lucide-react";
 import { Button } from "../components/ui/button";
@@ -14,14 +14,14 @@ import { OverlaySettingsDialog } from "../components/my-layouts/overlay-settings
 import { ILayoutOverlay } from "@/main/services/layoutService/schemas/overlaySchema";
 
 const MyLayoutsRoute = () => {
-  const [layouts, setLayouts] = useState<LayoutDataAndFilename[]>([]);
+  const [layouts, setLayouts] = useState<ILayoutDataAndFilename[]>([]);
   const [overlays, setOverlays] = useState<IOverlayAndFolderName[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [layoutToDelete, setLayoutToDelete] =
-    useState<LayoutDataAndFilename | null>(null);
+    useState<ILayoutDataAndFilename | null>(null);
   const [editingLayout, setEditingLayout] =
-    useState<LayoutDataAndFilename | null>(null);
+    useState<ILayoutDataAndFilename | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newLayoutName, setNewLayoutName] = useState("");
   const [newLayoutDescription, setNewLayoutDescription] = useState("");
@@ -197,27 +197,30 @@ const MyLayoutsRoute = () => {
       });
   }, [selectedOverlay, layouts, updateLayoutAndOverlayLists]);
 
-  const handleSetActiveLayout = useCallback((layout: LayoutDataAndFilename) => {
-    window.electron
-      .setActiveLayout(layout.filename)
-      .then((response) => {
-        if (response.success) {
-          toast.success("Active layout has been updated");
-        } else {
-          console.error("Failed to set active layout:", response.error);
-          toast.error("Failed to set active layout", {
-            description: response.error,
+  const handleSetActiveLayout = useCallback(
+    (layout: ILayoutDataAndFilename) => {
+      window.electron
+        .setActiveLayout(layout.filename)
+        .then((response) => {
+          if (response.success) {
+            toast.success("Active layout has been updated");
+          } else {
+            console.error("Failed to set active layout:", response.error);
+            toast.error("Failed to set active layout", {
+              description: response.error,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error in setActiveLayout:", error);
+          toast.error("An error occurred while setting the active layout", {
+            description: error.message,
           });
-        }
-      })
-      .catch((error) => {
-        console.error("Error in setActiveLayout:", error);
-        toast.error("An error occurred while setting the active layout", {
-          description: error.message,
-        });
-      })
-      .finally(() => updateLayoutAndOverlayLists());
-  }, []);
+        })
+        .finally(() => updateLayoutAndOverlayLists());
+    },
+    [],
+  );
 
   useEffect(() => {
     window.addEventListener("focus", updateLayoutAndOverlayLists);

@@ -8,12 +8,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/renderer/components/ui/alert-dialog";
-import type { LayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 
 interface DeleteLayoutDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  layout: LayoutDataAndFilename | null;
+  layout: ILayoutDataAndFilename | null;
   onDelete: () => void;
 }
 
