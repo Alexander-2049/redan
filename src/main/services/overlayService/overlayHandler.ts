@@ -7,11 +7,7 @@ import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
 import { z } from "zod";
 
 export default class OverlayHandler {
-  static setup() {
-    this.createOverlaysFolder();
-  }
-
-  private static createOverlaysFolder() {
+  public static createOverlaysFolder() {
     if (!fs.existsSync(OVERLAYS_PATH)) {
       fs.mkdirSync(OVERLAYS_PATH, { recursive: true });
       return true;
@@ -21,7 +17,7 @@ export default class OverlayHandler {
   }
 
   static loadAllOverlays() {
-    this.setup();
+    this.createOverlaysFolder();
 
     const dir = fs.readdirSync(OVERLAYS_PATH);
     const folders = dir.filter((item) =>
@@ -66,7 +62,7 @@ export default class OverlayHandler {
   static loadOverlayManifest(
     folderName: string,
   ): z.infer<typeof overlayManifestFileSchema> | null {
-    this.setup();
+    this.createOverlaysFolder();
 
     const folderPath = path.join(OVERLAYS_PATH, folderName);
     const manifestPath = path.join(folderPath, "manifest.json");

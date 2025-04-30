@@ -1,28 +1,28 @@
 import { globalShortcut } from "electron";
-import { getWindows } from "./windowManager";
+import { getOverlayWindows } from "./windowManager";
 
 let windowsHidden = false;
 let windowsClickThrough = false;
 
 export const registerShortcuts = () => {
-  const windows = getWindows();
+  const windows = getOverlayWindows();
 
   globalShortcut.register("CommandOrControl+Alt+H", () => {
-    for (let i = 1; i < windows.length; i++) {
-      const win = windows[i];
+    for (let i = 0; i < windows.length; i++) {
+      const overlay = windows[i];
       if (windowsHidden) {
-        win.show();
+        overlay.window.show();
       } else {
-        win.hide();
+        overlay.window.hide();
       }
     }
     windowsHidden = !windowsHidden;
   });
 
   globalShortcut.register("CommandOrControl+Alt+I", () => {
-    for (let i = 1; i < windows.length; i++) {
-      const win = windows[i];
-      win.setIgnoreMouseEvents(!windowsClickThrough);
+    for (let i = 0; i < windows.length; i++) {
+      const overlay = windows[i];
+      overlay.window.setIgnoreMouseEvents(!windowsClickThrough);
     }
     windowsClickThrough = !windowsClickThrough;
   });

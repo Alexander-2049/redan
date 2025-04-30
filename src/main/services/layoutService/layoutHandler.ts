@@ -3,20 +3,20 @@ import fs from "fs";
 import {
   layoutSchema,
   ILayout,
-  LayoutDataAndFilename,
+  ILayoutDataAndFilename,
 } from "./schemas/layoutSchema";
 import sanitize from "sanitize-filename";
 import { overlaySchema } from "./schemas/overlaySchema";
 import { z } from "zod";
 import OverlayHandler from "../overlayService/overlayHandler";
 
-export interface ICreateNewLayoutResponse {
+interface ICreateNewLayoutResponse {
   success: boolean;
   filePath?: string;
   error?: string;
 }
 
-export type IResponse =
+type IResponse =
   | {
       success: true;
     }
@@ -25,12 +25,24 @@ export type IResponse =
       error: string;
     };
 
-export interface IModifyLayoutResponse {
+interface IModifyLayoutResponse {
   success: boolean;
   error?: string;
 }
 
-export class LayoutHandler {
+export type ILayoutResponse =
+  | {
+      success: boolean;
+      layouts: ILayoutDataAndFilename[];
+      error?: undefined;
+    }
+  | {
+      success: boolean;
+      error: string;
+      layouts?: undefined;
+    };
+
+class LayoutHandler {
   public static setup() {
     this.createLayoutsFolder();
   }
@@ -96,12 +108,12 @@ export class LayoutHandler {
     }
   }
 
-  public static getAllLayouts() {
+  public static getAllLayouts(): ILayoutResponse {
     this.setup();
 
     try {
       const files = fs.readdirSync(LAYOUTS_PATH);
-      const layouts: LayoutDataAndFilename[] = [];
+      const layouts: ILayoutDataAndFilename[] = [];
 
       files
         .filter((file) => file.endsWith(".json"))
@@ -351,3 +363,10 @@ export class LayoutHandler {
     }
   }
 }
+
+export {
+  ICreateNewLayoutResponse,
+  IResponse,
+  IModifyLayoutResponse,
+  LayoutHandler,
+};

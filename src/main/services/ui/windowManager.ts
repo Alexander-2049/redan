@@ -4,8 +4,22 @@ import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
 import { LayoutHandler } from "../layoutService/layoutHandler";
 import { ILayout } from "../layoutService/schemas/layoutSchema";
+import { ILayoutOverlaySetting } from "../layoutService/schemas/overlaySchema";
+import { updateOverlayWindows } from "./overlayManager";
 
-const windows: BrowserWindow[] = [];
+export interface IOverlayWindow {
+  overlayId: string;
+  overlaySettings: ILayoutOverlaySetting[];
+  window: BrowserWindow;
+}
+
+const windows: {
+  main: BrowserWindow | null;
+  overlays: IOverlayWindow[];
+} = {
+  main: null,
+  overlays: [],
+};
 
 export const createWindow = (preload: string, entry: string): BrowserWindow => {
   const mainWindow = new BrowserWindow({
@@ -32,9 +46,14 @@ export const createWindow = (preload: string, entry: string): BrowserWindow => {
   mainWindow.loadURL(entry);
 
   mainWindow.on("close", () => {
-    windows.forEach((win) => {
-      win.removeAllListeners("close");
-      win.close();
+    if (mainWindow) {
+      mainWindow.removeAllListeners("close");
+      mainWindow.close();
+    }
+
+    windows.overlays.forEach((overlay) => {
+      overlay.window.removeAllListeners("close");
+      overlay.window.close();
     });
   });
 
@@ -102,6 +121,7 @@ const addMessageHandlers = () => {
 
   ipcMain.on("delete-layout-renderer-to-main", (event, fileName: string) => {
     const response = LayoutHandler.deleteLayout(fileName);
+    updateOverlayWindows(getOverlayWindows());
 
     event.reply("delete-layout-main-to-renderer", response);
   });
@@ -110,6 +130,7 @@ const addMessageHandlers = () => {
     "modify-layout-renderer-to-main",
     (event, fileName: string, updatedData: Partial<ILayout>) => {
       const response = LayoutHandler.modifyLayout(fileName, updatedData);
+      updateOverlayWindows(getOverlayWindows());
 
       event.reply("modify-layout-main-to-renderer", response);
     },
@@ -122,6 +143,7 @@ const addMessageHandlers = () => {
         layoutFileName,
         overlayFolderName,
       );
+      updateOverlayWindows(getOverlayWindows());
 
       event.reply("add-overlay-to-layout-main-to-renderer", response);
     },
@@ -130,6 +152,7 @@ const addMessageHandlers = () => {
     "remove-overlay-from-layout-renderer-to-main",
     (event, layoutFileName: string, overlayId: string) => {
       const response = LayoutHandler.removeOverlay(layoutFileName, overlayId);
+      updateOverlayWindows(getOverlayWindows());
 
       event.reply("remove-overlay-from-layout-main-to-renderer", response);
     },
@@ -138,11 +161,18 @@ const addMessageHandlers = () => {
     "set-active-layout-renderer-to-main",
     (event, layoutFileName: string) => {
       const response = LayoutHandler.setActiveLayout(layoutFileName);
+      updateOverlayWindows(getOverlayWindows());
 
       event.reply("set-active-layout-main-to-renderer", response);
     },
   );
 };
 
-export const getWindows = () => windows;
-export const addWindow = (window: BrowserWindow) => windows.push(window);
+export const getOverlayWindows = (): IOverlayWindow[] => windows.overlays;
+export const addOverlayWindow = ({
+  window,
+  overlayId,
+  overlaySettings,
+}: IOverlayWindow) =>
+  windows.overlays.push({ window, overlayId, overlaySettings });
+export const addMainWindow = (window: BrowserWindow) => (windows.main = window);
