@@ -26,7 +26,13 @@ app.get("/*", (req, res) => {
     if (!path.extname(req.path)) {
       const indexPath = path.join(filePath, "index.html");
       if (fs.existsSync(indexPath) && fs.statSync(indexPath).isFile()) {
-        return res.redirect(301, path.join(req.path, "index.html"));
+        const queryParams = new URLSearchParams(
+          req.query as Record<string, string>,
+        ).toString();
+        const redirectUrl =
+          path.join(req.path, "index.html") +
+          (queryParams ? `?${queryParams}` : "");
+        return res.redirect(301, redirectUrl);
       } else {
         return res.status(404).send("Not found.");
       }
