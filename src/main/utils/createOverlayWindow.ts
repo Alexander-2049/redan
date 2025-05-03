@@ -22,6 +22,8 @@ export const createOverlayWindow = (
       preload: OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
     },
+    minWidth: 80,
+    minHeight: 80,
     ...options,
   });
   // and load the index.html of the app.
