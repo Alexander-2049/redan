@@ -26,7 +26,15 @@ import {
 } from "@/renderer/components/ui/dropdown-menu";
 import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
 import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
-import { Edit, Layers, MoreVertical, Settings, Trash2 } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  EyeOff,
+  Layers,
+  MoreVertical,
+  Settings,
+  Trash2,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ILayoutOverlay } from "@/main/services/layoutService/schemas/overlaySchema";
 import { RemoveOverlayButton } from "@/renderer/components/my-layouts/remove-overlay-button";
@@ -42,6 +50,7 @@ interface LayoutCardProps {
   ) => void;
   onRemoveOverlay: (overlayId: string) => void;
   onSetActiveLayout: (layoutFolderName: ILayoutDataAndFilename) => void;
+  onToggleVisibility: (overlayId: string, isVisible: boolean) => void;
 }
 
 export function LayoutCard({
@@ -52,6 +61,7 @@ export function LayoutCard({
   onOpenOverlaySettings,
   onRemoveOverlay,
   onSetActiveLayout,
+  onToggleVisibility,
 }: LayoutCardProps) {
   return (
     <Card
@@ -139,6 +149,14 @@ export function LayoutCard({
                         >
                           Missing
                         </Badge>
+                        {layoutOverlay.isVisible === false && (
+                          <Badge
+                            variant="outline"
+                            className="text-muted-foreground h-5 px-2 text-[10px] font-normal"
+                          >
+                            Hidden
+                          </Badge>
+                        )}
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
@@ -188,6 +206,14 @@ export function LayoutCard({
                           {manifestOverlay.data.type}
                         </Badge>
                       )}
+                      {layoutOverlay.isVisible === false && (
+                        <Badge
+                          variant="outline"
+                          className="text-muted-foreground h-5 px-2 text-[10px] font-normal"
+                        >
+                          Hidden
+                        </Badge>
+                      )}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -210,20 +236,47 @@ export function LayoutCard({
                       </div>
 
                       <div className="flex items-center justify-between pt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="gap-1"
-                          onClick={() =>
-                            onOpenOverlaySettings(
-                              layoutOverlay,
-                              manifestOverlay,
-                            )
-                          }
-                        >
-                          <Settings size={14} />
-                          Settings
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1"
+                            onClick={() =>
+                              onOpenOverlaySettings(
+                                layoutOverlay,
+                                manifestOverlay,
+                              )
+                            }
+                          >
+                            <Settings size={14} />
+                            Settings
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1"
+                            onClick={() =>
+                              onToggleVisibility(
+                                layoutOverlay.id,
+                                !layoutOverlay.isVisible,
+                              )
+                            }
+                            title={
+                              layoutOverlay.isVisible
+                                ? "Hide overlay"
+                                : "Show overlay"
+                            }
+                          >
+                            {layoutOverlay.isVisible !== false ? (
+                              <Eye size={14} />
+                            ) : (
+                              <EyeOff size={14} />
+                            )}
+                            {layoutOverlay.isVisible !== false
+                              ? "Visible"
+                              : "Hidden"}
+                          </Button>
+                        </div>
                         <RemoveOverlayButton
                           overlayName={
                             layoutOverlay.name ||

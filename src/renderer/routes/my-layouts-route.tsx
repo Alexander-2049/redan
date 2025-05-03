@@ -222,6 +222,56 @@ const MyLayoutsRoute = () => {
     [],
   );
 
+  const handleToggleVisibility = useCallback(
+    (layoutOverlayId: string, isVisible: boolean) => {
+      const updatedLayouts = layouts.map((layout) => {
+        const updatedOverlays = layout.data.overlays.map((overlay) => {
+          if (overlay.id === layoutOverlayId) {
+            return { ...overlay, isVisible };
+          }
+          return overlay;
+        });
+
+        return {
+          ...layout,
+          data: { ...layout.data, overlays: updatedOverlays },
+        };
+      });
+
+      setLayouts(updatedLayouts);
+
+      window.electron
+        .modifyLayout(
+          updatedLayouts.find((layout) =>
+            layout.data.overlays.some(
+              (overlay) => overlay.id === layoutOverlayId,
+            ),
+          )?.filename || "",
+          updatedLayouts.find((layout) =>
+            layout.data.overlays.some(
+              (overlay) => overlay.id === layoutOverlayId,
+            ),
+          )?.data || {},
+        )
+        .then((response) => {
+          if (response.success) {
+            toast.success("Overlay visibility updated", {
+              description: "Your changes have been saved",
+            });
+          } else {
+            toast.error("Something went wrong...", {
+              description: response.error,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error("Error occurred...", { description: error.message });
+        });
+    },
+    [layouts],
+  );
+
   useEffect(() => {
     window.addEventListener("focus", updateLayoutAndOverlayLists);
     updateLayoutAndOverlayLists();
@@ -302,6 +352,7 @@ const MyLayoutsRoute = () => {
                     setEditingLayout(layout);
                     setIsEditDialogOpen(true);
                   }}
+                  onToggleVisibility={handleToggleVisibility}
                   onDelete={() => {
                     setIsDeleteDialogOpen(true);
                     setLayoutToDelete(layout);

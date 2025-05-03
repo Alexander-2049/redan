@@ -53,6 +53,9 @@ export const updateOverlayWindows = (windows: IOverlayWindow[]) => {
         existingWindow.overlaySettings = overlay.settings;
       }
 
+      if (!overlay.isVisible) existingWindow.window.hide();
+      else existingWindow.window.show();
+
       // Attach event listeners to track position and size changes
       attachWindowListeners(existingWindow.window, overlay.id, activeLayout);
     } else {
@@ -64,6 +67,9 @@ export const updateOverlayWindows = (windows: IOverlayWindow[]) => {
         y: overlay.position.y,
         resizable: overlay.isResizable,
       });
+
+      if (!overlay.isVisible) overlayWindow.hide();
+      else overlayWindow.show();
 
       // Attach event listeners to track position and size changes
       attachWindowListeners(overlayWindow, overlay.id, activeLayout);
