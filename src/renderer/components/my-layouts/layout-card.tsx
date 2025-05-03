@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -112,7 +114,7 @@ export function LayoutCard({
         </div>
 
         {layout.data.overlays.length > 0 ? (
-          <Accordion type="multiple" className="w-full">
+          <Accordion type="single" collapsible className="w-full">
             {layout.data.overlays.map((layoutOverlay) => {
               const manifestOverlay =
                 overlays.filter(
@@ -123,7 +125,7 @@ export function LayoutCard({
                 return (
                   <AccordionItem
                     key={layoutOverlay.id}
-                    value={layoutOverlay.folderName}
+                    value={layoutOverlay.id}
                     className="border-muted/60 border-b"
                   >
                     <AccordionTrigger className="px-1 py-2 text-sm hover:no-underline">
@@ -168,7 +170,7 @@ export function LayoutCard({
               return (
                 <AccordionItem
                   key={layoutOverlay.id}
-                  value={layoutOverlay.folderName}
+                  value={layoutOverlay.id}
                   className="border-muted/60 border-b"
                 >
                   <AccordionTrigger className="px-1 py-2 text-sm hover:no-underline">
