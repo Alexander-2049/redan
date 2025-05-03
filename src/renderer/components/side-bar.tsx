@@ -77,11 +77,13 @@ const Sidebar = () => {
       <div className="bg-muted/20 flex w-16 flex-col items-center py-4">
         <TooltipProvider>
           <div className="flex flex-col items-center space-y-2">
-            {sidebarLinks.map((group) => (
-              <div key={group.group} className="space-y-2">
-                {group.links.map((link) => (
-                  <Tooltip key={link.text}>
-                    <TooltipTrigger
+            {sidebarLinks.map((group) =>
+              group.links.map((link) => (
+                <Tooltip key={link.text}>
+                  <TooltipTrigger>
+                    <Link
+                      to={link.path}
+                      title={link.text}
                       className={cn(
                         "relative flex h-10 w-10 items-center justify-center rounded-full text-gray-600 shadow-md transition-all duration-300 hover:scale-110 active:scale-90",
                         pathname.startsWith(link.path)
@@ -89,17 +91,15 @@ const Sidebar = () => {
                           : "",
                       )}
                     >
-                      <Link to={link.path} title={link.text}>
-                        <link.icon />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={5}>
-                      {link.text}
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
-            ))}
+                      <link.icon />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={5}>
+                    {link.text}
+                  </TooltipContent>
+                </Tooltip>
+              )),
+            )}
           </div>
         </TooltipProvider>
       </div>
