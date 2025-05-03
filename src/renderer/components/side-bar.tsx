@@ -80,14 +80,14 @@ const Sidebar = () => {
             {sidebarLinks.map((group) =>
               group.links.map((link) => (
                 <Tooltip key={link.text}>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <Link
                       to={link.path}
                       title={link.text}
                       className={cn(
                         "relative flex h-10 w-10 items-center justify-center rounded-full text-gray-600 shadow-md transition-all duration-300 hover:scale-110 active:scale-90",
                         pathname.startsWith(link.path)
-                          ? "bg-blue-100 text-blue-600 ring-2 ring-blue-500"
+                          ? "scale-110 bg-blue-100 text-blue-600 ring-blue-500"
                           : "",
                       )}
                     >
