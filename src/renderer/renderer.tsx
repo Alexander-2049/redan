@@ -28,14 +28,14 @@
 
 import "./index.css";
 import "./styles/globals.css";
-
-import { createRoot } from "react-dom/client";
 import Main from ".";
-
-import { createHashRouter } from "react-router-dom";
 import React from "react";
 import DashboardRoute from "./routes/dashboard-route";
+import { createRoot } from "react-dom/client";
+import { createHashRouter } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
+import { Provider } from "react-redux";
+import { store } from "./store"; // путь к твоему store.ts
 
 export const router = createHashRouter([
   {
@@ -51,11 +51,9 @@ const root = createRoot(app);
 
 root.render(
   <React.StrictMode>
-    <Main />
-    <Toaster />
+    <Provider store={store}>
+      <Main />
+      <Toaster />
+    </Provider>
   </React.StrictMode>,
-);
-
-console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack',
 );
