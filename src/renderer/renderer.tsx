@@ -36,6 +36,7 @@ import { createHashRouter } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
 import { Provider } from "react-redux";
 import { store } from "./store"; // путь к твоему store.ts
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export const router = createHashRouter([
   {
@@ -44,6 +45,8 @@ export const router = createHashRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 const app = document.getElementById("app");
 if (!app) throw new Error("root element with app id was not found");
 
@@ -51,9 +54,11 @@ const root = createRoot(app);
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <Main />
-      <Toaster />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <Main />
+        <Toaster />
+      </Provider>
+    </QueryClientProvider>
   </React.StrictMode>,
 );

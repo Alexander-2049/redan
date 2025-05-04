@@ -84,6 +84,7 @@
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.2.4",
     "@reduxjs/toolkit": "^2.7.0",
+    "@tanstack/react-query": "^5.75.1",
     "ac-sdk-2025": "github:Alexander-2049/ac-sdk-2025",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
