@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ILayoutOverlay } from "@/main/services/layoutService/schemas/overlaySchema";
-import { RemoveOverlayButton } from "@/renderer/components/my-layouts/remove-overlay-button";
+import { RemoveOverlayButton } from "@/renderer/components/my-layouts-old/remove-overlay-button";
 
 interface LayoutCardProps {
   layout: ILayoutDataAndFilename;
@@ -50,7 +50,7 @@ interface LayoutCardProps {
   ) => void;
   onRemoveOverlay: (overlayId: string) => void;
   onSetActiveLayout: (layoutFolderName: ILayoutDataAndFilename) => void;
-  onToggleVisibility: (overlayId: string, isVisible: boolean) => void;
+  onToggleVisibility: (overlayId: string, visible: boolean) => void;
 }
 
 export function LayoutCard({
@@ -149,7 +149,7 @@ export function LayoutCard({
                         >
                           Missing
                         </Badge>
-                        {layoutOverlay.isVisible === false && (
+                        {layoutOverlay.visible === false && (
                           <Badge
                             variant="outline"
                             className="text-muted-foreground h-5 px-2 text-[10px] font-normal"
@@ -206,7 +206,7 @@ export function LayoutCard({
                           {manifestOverlay.data.type}
                         </Badge>
                       )}
-                      {layoutOverlay.isVisible === false && (
+                      {layoutOverlay.visible === false && (
                         <Badge
                           variant="outline"
                           className="text-muted-foreground h-5 px-2 text-[10px] font-normal"
@@ -258,21 +258,21 @@ export function LayoutCard({
                             onClick={() =>
                               onToggleVisibility(
                                 layoutOverlay.id,
-                                !layoutOverlay.isVisible,
+                                !layoutOverlay.visible,
                               )
                             }
                             title={
-                              layoutOverlay.isVisible
+                              layoutOverlay.visible
                                 ? "Hide overlay"
                                 : "Show overlay"
                             }
                           >
-                            {layoutOverlay.isVisible !== false ? (
+                            {layoutOverlay.visible !== false ? (
                               <Eye size={14} />
                             ) : (
                               <EyeOff size={14} />
                             )}
-                            {layoutOverlay.isVisible !== false
+                            {layoutOverlay.visible !== false
                               ? "Visible"
                               : "Hidden"}
                           </Button>

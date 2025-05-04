@@ -53,22 +53,31 @@ export const updateOverlayWindows = (windows: IOverlayWindow[]) => {
         existingWindow.overlaySettings = overlay.settings;
       }
 
-      if (!overlay.isVisible) existingWindow.window.hide();
+      if (!overlay.visible) existingWindow.window.hide();
       else existingWindow.window.show();
 
       // Attach event listeners to track position and size changes
       attachWindowListeners(existingWindow.window, overlay.id, activeLayout);
     } else {
       // Create a new overlay window
+      const overlayManifest = OverlayHandler.loadOverlayManifest(
+        overlay.folderName,
+      );
+      if (!overlayManifest) continue;
+      const { minWidth, minHeight, maxWidth, maxHeight } = overlayManifest;
+
       const overlayWindow = createOverlayWindow(url, {
         width: overlay.position.width,
         height: overlay.position.height,
         x: overlay.position.x,
         y: overlay.position.y,
-        resizable: overlay.isResizable,
+        minWidth,
+        minHeight,
+        maxWidth,
+        maxHeight,
       });
 
-      if (!overlay.isVisible) overlayWindow.hide();
+      if (!overlay.visible) overlayWindow.hide();
       else overlayWindow.show();
 
       // Attach event listeners to track position and size changes

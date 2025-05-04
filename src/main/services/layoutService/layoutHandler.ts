@@ -87,6 +87,7 @@ class LayoutHandler {
       overlays: [],
       screenWidth,
       screenHeight,
+      locked: false,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -241,12 +242,10 @@ class LayoutHandler {
         name: overlayManifest.name || overlayFolderName,
         folderName: overlayFolderName,
         settings: [],
-        isVisible: true,
-        isDraggable: true,
-        isResizable: true,
+        visible: true,
         position: {
-          width: overlayManifest.defaultWindowWidth || 320,
-          height: overlayManifest.defaultWindowHeight || 180,
+          width: overlayManifest.defaultWidth || 320,
+          height: overlayManifest.defaultHeight || 180,
           x: 128,
           y: 72,
         },

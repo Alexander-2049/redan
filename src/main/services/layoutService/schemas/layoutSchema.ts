@@ -8,6 +8,7 @@ export const layoutSchema = z.object({
   overlays: z.array(overlaySchema),
   screenWidth: z.number(),
   screenHeight: z.number(),
+  locked: z.boolean(),
   createdAt: z.number(),
   updatedAt: z.number(),
 });
