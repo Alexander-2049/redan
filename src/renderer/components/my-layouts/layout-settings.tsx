@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/renderer/components/ui/input";
 import { Textarea } from "@/renderer/components/ui/textarea";
-import { Button } from "@/renderer/components/ui/button";
 import { ScrollArea } from "@/renderer/components/ui/scroll-area";
 import {
   Accordion,
@@ -66,12 +65,12 @@ const LayoutSettings = () => {
               <AccordionTrigger className="px-4 py-3 hover:no-underline">
                 <div className="flex w-full items-center justify-between pr-2">
                   <span>{overlay.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="hover:bg-muted flex h-8 w-8 items-center justify-center rounded-full focus:outline-none"
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e.stopPropagation(); // Prevent triggering the AccordionTrigger
                       toggleVisibility(overlay.id);
                     }}
                   >
@@ -80,7 +79,7 @@ const LayoutSettings = () => {
                     ) : (
                       <EyeOff className="text-muted-foreground h-4 w-4" />
                     )}
-                  </Button>
+                  </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent>

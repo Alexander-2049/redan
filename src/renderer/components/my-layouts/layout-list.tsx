@@ -80,10 +80,12 @@ function LayoutSelector() {
         {filteredItems.length > 0 ? (
           <div className="py-1">
             {filteredItems.map((item) => (
-              <button
+              <div
                 key={item.filename}
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  "border-border/50 group relative grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b px-3 py-2 text-left transition-colors",
+                  "border-border/50 group relative grid w-full cursor-default grid-cols-[auto_1fr_auto] items-center gap-2 border-b px-3 py-2 text-left transition-colors",
                   selectedItem?.filename === item.filename
                     ? "border-blue-200 bg-blue-100 text-blue-600"
                     : "hover:bg-muted/50",
@@ -117,7 +119,7 @@ function LayoutSelector() {
                 >
                   <Trash2 size={14} />
                 </Button>
-              </button>
+              </div>
             ))}
           </div>
         ) : (
