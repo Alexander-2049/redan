@@ -1,18 +1,13 @@
-import Header from "../header";
 import Sidebar from "../side-bar";
 import { Outlet } from "react-router-dom";
-import { ScrollArea } from "../ui/scroll-area";
 
 const PageLayout = () => {
   return (
     <>
-      <Header />
-      <div className="flex h-0 grow flex-col">
+      <div className="flex h-full flex-col">
         <div className="flex h-full grow flex-row">
           <Sidebar />
-          <ScrollArea className="overflow-y h-full grow bg-[#f5f5f5]">
-            <Outlet />
-          </ScrollArea>
+          <Outlet />
         </div>
       </div>
     </>

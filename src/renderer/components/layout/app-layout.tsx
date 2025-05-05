@@ -1,11 +1,15 @@
 import { Outlet } from "react-router-dom";
 import TitleBar from "../title-bar";
+import Header from "../header";
 
 function Layout() {
   return (
-    <div className="flex h-full flex-col">
+    <div className="grid h-full grid-rows-[auto_auto_1fr] overflow-hidden">
       <TitleBar />
-      <Outlet />
+      <Header />
+      <div className="overflow-hidden">
+        <Outlet />
+      </div>
     </div>
   );
 }

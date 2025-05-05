@@ -1,9 +1,7 @@
+import LayoutList from "../components/my-layouts/layout-list";
+
 const MyLayoutsRoute = () => {
-  return (
-    <div>
-      <div>Layouts</div>
-    </div>
-  );
+  return <LayoutList />;
 };
 
 export default MyLayoutsRoute;

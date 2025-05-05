@@ -6,6 +6,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "rlig" 1, "calt" 1;
 }
+html, body {
+  height: 100%;    
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
@@ -13,6 +16,7 @@ code {
 
 #app {
   overflow: hidden;
+  height: 100%;
 }
 
 .drag {
