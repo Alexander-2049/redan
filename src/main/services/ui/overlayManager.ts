@@ -12,7 +12,15 @@ export const updateOverlayWindows = (windows: IOverlayWindow[]) => {
 
   const layouts = LayoutHandler.getAllLayouts();
   const activeLayout = getActiveLayout(layouts);
-  if (!activeLayout) return;
+  if (!activeLayout) {
+    for (let i = windows.length - 1; i >= 0; i--) {
+      const overlayWindow = windows[i];
+      overlayWindow.window.removeAllListeners("close");
+      overlayWindow.window.close();
+      windows.splice(i, 1);
+    }
+    return;
+  }
 
   const overlays = activeLayout.data.overlays;
 
