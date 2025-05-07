@@ -18,14 +18,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/renderer/components/ui/alert-dialog";
+import { useSetActiveLayout } from "@/renderer/api/layouts/set-active-layout";
 
 function LayoutSelector() {
   const layouts = useLayouts();
   const { mutate: deleteLayout } = useDeleteLayout();
   const { mutate: createLayout } = useCreateLayout();
+  const { mutate: setActiveLayout } = useSetActiveLayout();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] =
-    useState<ILayoutDataAndFilename | null>();
   const [layoutToDelete, setLayoutToDelete] = useState<string | null>(null);
 
   if (!layouts.data) return null;
@@ -60,6 +60,11 @@ function LayoutSelector() {
     }
   };
 
+  const handleSelectLayout = (layout: ILayoutDataAndFilename) => {
+    console.log(layout);
+    setActiveLayout({ fileName: layout.filename });
+  };
+
   return (
     <div className="bg-muted/20 grid h-full w-64 grid-rows-[auto_1fr_auto] overflow-hidden border-r">
       {/* Search Header */}
@@ -86,20 +91,18 @@ function LayoutSelector() {
                 tabIndex={0}
                 className={cn(
                   "border-border/50 group relative grid w-full cursor-default grid-cols-[auto_1fr_auto] items-center gap-2 border-b px-3 py-2 text-left transition-colors",
-                  selectedItem?.filename === item.filename
+                  item.data.active
                     ? "border-blue-200 bg-blue-100 text-blue-600"
                     : "hover:bg-muted/50",
                 )}
-                onClick={() => setSelectedItem(item)}
-                aria-pressed={selectedItem?.filename === item.filename}
+                onClick={() => handleSelectLayout(item)}
+                aria-pressed={item.data.active}
               >
                 <Layout
                   size={16}
                   className={cn(
                     "text-muted-foreground",
-                    selectedItem?.filename === item.filename
-                      ? "text-blue-500"
-                      : "",
+                    item.data.active ? "text-blue-500" : "",
                   )}
                   aria-hidden="true"
                 />
