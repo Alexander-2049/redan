@@ -29,17 +29,6 @@ export const OverlayListItem = ({
 
   return (
     <div className="flex rounded-lg bg-white p-4 shadow-sm">
-      <img
-        src={
-          overlay.data.image ||
-          "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
-          "/placeholder.svg"
-        }
-        alt={overlay.data.name}
-        width={120}
-        height={80}
-        className="h-20 w-32 rounded object-cover"
-      />
       <div className="ml-4 flex-1">
         <div className="flex items-start justify-between">
           <div>

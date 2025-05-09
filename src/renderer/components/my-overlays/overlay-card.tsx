@@ -37,17 +37,6 @@ export const OverlayCard = ({
   return (
     <div className="overflow-hidden rounded-lg bg-white shadow-sm">
       <div className="relative">
-        <img
-          src={
-            overlay.data.image ||
-            "https://kzml8tdlacqptj5ggjfc.lite.vusercontent.net/placeholder.svg?height=200&width=350" ||
-            "/placeholder.svg"
-          }
-          alt={overlay.data.name}
-          width={350}
-          height={200}
-          className="h-48 w-full object-cover"
-        />
         {overlay.data.type && (
           <Badge className="absolute top-3 right-3 bg-black/70">
             {overlay.data.type}
