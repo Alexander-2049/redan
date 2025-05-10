@@ -69,7 +69,7 @@ const OverlaysList = () => {
 
                       {/* Overlay name badge */}
                       <div className="absolute bottom-3 left-3 z-10 rounded bg-black/60 px-2 py-1 text-xs font-medium text-white">
-                        {overlay.folderName}
+                        {overlay.data.name || overlay.folderName}
                       </div>
 
                       {/* Button or message that appears on hover */}
