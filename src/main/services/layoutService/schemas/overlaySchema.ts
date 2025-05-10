@@ -7,9 +7,15 @@ export const overlayPositionSchema = z.object({
   y: z.number(),
 });
 
+export const overlaySettingValueSchema = z.union([
+  z.number(),
+  z.string(),
+  z.boolean(),
+]);
+
 export const overlaySettingSchema = z.object({
   id: z.string(),
-  value: z.union([z.number(), z.string(), z.boolean()]),
+  value: overlaySettingValueSchema,
 });
 
 export const overlaySchema = z.object({
@@ -23,3 +29,6 @@ export const overlaySchema = z.object({
 
 export type ILayoutOverlay = z.infer<typeof overlaySchema>;
 export type ILayoutOverlaySetting = z.infer<typeof overlaySettingSchema>;
+export type ILayoutOverlaySettingValue = z.infer<
+  typeof overlaySettingValueSchema
+>;

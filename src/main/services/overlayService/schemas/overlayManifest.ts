@@ -5,6 +5,7 @@ const versionRegex = /^\d+\.\d+(\.\d+)?$/;
 export type IOverlaySettingDescription = z.infer<
   typeof overlaySettingDescriptionSchema
 >;
+export type IOverlayManifest = z.infer<typeof overlayManifestFileSchema>;
 
 export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   z.object({
