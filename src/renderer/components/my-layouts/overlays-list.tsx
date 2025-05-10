@@ -7,6 +7,7 @@ import {
   ASSETS_SERVER_PORT,
   OVERLAY_SERVER_PORT,
 } from "@/shared/shared-constants";
+import OpenOverlaysFolderButton from "../open-overlays-folder-button";
 
 const OverlaysList = () => {
   const overlays = useOverlays();
@@ -17,8 +18,9 @@ const OverlaysList = () => {
   return (
     <div className="h-full overflow-hidden">
       <div className="bg-accent/10 flex h-full flex-col">
-        <div className="flex-shrink-0 border-b p-3">
+        <div className="flex flex-shrink-0 flex-row justify-between border-b p-3">
           <h2 className="text-lg font-semibold">Overlays</h2>
+          <OpenOverlaysFolderButton />
         </div>
         <ScrollArea className="overflow-y-auto">
           <div className="p-4">
