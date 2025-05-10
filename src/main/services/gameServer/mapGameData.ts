@@ -19,10 +19,10 @@ export interface IRealtimeGameData {
   speedKph?: number;
   speedMph?: number;
   rpm?: number;
-  rpmStage1?: number;
-  rpmStage2?: number;
-  rpmStage3?: number;
+  rpmStageFirst?: number;
+  rpmStageShift?: number;
   rpmStageLast?: number;
+  rpmStageBlink?: number;
   displayUnits?: "IMPERIAL" | "METRIC";
 }
 
@@ -136,10 +136,10 @@ export function mapDataFromIRacing(
         "MILES_PER_HOUR",
       ),
       rpm: telemetry.RPM,
-      rpmStage1: telemetry.PlayerCarSLFirstRPM,
-      rpmStage2: telemetry.PlayerCarSLShiftRPM,
-      rpmStage3: telemetry.PlayerCarSLLastRPM,
-      rpmStageLast: telemetry.PlayerCarSLBlinkRPM,
+      rpmStageFirst: telemetry.PlayerCarSLFirstRPM,
+      rpmStageShift: telemetry.PlayerCarSLShiftRPM,
+      rpmStageLast: telemetry.PlayerCarSLLastRPM,
+      rpmStageBlink: telemetry.PlayerCarSLBlinkRPM,
       displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
     },
     entrylist,

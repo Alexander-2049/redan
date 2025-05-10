@@ -3,7 +3,7 @@ export function iracingSteeringAngleToPercents(rotation: number): number {
     -9.42477798461914,
     Math.min(rotation, 9.42477798461914),
   );
-  const percent = (clampedRotation / 9.42477798461914) * 150;
+  const percent = (clampedRotation / 9.42477798461914) * 1.5;
 
   return percent;
 }
