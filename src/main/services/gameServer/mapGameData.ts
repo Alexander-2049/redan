@@ -2,6 +2,8 @@ import { RealtimeCarAndEntryDataUpdate } from "ac-sdk-2025";
 import { IAssettoCorsaCompetizioneData } from "ac-sdk-2025/dist/types/broadcast/interfaces/AssettoCorsaCompetizioneData";
 import { IAssettoCorsaData } from "ac-sdk-2025/dist/types/broadcast/interfaces/AssettoCorsaData";
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
+import { iracingSteeringAngleToPercents } from "./utils/iracingSteeringAngleToPercents";
+import { SpeedConverter } from "@/main/utils/speedConverter";
 
 export type Game =
   | "none"
@@ -13,6 +15,15 @@ export interface IRealtimeGameData {
   throttle?: number;
   brake?: number;
   steeringAngle?: number;
+  gear?: number;
+  speedKph?: number;
+  speedMph?: number;
+  rpm?: number;
+  rpmStage1?: number;
+  rpmStage2?: number;
+  rpmStage3?: number;
+  rpmStageLast?: number;
+  displayUnits?: "IMPERIAL" | "METRIC";
 }
 
 export interface IEntryListElement {
@@ -110,7 +121,26 @@ export function mapDataFromIRacing(
     realtime: {
       throttle: telemetry.Throttle,
       brake: telemetry.Brake,
-      steeringAngle: telemetry.SteeringWheelAngle,
+      steeringAngle: iracingSteeringAngleToPercents(
+        telemetry.SteeringWheelAngle,
+      ),
+      gear: telemetry.Gear,
+      speedKph: SpeedConverter.convert(
+        telemetry.Speed,
+        "METERS_PER_SECOND",
+        "KILOMETERS_PER_HOUR",
+      ),
+      speedMph: SpeedConverter.convert(
+        telemetry.Speed,
+        "METERS_PER_SECOND",
+        "MILES_PER_HOUR",
+      ),
+      rpm: telemetry.RPM,
+      rpmStage1: telemetry.PlayerCarSLFirstRPM,
+      rpmStage2: telemetry.PlayerCarSLShiftRPM,
+      rpmStage3: telemetry.PlayerCarSLLastRPM,
+      rpmStageLast: telemetry.PlayerCarSLBlinkRPM,
+      displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
     },
     entrylist,
   };
