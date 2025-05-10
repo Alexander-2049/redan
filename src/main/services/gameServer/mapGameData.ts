@@ -14,7 +14,7 @@ export type Game =
 export interface IRealtimeGameData {
   throttle?: number;
   brake?: number;
-  steeringAngle?: number;
+  steeringAnglePct?: number;
   gear?: number;
   speedKph?: number;
   speedMph?: number;
@@ -50,7 +50,7 @@ export function mapDataFromAssettoCorsa(
     realtime: {
       throttle: e.throttle,
       brake: e.brake,
-      steeringAngle: e.steeringAngle,
+      steeringAnglePct: e.steeringAngle,
     },
     entrylist: [],
   };
@@ -76,7 +76,7 @@ export function mapDataFromAssettoCorsaCompetizione(
     realtime: {
       throttle: acc_shared_memory_update.throttle,
       brake: acc_shared_memory_update.brake,
-      steeringAngle: acc_shared_memory_update.steeringAngle,
+      steeringAnglePct: acc_shared_memory_update.steeringAngle,
     },
     entrylist: entrylistElements,
   };
@@ -121,7 +121,7 @@ export function mapDataFromIRacing(
     realtime: {
       throttle: telemetry.Throttle,
       brake: telemetry.Brake,
-      steeringAngle: iracingSteeringAngleToPercents(
+      steeringAnglePct: iracingSteeringAngleToPercents(
         telemetry.SteeringWheelAngle,
       ),
       gear: telemetry.Gear,
