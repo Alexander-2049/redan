@@ -12,18 +12,19 @@ export type Game =
   | "iRacing";
 
 export interface IRealtimeGameData {
-  throttle?: number;
-  brake?: number;
-  steeringAnglePct?: number;
-  gear?: number;
-  speedKph?: number;
-  speedMph?: number;
-  rpm?: number;
-  rpmStageFirst?: number;
-  rpmStageShift?: number;
-  rpmStageLast?: number;
-  rpmStageBlink?: number;
-  displayUnits?: "IMPERIAL" | "METRIC";
+  throttle?: number; // Float: [0, 1]
+  brake?: number; // Float: [0, 1]
+  steeringAnglePct?: number; // Float: [0, 1]
+  gear?: number; // Int: [0, 1]
+  speedKph?: number; // Float (-Infinity, +Infinity)
+  speedMph?: number; // Float (-Infinity, +Infinity)
+  rpm?: number; // Float [0, +Infinity]
+  rpmStageFirst?: number; // Int: [0, +Infinity)
+  rpmStageShift?: number; // Int: [0, +Infinity)
+  rpmStageLast?: number; // Int: [0, +Infinity)
+  rpmStageBlink?: number; // Int: [0, +Infinity)
+  displayUnits?: "IMPERIAL" | "METRIC"; // String: "IMPERIAL" | "METRIC"
+  test?: number | string | boolean | number[] | boolean[] | string[];
 }
 
 export interface IEntryListElement {
@@ -50,7 +51,18 @@ export function mapDataFromAssettoCorsa(
     realtime: {
       throttle: e.throttle,
       brake: e.brake,
+      rpm: e.rpm,
+      gear: e.gear,
+      speedKph: e.speedKmh,
+      speedMph: SpeedConverter.convert(
+        e.speedKmh,
+        "KILOMETERS_PER_HOUR",
+        "MILES_PER_HOUR",
+      ),
+      // e.steeringAngle is in range [-1, 1] where -1 is full left and 1 is full right
+      // so it need to be converted to percentage somehow
       steeringAnglePct: e.steeringAngle,
+      test: e.suspensionTravel,
     },
     entrylist: [],
   };
@@ -76,7 +88,18 @@ export function mapDataFromAssettoCorsaCompetizione(
     realtime: {
       throttle: acc_shared_memory_update.throttle,
       brake: acc_shared_memory_update.brake,
+      rpm: acc_shared_memory_update.rpm,
+      gear: acc_shared_memory_update.gear,
+      speedKph: acc_shared_memory_update.speedKmh,
+      speedMph: SpeedConverter.convert(
+        acc_shared_memory_update.speedKmh,
+        "KILOMETERS_PER_HOUR",
+        "MILES_PER_HOUR",
+      ),
+      // acc_shared_memory_update.steeringAngle is in range [-1, 1] where -1 is full left and 1 is full right
+      // so it need to be converted to percentage somehow
       steeringAnglePct: acc_shared_memory_update.steeringAngle,
+      test: acc_shared_memory_update.suspensionTravel,
     },
     entrylist: entrylistElements,
   };
