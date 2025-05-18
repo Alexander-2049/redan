@@ -133,10 +133,10 @@ function attachWindowListeners(
   window.on("moved", updateOverlayPositionAndSize);
 
   window.on("focus", () => {
-    window.webContents.send("overlay-focus");
+    window.webContents.send("show-borders");
   });
   window.on("blur", () => {
-    window.webContents.send("overlay-blur");
+    window.webContents.send("hide-borders");
   });
 }
 

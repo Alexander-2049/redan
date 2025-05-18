@@ -39,11 +39,11 @@ window.addEventListener("DOMContentLoaded", () => {
   const div = new OverlayDraggable();
 
   // ✅ IPC listeners
-  ipcRenderer.on("overlay-focus", () => {
+  ipcRenderer.on("show-borders", () => {
     div.showBorders();
   });
 
-  ipcRenderer.on("overlay-blur", () => {
+  ipcRenderer.on("hide-borders", () => {
     div.hideBorders();
   });
 });
