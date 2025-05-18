@@ -1,9 +1,10 @@
+import { /* contextBridge, */ ipcRenderer } from "electron";
+
 class OverlayDraggable {
   private draggableDiv: HTMLDivElement;
 
   constructor() {
     this.draggableDiv = this.createDraggableDiv();
-
     this.appendElements();
   }
 
@@ -23,9 +24,26 @@ class OverlayDraggable {
   private appendElements(): void {
     document.body.appendChild(this.draggableDiv);
   }
+
+  public showBorders(): void {
+    this.draggableDiv.style.border = "2px solid #00ff00";
+  }
+
+  public hideBorders(): void {
+    this.draggableDiv.style.border = "none";
+  }
 }
 
 // Initialize the draggable overlay when the DOM is loaded
 window.addEventListener("DOMContentLoaded", () => {
-  new OverlayDraggable();
+  const div = new OverlayDraggable();
+
+  // ✅ IPC listeners
+  ipcRenderer.on("overlay-focus", () => {
+    div.showBorders();
+  });
+
+  ipcRenderer.on("overlay-blur", () => {
+    div.hideBorders();
+  });
 });

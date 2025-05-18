@@ -131,6 +131,13 @@ function attachWindowListeners(
   // Listen for resize and move events
   window.on("resized", updateOverlayPositionAndSize);
   window.on("moved", updateOverlayPositionAndSize);
+
+  window.on("focus", () => {
+    window.webContents.send("overlay-focus");
+  });
+  window.on("blur", () => {
+    window.webContents.send("overlay-blur");
+  });
 }
 
 function haveSettingsChanged(
