@@ -24,6 +24,7 @@ export interface IRealtimeGameData {
   rpmStageLast?: number; // Int: [0, +Infinity)
   rpmStageBlink?: number; // Int: [0, +Infinity)
   displayUnits?: "IMPERIAL" | "METRIC"; // String: "IMPERIAL" | "METRIC"
+  absActive?: boolean;
   test?: number | string | boolean | number[] | boolean[] | string[];
 }
 
@@ -164,6 +165,7 @@ export function mapDataFromIRacing(
       rpmStageLast: telemetry.PlayerCarSLLastRPM,
       rpmStageBlink: telemetry.PlayerCarSLBlinkRPM,
       displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
+      absActive: telemetry.BrakeABSactive,
     },
     entrylist,
   };
