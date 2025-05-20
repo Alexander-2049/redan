@@ -5,10 +5,13 @@ import {
   ASSETS_SERVER_PORT,
   OVERLAY_SERVER_PORT,
 } from "../../shared/shared-constants";
+import gameDataHandler from "./game-data";
 
 export const startServers = () => {
   const gameWsServer = new GameWebSocketServer();
   gameWsServer.start();
+  // Remove later
+  gameDataHandler.selectGame("iRacing");
 
   const assetsServer = new AssetsServer(ASSETS_SERVER_PORT);
   assetsServer.start();
