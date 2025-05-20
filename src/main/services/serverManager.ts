@@ -1,4 +1,4 @@
-import { GameWebSocketServer } from "./gameServer/GameWebSocketServer";
+import { GameWebSocketServer } from "./game-websocket-server";
 import AssetsServer from "./assetsServer";
 import OverlayHandler from "./overlayService/overlayHandler";
 import {

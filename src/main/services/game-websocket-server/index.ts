@@ -1,12 +1,10 @@
 import { WEBSOCKET_SERVER_PORT } from "../../../shared/shared-constants";
 import WebSocket from "ws";
-import { ApiResponse } from "./apiResponse";
-import { IMappedGameData } from "./mapGameData";
-import { assettoCorsaStreamer } from "./games/assettoCorsa";
-import { accStreamer } from "./games/assettoCorsaCompetizione";
-import { iracingStreamer } from "./games/iRacing";
-import { extractFieldsFromObject } from "./extractFieldsFromObject";
-import { getChangedFields } from "./getChangedFields";
+import { MappedGameData } from "../game-data/types/GameData";
+import gameDataHandler from "../game-data";
+import { Response } from "./utils/response";
+import { extractFieldsFromObject } from "./utils/extractFieldsFromObject";
+import { getChangedFields } from "./utils/getChangedFields";
 
 interface Listener {
   socket: WebSocket;
@@ -16,18 +14,11 @@ interface Listener {
 export class GameWebSocketServer {
   private wss: WebSocket.Server | null = null;
   private listeners: Listener[] = [];
-  private gameData: IMappedGameData | null = null;
+  private gameData: MappedGameData | null = null;
+  private client = gameDataHandler;
 
   constructor() {
-    assettoCorsaStreamer.on("data", (data) => {
-      this.updateAndSendGameDataUpdateToAllListeners(data);
-    });
-
-    accStreamer.on("data", (data) => {
-      this.updateAndSendGameDataUpdateToAllListeners(data);
-    });
-
-    iracingStreamer.on("data", (data) => {
+    this.client.addListener("data", (data) => {
       this.updateAndSendGameDataUpdateToAllListeners(data);
     });
   }
@@ -48,9 +39,7 @@ export class GameWebSocketServer {
         const query = url.searchParams.get("q");
 
         if (!query) {
-          socket.send(
-            ApiResponse.failure("'q' parameter is required").toJSON(),
-          );
+          socket.send(Response.failure("'q' parameter is required").toJSON());
           socket.close();
           return;
         }
@@ -60,7 +49,7 @@ export class GameWebSocketServer {
 
         if (fields.length < 1 || fields.length > maxFields) {
           socket.send(
-            ApiResponse.failure(
+            Response.failure(
               "There must be >1 field and <30 fields listed in 'q' parameter",
             ).toJSON(),
           );
@@ -72,13 +61,13 @@ export class GameWebSocketServer {
 
         if (this.gameData) {
           const data = extractFieldsFromObject(fields, this.gameData);
-          socket.send(ApiResponse.success(data).toJSON());
+          socket.send(Response.success(data).toJSON());
         }
         this.addListenerSocket(socket, fields);
       } catch (error) {
         console.error(error);
         if (error instanceof Error) {
-          socket.send(ApiResponse.failure(error.message).toJSON());
+          socket.send(Response.failure(error.message).toJSON());
         }
         socket.close();
       }
@@ -110,7 +99,7 @@ export class GameWebSocketServer {
     this.listeners = this.listeners.filter(({ socket: s }) => s !== socket);
   }
 
-  private updateAndSendGameDataUpdateToAllListeners(data: IMappedGameData) {
+  private updateAndSendGameDataUpdateToAllListeners(data: MappedGameData) {
     this.listeners.forEach((listener) => {
       const oldData = this.gameData;
       const updatedData = data;
@@ -126,10 +115,10 @@ export class GameWebSocketServer {
   }
 
   private sendGameDataToListener<T>(listener: Listener, data: T) {
-    listener.socket.send(ApiResponse.success(data).toJSON());
+    listener.socket.send(Response.success(data).toJSON());
   }
 
-  public acceptGameData(data: IMappedGameData) {
+  public acceptGameData(data: MappedGameData) {
     this.gameData = data;
   }
 
