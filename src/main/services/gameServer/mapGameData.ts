@@ -25,6 +25,8 @@ export interface IRealtimeGameData {
   rpmStageBlink?: number; // Int: [0, +Infinity)
   displayUnits?: "IMPERIAL" | "METRIC"; // String: "IMPERIAL" | "METRIC"
   absActive?: boolean;
+  isOnTrack?: boolean;
+  isReplayMode?: boolean;
   test?: number | string | boolean | number[] | boolean[] | string[];
 }
 
@@ -166,6 +168,8 @@ export function mapDataFromIRacing(
       rpmStageBlink: telemetry.PlayerCarSLBlinkRPM,
       displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
       absActive: telemetry.BrakeABSactive,
+      isOnTrack: telemetry.IsOnTrack,
+      isReplayMode: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
     },
     entrylist,
   };
