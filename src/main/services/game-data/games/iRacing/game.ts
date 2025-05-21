@@ -62,6 +62,7 @@ class iRacing extends Game {
   disconnect(): void {
     if (this.client !== null) {
       this.client._stop();
+      this.client.removeAllListeners();
       this.client = null;
       this._isConnected = false;
       this._isListening = false;
