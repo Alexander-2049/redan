@@ -5,7 +5,6 @@ import {
   // Flag,
   // Gauge,
   // HelpCircle,
-  Layers,
   Layout,
   // LayoutDashboard,
   // MonitorPlay,
@@ -29,7 +28,6 @@ const sidebarLinks = [
     group: "MAIN",
     links: [
       // { text: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-      { text: "My Overlays", path: "/my-overlays", icon: Layers },
       { text: "My Layouts", path: "/my-layouts", icon: Layout },
       // { text: "Live Preview", path: "/live-preview", icon: MonitorPlay },
       // { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },

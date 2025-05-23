@@ -6,7 +6,6 @@ import DashboardRoute from "./routes/dashboard-route";
 import DebugRoute from "./routes/debug-route";
 import PageLayout from "./components/layout/page-layout";
 import NotFoundRoute from "./routes/not-found-route";
-import MyOverlaysRoute from "./routes/my-overlays-route";
 import MyLayoutsRoute from "./routes/my-layouts-route";
 
 const Main = () => {
@@ -24,7 +23,6 @@ const Main = () => {
             <Route index element={<DashboardRoute />} />
             <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugRoute />} />
-            <Route path="/my-overlays" element={<MyOverlaysRoute />} />
             <Route path="/my-layouts" element={<MyLayoutsRoute />} />
           </Route>
           <Route path="*" element={<PageLayout />}>
