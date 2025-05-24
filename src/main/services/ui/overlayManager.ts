@@ -6,6 +6,7 @@ import { ILayoutDataAndFilename } from "../layoutService/schemas/layoutSchema";
 import { OVERLAY_SERVER_PORT } from "@/shared/shared-constants";
 import { ILayoutOverlaySetting } from "../layoutService/schemas/overlaySchema";
 import { BrowserWindow } from "electron";
+import gameDataHandler from "../game-data";
 
 export const updateOverlayWindows = (windows: IOverlayWindow[]) => {
   OverlayHandler.createOverlaysFolder();
@@ -105,6 +106,10 @@ function attachWindowListeners(
   overlayId: string,
   activeLayout: ILayoutDataAndFilename,
 ) {
+  const overlay = activeLayout.data.overlays.find(
+    (overlay) => overlay.id === overlayId,
+  );
+
   const updateOverlayPositionAndSize = () => {
     const bounds = window.getBounds(); // Get the current position and size
     const overlayIndex = activeLayout.data.overlays.findIndex(
@@ -137,6 +142,16 @@ function attachWindowListeners(
   });
   window.on("blur", () => {
     window.webContents.send("hide-borders");
+  });
+
+  window.hide();
+  gameDataHandler.addListener("data", (data) => {
+    if (overlay?.visible && !data.isConnected && window.isVisible()) {
+      window.hide();
+    }
+    if (overlay?.visible && data.isConnected && !window.isVisible()) {
+      window.show();
+    }
   });
 }
 
