@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, screen } from "electron";
+import { app, BrowserWindow, ipcMain, screen } from "electron";
 import OverlayHandler from "@/main/services/overlayService/overlayHandler";
 import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
@@ -6,6 +6,7 @@ import { LayoutHandler } from "../layoutService/layoutHandler";
 import { ILayout } from "../layoutService/schemas/layoutSchema";
 import { ILayoutOverlaySetting } from "../layoutService/schemas/overlaySchema";
 import { updateOverlayWindows } from "./overlayManager";
+import path from "path";
 
 export interface IOverlayWindow {
   overlayId: string;
@@ -21,6 +22,10 @@ const windows: {
   overlays: [],
 };
 
+const iconPath = app.isPackaged
+  ? path.join(process.resourcesPath, "public", "logo.ico")
+  : path.join(__dirname, "..", "..", "public", "logo.ico");
+
 export const createWindow = (preload: string, entry: string): BrowserWindow => {
   const mainWindow = new BrowserWindow({
     height: 800,
@@ -33,6 +38,7 @@ export const createWindow = (preload: string, entry: string): BrowserWindow => {
     },
     frame: false,
     titleBarStyle: "hidden",
+    icon: iconPath,
   });
 
   addMessageHandlers();
