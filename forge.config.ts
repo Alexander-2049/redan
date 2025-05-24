@@ -18,6 +18,7 @@ import {
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    icon: "public/logo.ico",
   },
   rebuildConfig: {},
   makers: [
