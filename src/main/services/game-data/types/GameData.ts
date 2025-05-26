@@ -21,6 +21,8 @@ export interface RealtimeGameData {
 
 export interface DriverElement {
   position?: number;
+  classPosition?: number;
+  iRacingClass?: number;
   firstName?: string;
   middleName?: string;
   lastName?: string;
@@ -28,6 +30,8 @@ export interface DriverElement {
   teamName?: string | null;
   iRating?: number;
   lapDistPct?: number;
+  lapDistTotalPct?: number;
+  lapsCompleted?: number;
   rpm?: number;
   gear?: number;
 }

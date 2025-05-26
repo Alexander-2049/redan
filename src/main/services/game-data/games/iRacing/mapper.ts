@@ -2,44 +2,29 @@ import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
 import { SpeedConverter } from "../../utils/SpeedConverter";
 import { iracingSteeringAngleToPercents } from "../../utils/iracingSteeringAngleToPercents";
 import { DriverElement, MappedGameData } from "../../types/GameData";
+import { calculateDistancesAndSort, mapDriverData } from "./utils";
 
 export function mapDataFromIRacing(
   c: boolean,
   telemetry: TelemetryValues,
   sessionInfo: SessionInfoData,
 ): MappedGameData {
+  const driversRaw = sessionInfo.DriverInfo.Drivers;
+  const { positionMap, classPositionMap } = calculateDistancesAndSort(
+    telemetry,
+    driversRaw,
+  );
+
   const drivers: DriverElement[] = [];
-  for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
-    const driver = sessionInfo.DriverInfo.Drivers[i];
-    telemetry;
-
-    let username: string[] = [];
-    if (typeof driver.UserName === "string")
-      username = driver.UserName.split(" ");
-    let firstName = "";
-    let middleName = "";
-    let lastName = "";
-
-    if (username.length > 0) {
-      firstName = username[0];
-      lastName = username[username.length - 1];
-      if (username.length > 2) {
-        middleName = username.slice(1, -1).join(" ");
-      }
-    }
-
-    drivers.push({
-      position: telemetry.CarIdxPosition[i],
-      firstName,
-      middleName,
-      lastName,
-      teamId: driver.TeamID === 0 ? null : driver.TeamID,
-      teamName: driver.TeamID === 0 ? null : driver.TeamName,
-      iRating: driver.IRating,
-      lapDistPct: telemetry.CarIdxLapDistPct[i],
-      rpm: telemetry.CarIdxRPM[i],
-      gear: telemetry.CarIdxGear[i],
-    });
+  for (let i = 0; i < driversRaw.length; i++) {
+    const driver = mapDriverData(
+      i,
+      driversRaw[i],
+      telemetry,
+      positionMap,
+      classPositionMap,
+    );
+    if (driver) drivers.push(driver);
   }
 
   return {
@@ -73,7 +58,7 @@ export function mapDataFromIRacing(
         telemetry.IsOnTrack || telemetry.PlayerTrackSurface !== "NotInWorld",
       isInReplay: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
     },
-    drivers: drivers,
+    drivers,
     session: {
       trackName: sessionInfo.WeekendInfo.TrackName,
     },
