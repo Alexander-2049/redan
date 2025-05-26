@@ -5,16 +5,11 @@ const client = new GameWebSocketServer();
 client.start();
 gameDataHandler.selectGame("iRacing");
 
-setTimeout(() => {
-  console.log(`Selecting game: null`);
-  gameDataHandler.selectGame(null);
+let last = "";
+gameDataHandler.addListener("data", (data) => {
+  const current = JSON.stringify(data);
+  if (current === last) return;
 
-  setTimeout(() => {
-    console.log(gameDataHandler.gameName);
-
-    console.log(`Selecting game: iRacing`);
-    gameDataHandler.selectGame("iRacing");
-
-    console.log(gameDataHandler.gameName);
-  }, 1000);
-}, 10000);
+  last = current;
+  console.log(data.drivers);
+});
