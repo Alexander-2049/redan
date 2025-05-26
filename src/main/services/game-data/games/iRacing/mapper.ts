@@ -29,13 +29,16 @@ export function mapDataFromIRacing(
     }
 
     drivers.push({
-      position: i + 1,
+      position: telemetry.CarIdxPosition[i],
       firstName,
       middleName,
       lastName,
       teamId: driver.TeamID === 0 ? null : driver.TeamID,
       teamName: driver.TeamID === 0 ? null : driver.TeamName,
       iRating: driver.IRating,
+      lapDistPct: telemetry.CarIdxLapDistPct[i],
+      rpm: telemetry.CarIdxRPM[i],
+      gear: telemetry.CarIdxGear[i],
     });
   }
 
@@ -69,8 +72,10 @@ export function mapDataFromIRacing(
       isOnTrack:
         telemetry.IsOnTrack || telemetry.PlayerTrackSurface !== "NotInWorld",
       isInReplay: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
-      test: JSON.stringify(sessionInfo.SessionInfo.Sessions, null, 2),
     },
     drivers: drivers,
+    session: {
+      trackName: sessionInfo.WeekendInfo.TrackName,
+    },
   };
 }

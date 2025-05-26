@@ -27,6 +27,13 @@ export interface DriverElement {
   teamId?: number | null;
   teamName?: string | null;
   iRating?: number;
+  lapDistPct?: number;
+  rpm?: number;
+  gear?: number;
+}
+
+export interface Session {
+  trackName?: string;
 }
 
 export interface MappedGameData {
@@ -34,4 +41,5 @@ export interface MappedGameData {
   isConnected: boolean;
   realtime: RealtimeGameData;
   drivers: DriverElement[];
+  session: Session;
 }
