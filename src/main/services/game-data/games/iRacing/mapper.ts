@@ -63,8 +63,9 @@ export function mapDataFromIRacing(
       rpmStageBlink: telemetry.PlayerCarSLBlinkRPM,
       displayUnits: telemetry.DisplayUnits === 0 ? "IMPERIAL" : "METRIC",
       absActive: telemetry.BrakeABSactive,
-      isOnTrack: telemetry.IsOnTrack,
-      isReplayMode: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
+      isOnTrack:
+        telemetry.IsOnTrack || telemetry.PlayerTrackSurface !== "NotInWorld",
+      isInReplay: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
     },
     entrylist,
   };

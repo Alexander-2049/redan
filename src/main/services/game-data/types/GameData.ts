@@ -15,7 +15,7 @@ export interface RealtimeGameData {
   displayUnits?: "IMPERIAL" | "METRIC"; // String: "IMPERIAL" | "METRIC"
   absActive?: boolean;
   isOnTrack?: boolean;
-  isReplayMode?: boolean;
+  isInReplay?: boolean;
   test?: number | string | boolean | number[] | boolean[] | string[];
 }
 

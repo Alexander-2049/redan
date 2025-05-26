@@ -1,21 +1,74 @@
 import { EventEmitter } from "events";
 import { MappedGameData } from "../types/GameData";
+import { GameName } from "../types/GameName";
+
+export interface RaceStatus {
+  isOnTrack: boolean;
+  isInReplay: boolean;
+}
+
+interface GameDataEvents {
+  game: GameName | null;
+  data: MappedGameData;
+  status: RaceStatus;
+}
 
 export default class GameDataEmitter extends EventEmitter {
-  on(event: "data", listener: (data: MappedGameData) => void): this;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  on(event: string, listener: (...args: any[]) => void): this {
+  constructor() {
+    super();
+    this.addListener("data", (data) => {
+      if (!data.isConnected) {
+        this.status = {
+          isOnTrack: false,
+          isInReplay: false,
+        };
+      } else {
+        this.status = {
+          isOnTrack: data.realtime.isOnTrack || false,
+          isInReplay: data.realtime.isInReplay || false,
+        };
+      }
+    });
+  }
+
+  private _status: RaceStatus = {
+    isInReplay: false,
+    isOnTrack: false,
+  };
+
+  private set status(status: RaceStatus) {
+    if (
+      status.isInReplay === this.status.isInReplay &&
+      status.isOnTrack === this.status.isOnTrack
+    )
+      return;
+
+    this._status = status;
+    this.emit("status", status);
+  }
+
+  public get status() {
+    return this._status;
+  }
+
+  override on<K extends keyof GameDataEvents>(
+    event: K,
+    listener: (arg: GameDataEvents[K]) => void,
+  ): this {
     return super.on(event, listener);
   }
 
-  addListener(event: "data", listener: (data: MappedGameData) => void): this;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addListener(event: string, listener: (...args: any[]) => void): this {
+  override addListener<K extends keyof GameDataEvents>(
+    event: K,
+    listener: (arg: GameDataEvents[K]) => void,
+  ): this {
     return super.addListener(event, listener);
   }
 
-  emit(event: "data", data: MappedGameData): boolean;
-  emit(event: string, ...args: unknown[]): boolean {
-    return super.emit(event, ...args);
+  override emit<K extends keyof GameDataEvents>(
+    event: K,
+    arg: GameDataEvents[K],
+  ): boolean {
+    return super.emit(event, arg);
   }
 }

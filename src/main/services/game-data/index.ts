@@ -26,7 +26,7 @@ class GameDataHandler extends GameDataEmitter {
         break;
     }
 
-    this._gameName = gameName;
+    this.gameName = gameName;
 
     if (this.game) {
       this.game.addListener("data", (data) => {
@@ -38,6 +38,11 @@ class GameDataHandler extends GameDataEmitter {
 
   public get gameName() {
     return this._gameName;
+  }
+
+  private set gameName(gameName: GameName | null) {
+    this._gameName = gameName;
+    this.emit("game", gameName);
   }
 }
 
