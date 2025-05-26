@@ -16,10 +16,12 @@ export interface RealtimeGameData {
   absActive?: boolean;
   isOnTrack?: boolean;
   isInReplay?: boolean;
+  spectateCarId?: number;
   test?: number | string | boolean | number[] | boolean[] | string[];
 }
 
 export interface DriverElement {
+  carId?: number;
   position?: number;
   classPosition?: number;
   iRacingClass?: number;

@@ -25,16 +25,18 @@ export function calculateDriversLivePositions(
   const onTrackDrivers: {
     carIdx: number;
     classId: number;
-    distance: number;
+    totalDistance: number;
   }[] = [];
 
   for (const driver of sessionInfo.DriverInfo.Drivers) {
     const carIdx = driver.CarIdx;
     const classId = driver.CarClassID;
     const isCarOnTrack = telemetry.CarIdxTrackSurface[carIdx] !== "NotInWorld";
+    const isPaceCar = driver.CarIsPaceCar;
+
+    if (isPaceCar) continue;
 
     if (!isCarOnTrack) {
-      // Save positions directly
       positions.set(carIdx, {
         position: telemetry.CarIdxPosition[carIdx],
         classPosition: telemetry.CarIdxClassPosition[carIdx],
@@ -51,15 +53,26 @@ export function calculateDriversLivePositions(
       }
     } else {
       // Calculate distance traveled
-      const distance =
+
+      const raceJustStarted = telemetry.SessionTime < 120 + 25;
+      let lapDistTotalPct =
         telemetry.CarIdxLapCompleted[carIdx] +
         telemetry.CarIdxLapDistPct[carIdx];
-      onTrackDrivers.push({ carIdx, classId, distance });
+      if (
+        raceJustStarted &&
+        telemetry.CarIdxLapCompleted[carIdx] +
+          telemetry.CarIdxLapDistPct[carIdx] >
+          0.75
+      ) {
+        lapDistTotalPct = (1 - lapDistTotalPct) * -1;
+      }
+
+      onTrackDrivers.push({ carIdx, classId, totalDistance: lapDistTotalPct });
     }
   }
 
   // Sort on-track drivers by distance (descending)
-  onTrackDrivers.sort((a, b) => b.distance - a.distance);
+  onTrackDrivers.sort((a, b) => b.totalDistance - a.totalDistance);
 
   // Assign positions to on-track drivers
   const availablePositions: number[] = [];
@@ -98,22 +111,31 @@ export function mapDriversData(
   sessionInfo: SessionInfoData,
 ): DriverElement[] {
   const drivers: DriverElement[] = [];
+  const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
 
   for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
     const driver = sessionInfo.DriverInfo.Drivers[i];
+    if (driver.CarIsPaceCar) continue;
+
     const name = parseDriverName(driver.UserName);
 
-    // console.log(sessionInfo.SessionInfo.Sessions);
-
-    const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
+    const raceJustStarted = telemetry.SessionTime < 120 + 25;
+    let lapDistTotalPct =
+      telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i];
+    if (
+      raceJustStarted &&
+      telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i] > 0.75
+    ) {
+      lapDistTotalPct = (1 - lapDistTotalPct) * -1;
+    }
 
     drivers.push({
+      carId: driver.CarIdx,
       firstName: name.firstName,
       lastName: name.lastName,
       middleName: name.middleName,
       lapDistPct: telemetry.CarIdxLapDistPct[i],
-      lapDistTotalPct:
-        telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i],
+      lapDistTotalPct,
       position: livePosition.get(driver.CarIdx)?.position || 0,
       classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
       isCarOnTrack:

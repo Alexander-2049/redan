@@ -39,6 +39,7 @@ export function mapDataFromIRacing(
       isOnTrack:
         telemetry.IsOnTrack || telemetry.PlayerTrackSurface !== "NotInWorld",
       isInReplay: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
+      spectateCarId: telemetry.CamCarIdx,
     },
     drivers: mapDriversData(telemetry, sessionInfo),
     session: {
