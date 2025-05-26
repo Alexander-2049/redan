@@ -10,73 +10,116 @@ export function parseDriverName(fullName: string) {
   return { firstName, middleName, lastName };
 }
 
-export function mapDriverData(
-  i: number,
-  driver: SessionInfoData["DriverInfo"]["Drivers"][number],
-  telemetry: TelemetryValues,
-  positionMap: Map<number, number>,
-  classPositionMap: Map<number, number>,
-): DriverElement | null {
-  if (driver.CarIsPaceCar) return null;
-
-  const { firstName, middleName, lastName } = parseDriverName(driver.UserName);
-
-  return {
-    position: positionMap.get(i) ?? 0,
-    classPosition: classPositionMap.get(i) ?? 0,
-    iRacingClass: telemetry.CarIdxClass[i],
-    firstName,
-    middleName,
-    lastName,
-    teamId: driver.TeamID === 0 ? null : driver.TeamID,
-    teamName: driver.TeamID === 0 ? null : driver.TeamName,
-    iRating: driver.IRating,
-    lapDistPct: telemetry.CarIdxLapDistPct[i],
-    lapDistTotalPct:
-      telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i],
-    lapsCompleted: telemetry.CarIdxLapCompleted[i],
-    gear: telemetry.CarIdxGear[i],
-  };
+interface Position {
+  position: number;
+  classPosition: number;
 }
 
-export type DistanceEntry = {
-  index: number;
-  totalDist: number;
-  classId: number;
-};
-
-export function calculateDistancesAndSort(
+export function calculateDriversLivePositions(
   telemetry: TelemetryValues,
-  drivers: SessionInfoData["DriverInfo"]["Drivers"],
-) {
-  const distanceArray: DistanceEntry[] = [];
+  sessionInfo: SessionInfoData,
+): Map<number, Position> {
+  const positions: Map<number, Position> = new Map();
+  const notOnTrackPositions: number[] = [];
+  const notOnTrackClassPositions: Map<number, number[]> = new Map(); // Map<classId, carIdx[]>
+  const onTrackDrivers: {
+    carIdx: number;
+    classId: number;
+    distance: number;
+  }[] = [];
 
-  for (let i = 0; i < drivers.length; i++) {
-    const totalDist =
-      telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i];
-    const classId = telemetry.CarIdxClass[i];
-    distanceArray.push({ index: i, totalDist, classId });
+  for (const driver of sessionInfo.DriverInfo.Drivers) {
+    const carIdx = driver.CarIdx;
+    const classId = driver.CarClassID;
+    const isCarOnTrack = telemetry.CarIdxTrackSurface[carIdx] !== "NotInWorld";
+
+    if (!isCarOnTrack) {
+      // Save positions directly
+      positions.set(carIdx, {
+        position: telemetry.CarIdxPosition[carIdx],
+        classPosition: telemetry.CarIdxClassPosition[carIdx],
+      });
+
+      notOnTrackPositions.push(telemetry.CarIdxPosition[carIdx]);
+
+      if (!notOnTrackClassPositions.has(classId)) {
+        notOnTrackClassPositions.set(classId, []);
+      }
+      const classPositions = notOnTrackClassPositions.get(classId);
+      if (classPositions) {
+        classPositions.push(telemetry.CarIdxClassPosition[carIdx]);
+      }
+    } else {
+      // Calculate distance traveled
+      const distance =
+        telemetry.CarIdxLapCompleted[carIdx] +
+        telemetry.CarIdxLapDistPct[carIdx];
+      onTrackDrivers.push({ carIdx, classId, distance });
+    }
   }
 
-  distanceArray.sort((a, b) => b.totalDist - a.totalDist);
+  // Sort on-track drivers by distance (descending)
+  onTrackDrivers.sort((a, b) => b.distance - a.distance);
 
-  const positionMap = new Map<number, number>();
-  distanceArray.forEach((entry, idx) => positionMap.set(entry.index, idx + 1));
-
-  const classPositionMap = new Map<number, number>();
-  const classGrouped: Record<number, DistanceEntry[]> = {};
-
-  for (const entry of distanceArray) {
-    if (!classGrouped[entry.classId]) classGrouped[entry.classId] = [];
-    classGrouped[entry.classId].push(entry);
+  // Assign positions to on-track drivers
+  const availablePositions: number[] = [];
+  for (let pos = 1; pos <= sessionInfo.DriverInfo.Drivers.length; pos++) {
+    if (!notOnTrackPositions.includes(pos)) {
+      availablePositions.push(pos);
+    }
   }
 
-  for (const classId in classGrouped) {
-    const sorted = classGrouped[classId].sort(
-      (a, b) => b.totalDist - a.totalDist,
-    );
-    sorted.forEach((entry, idx) => classPositionMap.set(entry.index, idx + 1));
+  for (let i = 0; i < onTrackDrivers.length; i++) {
+    const { carIdx, classId } = onTrackDrivers[i];
+
+    // Assign global position
+    const position = availablePositions[i];
+
+    // Assign class position
+    const takenClassPositions = notOnTrackClassPositions.get(classId) ?? [];
+    let classPos = 1;
+    while (takenClassPositions.includes(classPos)) {
+      classPos++;
+    }
+    takenClassPositions.push(classPos);
+    notOnTrackClassPositions.set(classId, takenClassPositions);
+
+    positions.set(carIdx, {
+      position,
+      classPosition: classPos,
+    });
   }
 
-  return { positionMap, classPositionMap };
+  return positions;
+}
+
+export function mapDriversData(
+  telemetry: TelemetryValues,
+  sessionInfo: SessionInfoData,
+): DriverElement[] {
+  const drivers: DriverElement[] = [];
+
+  for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
+    const driver = sessionInfo.DriverInfo.Drivers[i];
+    const name = parseDriverName(driver.UserName);
+
+    // console.log(sessionInfo.SessionInfo.Sessions);
+
+    const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
+
+    drivers.push({
+      firstName: name.firstName,
+      lastName: name.lastName,
+      middleName: name.middleName,
+      lapDistPct: telemetry.CarIdxLapDistPct[i],
+      lapDistTotalPct:
+        telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i],
+      position: livePosition.get(driver.CarIdx)?.position || 0,
+      classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
+      isCarOnTrack:
+        telemetry.CarIdxTrackSurface[driver.CarIdx] !== "NotInWorld",
+    });
+  }
+
+  return drivers;
 }

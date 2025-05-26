@@ -1,32 +1,14 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
 import { SpeedConverter } from "../../utils/SpeedConverter";
 import { iracingSteeringAngleToPercents } from "../../utils/iracingSteeringAngleToPercents";
-import { DriverElement, MappedGameData } from "../../types/GameData";
-import { calculateDistancesAndSort, mapDriverData } from "./utils";
+import { MappedGameData } from "../../types/GameData";
+import { mapDriversData } from "./utils";
 
 export function mapDataFromIRacing(
   c: boolean,
   telemetry: TelemetryValues,
   sessionInfo: SessionInfoData,
 ): MappedGameData {
-  const driversRaw = sessionInfo.DriverInfo.Drivers;
-  const { positionMap, classPositionMap } = calculateDistancesAndSort(
-    telemetry,
-    driversRaw,
-  );
-
-  const drivers: DriverElement[] = [];
-  for (let i = 0; i < driversRaw.length; i++) {
-    const driver = mapDriverData(
-      i,
-      driversRaw[i],
-      telemetry,
-      positionMap,
-      classPositionMap,
-    );
-    if (driver) drivers.push(driver);
-  }
-
   return {
     isConnected: c,
     game: "iRacing",
@@ -58,7 +40,7 @@ export function mapDataFromIRacing(
         telemetry.IsOnTrack || telemetry.PlayerTrackSurface !== "NotInWorld",
       isInReplay: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
     },
-    drivers,
+    drivers: mapDriversData(telemetry, sessionInfo),
     session: {
       trackName: sessionInfo.WeekendInfo.TrackName,
     },

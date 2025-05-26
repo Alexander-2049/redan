@@ -34,6 +34,7 @@ export interface DriverElement {
   lapsCompleted?: number;
   rpm?: number;
   gear?: number;
+  isCarOnTrack?: boolean;
 }
 
 export interface Session {
