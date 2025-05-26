@@ -5,6 +5,7 @@ import { GameName } from "../types/GameName";
 export interface RaceStatus {
   isOnTrack: boolean;
   isInReplay: boolean;
+  isConnected: boolean;
 }
 
 interface GameDataEvents {
@@ -21,11 +22,13 @@ export default class GameDataEmitter extends EventEmitter {
         this.status = {
           isOnTrack: false,
           isInReplay: false,
+          isConnected: data.isConnected,
         };
       } else {
         this.status = {
           isOnTrack: data.realtime.isOnTrack || false,
           isInReplay: data.realtime.isInReplay || false,
+          isConnected: data.isConnected,
         };
       }
     });
@@ -34,6 +37,7 @@ export default class GameDataEmitter extends EventEmitter {
   private _status: RaceStatus = {
     isInReplay: false,
     isOnTrack: false,
+    isConnected: false,
   };
 
   private set status(status: RaceStatus) {
