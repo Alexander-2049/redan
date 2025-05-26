@@ -19,16 +19,19 @@ export interface RealtimeGameData {
   test?: number | string | boolean | number[] | boolean[] | string[];
 }
 
-export interface EntryListElement {
+export interface DriverElement {
   position?: number;
   firstName?: string;
   middleName?: string;
   lastName?: string;
+  teamId?: number | null;
+  teamName?: string | null;
+  iRating?: number;
 }
 
 export interface MappedGameData {
   game: GameName;
   isConnected: boolean;
   realtime: RealtimeGameData;
-  entrylist: EntryListElement[];
+  drivers: DriverElement[];
 }

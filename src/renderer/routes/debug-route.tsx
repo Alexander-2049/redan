@@ -7,7 +7,10 @@ const DebugRoute = () => {
   const value = useSelector((state: RootState) => state.example.value);
   const dispatch = useDispatch();
 
-  const { data } = useWebSocket("ws://localhost:49791", ["realtime"]);
+  const { data } = useWebSocket("ws://localhost:49791", [
+    "realtime",
+    "drivers",
+  ]);
 
   return (
     <>

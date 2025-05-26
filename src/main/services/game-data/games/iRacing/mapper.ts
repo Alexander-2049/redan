@@ -1,14 +1,14 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
 import { SpeedConverter } from "../../utils/SpeedConverter";
 import { iracingSteeringAngleToPercents } from "../../utils/iracingSteeringAngleToPercents";
-import { EntryListElement, MappedGameData } from "../../types/GameData";
+import { DriverElement, MappedGameData } from "../../types/GameData";
 
 export function mapDataFromIRacing(
   c: boolean,
   telemetry: TelemetryValues,
   sessionInfo: SessionInfoData,
 ): MappedGameData {
-  const entrylist: EntryListElement[] = [];
+  const drivers: DriverElement[] = [];
   for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
     const driver = sessionInfo.DriverInfo.Drivers[i];
     telemetry;
@@ -28,11 +28,14 @@ export function mapDataFromIRacing(
       }
     }
 
-    entrylist.push({
+    drivers.push({
       position: i + 1,
       firstName,
       middleName,
       lastName,
+      teamId: driver.TeamID === 0 ? null : driver.TeamID,
+      teamName: driver.TeamID === 0 ? null : driver.TeamName,
+      iRating: driver.IRating,
     });
   }
 
@@ -66,7 +69,8 @@ export function mapDataFromIRacing(
       isOnTrack:
         telemetry.IsOnTrack || telemetry.PlayerTrackSurface !== "NotInWorld",
       isInReplay: telemetry.IsReplayPlaying && !telemetry.IsOnTrackCar,
+      test: JSON.stringify(sessionInfo.SessionInfo.Sessions, null, 2),
     },
-    entrylist,
+    drivers: drivers,
   };
 }
