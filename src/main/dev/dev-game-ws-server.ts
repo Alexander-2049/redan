@@ -13,22 +13,3 @@ gameDataHandler.selectGame("iRacing");
 //   last = current;
 //   console.log(data.drivers);
 // });
-
-gameDataHandler.addListener("connected", () => {
-  console.log("Connected to the game!");
-});
-gameDataHandler.addListener("disconnected", () => {
-  console.log("Disconnected from the game!");
-});
-gameDataHandler.addListener("enteredReplay", () => {
-  console.log("Entered replay mode.");
-});
-gameDataHandler.addListener("exitedReplay", () => {
-  console.log("Exited replay mode.");
-});
-gameDataHandler.addListener("enteredTrack", () => {
-  console.log("Entered track.");
-});
-gameDataHandler.addListener("exitedTrack", () => {
-  console.log("Exited track.");
-});
