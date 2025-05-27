@@ -11,7 +11,6 @@ import { mapDataFromIRacing } from "./mapper";
 
 class iRacing extends Game {
   private client: JsIrSdk | null = null;
-  protected _isConnected = false;
   private data: {
     telemetry?: TelemetryValues;
     sessionInfo?: SessionInfoData;
@@ -27,10 +26,10 @@ class iRacing extends Game {
       this._isListening = true;
 
       this.client.addListener("Connected", () => {
-        this._isConnected = true;
+        this.isConnected = true;
       });
       this.client.addListener("Disconnected", () => {
-        this._isConnected = false;
+        this.isConnected = false;
       });
 
       this.client.addListener(
@@ -64,7 +63,7 @@ class iRacing extends Game {
       this.client._stop();
       this.client.removeAllListeners();
       this.client = null;
-      this._isConnected = false;
+      this.isConnected = false;
       this._isListening = false;
     }
   }

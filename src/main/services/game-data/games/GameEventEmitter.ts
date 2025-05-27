@@ -11,7 +11,12 @@ export interface RaceStatus {
 interface GameDataEvents {
   game: GameName | null;
   data: MappedGameData;
-  status: RaceStatus;
+  enteredReplay: boolean;
+  exitedReplay: boolean;
+  enteredTrack: boolean;
+  exitedTrack: boolean;
+  connected: boolean;
+  disconnected: boolean;
 }
 
 export default class GameDataEmitter extends EventEmitter {
@@ -19,40 +24,52 @@ export default class GameDataEmitter extends EventEmitter {
     super();
     this.addListener("data", (data) => {
       if (!data.isConnected) {
-        this.status = {
-          isOnTrack: false,
-          isInReplay: false,
-          isConnected: data.isConnected,
-        };
+        this.isInReplay = false;
+        this.isOnTrack = false;
+        this.isConnected = data.isConnected;
       } else {
-        this.status = {
-          isOnTrack: data.realtime.isOnTrack || false,
-          isInReplay: data.realtime.isInReplay || false,
-          isConnected: data.isConnected,
-        };
+        this.isOnTrack = data.realtime.isOnTrack || false;
+        this.isInReplay = data.realtime.isInReplay || false;
+        this.isConnected = data.isConnected;
       }
     });
   }
 
-  private _status: RaceStatus = {
-    isInReplay: false,
-    isOnTrack: false,
-    isConnected: false,
-  };
+  private _isInReplay = false;
+  private _isOnTrack = false;
+  private _isConnected = false;
 
-  private set status(status: RaceStatus) {
-    if (
-      status.isInReplay === this.status.isInReplay &&
-      status.isOnTrack === this.status.isOnTrack
-    )
-      return;
-
-    this._status = status;
-    this.emit("status", status);
+  protected set isInReplay(isInReplay: boolean) {
+    if (this._isInReplay === isInReplay) return;
+    this._isInReplay = isInReplay;
+    if (isInReplay) this.emit("enteredReplay", true);
+    else this.emit("exitedReplay", true);
   }
 
-  public get status() {
-    return this._status;
+  public get isInReplay() {
+    return this._isInReplay;
+  }
+
+  protected set isOnTrack(isOnTrack: boolean) {
+    if (this._isOnTrack === isOnTrack) return;
+    this._isOnTrack = isOnTrack;
+    if (isOnTrack) this.emit("enteredTrack", true);
+    else this.emit("exitedTrack", true);
+  }
+
+  public get isOnTrack() {
+    return this._isOnTrack;
+  }
+
+  protected set isConnected(isConnected: boolean) {
+    if (this._isConnected === isConnected) return;
+    this._isConnected = isConnected;
+    if (isConnected) this.emit("connected", true);
+    else this.emit("disconnected", true);
+  }
+
+  public get isConnected() {
+    return this._isConnected;
   }
 
   override on<K extends keyof GameDataEvents>(

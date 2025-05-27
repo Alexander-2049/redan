@@ -1,12 +1,7 @@
 import GameDataEmitter from "./GameEventEmitter";
 
 class Game extends GameDataEmitter {
-  protected _isConnected = false;
   protected _isListening = false;
-
-  get isConnected() {
-    return this._isConnected;
-  }
 
   get isListening() {
     return this._isListening;
