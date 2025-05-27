@@ -1,3 +1,4 @@
+import EmulatorGame from "./games/Emulator/game";
 import Game from "./games/Game";
 import GameDataEmitter from "./games/GameDataEmitter";
 import iRacing from "./games/iRacing/game";
@@ -17,6 +18,9 @@ class GameDataHandler extends GameDataEmitter {
     switch (gameName) {
       case "iRacing":
         this.game = new iRacing();
+        break;
+      case "Emulator":
+        this.game = new EmulatorGame();
         break;
       default:
         this.game = null;

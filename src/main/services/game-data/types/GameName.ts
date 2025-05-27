@@ -1,4 +1,5 @@
 export type GameName =
   | "iRacing"
   | "Assetto Corsa: Competizione"
-  | "Assetto Corsa";
+  | "Assetto Corsa"
+  | "Emulator";
