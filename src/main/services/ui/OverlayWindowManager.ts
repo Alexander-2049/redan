@@ -6,6 +6,7 @@ import { LayoutHandler } from "../layoutService/layoutHandler";
 import { ILayoutDataAndFilename } from "../layoutService/schemas/layoutSchema";
 import { OVERLAY_SERVER_PORT } from "@/shared/shared-constants";
 import { createOverlayWindow } from "@/main/utils/createOverlayWindow";
+// import gameDataHandler from "../game-data";
 
 export interface IOverlayWindow {
   overlayId: string;
@@ -93,6 +94,61 @@ export class OverlayWindowManager {
     w.window.removeAllListeners();
     w.window.close();
     console.log(`Windows after close: ${this.windows.length}`);
+  }
+
+  private attachOverlayWindowListeners(w: IOverlayWindow) {
+    const activeLayout = this.getActiveLayout();
+    if (!activeLayout) return;
+    const overlayId = w.overlayId;
+    const window = w.window;
+
+    // const overlay = activeLayout.data.overlays.find(
+    //   (overlay) => overlay.id === overlayId,
+    // );
+
+    const updateOverlayPositionAndSize = () => {
+      const bounds = window.getBounds(); // Get the current position and size
+      const overlayIndex = activeLayout.data.overlays.findIndex(
+        (overlay) => overlay.id === overlayId,
+      );
+
+      if (overlayIndex !== -1) {
+        // Update the overlay's position and size in the layout
+        activeLayout.data.overlays[overlayIndex].position = {
+          width: bounds.width,
+          height: bounds.height,
+          x: bounds.x,
+          y: bounds.y,
+        };
+
+        // Save the updated layout to the file
+        LayoutHandler.modifyLayout(activeLayout.filename, {
+          ...activeLayout.data,
+          overlays: [...activeLayout.data.overlays],
+        });
+      }
+    };
+
+    // Listen for resize and move events
+    window.on("resized", updateOverlayPositionAndSize);
+    window.on("moved", updateOverlayPositionAndSize);
+
+    window.on("focus", () => {
+      window.webContents.send("show-borders");
+    });
+    window.on("blur", () => {
+      window.webContents.send("hide-borders");
+    });
+
+    // window.hide();
+    // gameDataHandler.addListener("data", (data) => {
+    //   if (overlay?.visible && !data.isConnected && window.isVisible()) {
+    //     window.hide();
+    //   }
+    //   if (overlay?.visible && data.isConnected && !window.isVisible()) {
+    //     window.show();
+    //   }
+    // });
   }
 
   public closeAllOverlays() {
@@ -200,12 +256,15 @@ export class OverlayWindowManager {
           maxHeight,
         });
 
-        this.windows.push({
+        const overlayDetails = {
           manifest,
           overlayId: updatedOverlay.id,
           settings: updatedOverlay.settings,
           window: overlayWindow,
-        });
+        };
+        this.attachOverlayWindowListeners(overlayDetails);
+
+        this.windows.push(overlayDetails);
 
         console.log(
           `Window for overlay ${updatedOverlay.id} created and stored.`,

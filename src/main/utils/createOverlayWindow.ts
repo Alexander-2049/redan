@@ -8,6 +8,7 @@ export const createOverlayWindow = (
 ) => {
   // Create the browser window.
   const overlayWindow = new BrowserWindow({
+    show: false,
     height: 43,
     width: 474,
     frame: false,
@@ -27,7 +28,9 @@ export const createOverlayWindow = (
     ...options,
   });
   // and load the index.html of the app.
-  overlayWindow.loadURL(url);
+  overlayWindow.loadURL(url).then(() => {
+    overlayWindow.showInactive();
+  });
 
   overlayWindow.setAlwaysOnTop(true, "screen-saver");
   overlayWindow.setVisibleOnAllWorkspaces(true); // Ensures it's visible across all workspaces
