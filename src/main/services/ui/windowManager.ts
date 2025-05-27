@@ -119,7 +119,7 @@ const addMessageHandlers = () => {
 
   ipcMain.on("delete-layout-renderer-to-main", (event, fileName: string) => {
     const response = LayoutHandler.deleteLayout(fileName);
-    overlayWindowManager.updateOverlays();
+    overlayWindowManager.updateOverlayWindows();
 
     event.reply("delete-layout-main-to-renderer", response);
   });
@@ -128,7 +128,7 @@ const addMessageHandlers = () => {
     "modify-layout-renderer-to-main",
     (event, fileName: string, updatedData: Partial<ILayout>) => {
       const response = LayoutHandler.modifyLayout(fileName, updatedData);
-      overlayWindowManager.updateOverlays();
+      overlayWindowManager.updateOverlayWindows();
 
       event.reply("modify-layout-main-to-renderer", response);
     },
@@ -141,7 +141,7 @@ const addMessageHandlers = () => {
         layoutFileName,
         overlayFolderName,
       );
-      overlayWindowManager.updateOverlays();
+      overlayWindowManager.updateOverlayWindows();
 
       event.reply("add-overlay-to-layout-main-to-renderer", response);
     },
@@ -150,7 +150,7 @@ const addMessageHandlers = () => {
     "remove-overlay-from-layout-renderer-to-main",
     (event, layoutFileName: string, overlayId: string) => {
       const response = LayoutHandler.removeOverlay(layoutFileName, overlayId);
-      overlayWindowManager.updateOverlays();
+      overlayWindowManager.updateOverlayWindows();
 
       event.reply("remove-overlay-from-layout-main-to-renderer", response);
     },
@@ -159,7 +159,7 @@ const addMessageHandlers = () => {
     "set-active-layout-renderer-to-main",
     (event, layoutFileName: string) => {
       const response = LayoutHandler.setActiveLayout(layoutFileName);
-      overlayWindowManager.updateOverlays();
+      overlayWindowManager.updateOverlayWindows();
 
       event.reply("set-active-layout-main-to-renderer", response);
     },
