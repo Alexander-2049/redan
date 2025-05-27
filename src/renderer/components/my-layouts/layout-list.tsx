@@ -61,7 +61,6 @@ function LayoutSelector() {
   };
 
   const handleSelectLayout = (layout: ILayoutDataAndFilename) => {
-    console.log(layout);
     setActiveLayout({ fileName: layout.filename });
   };
 

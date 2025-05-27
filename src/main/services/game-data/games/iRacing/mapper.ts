@@ -5,12 +5,10 @@ import { MappedGameData } from "../../types/GameData";
 import { mapDriversData } from "./utils";
 
 export function mapDataFromIRacing(
-  c: boolean,
   telemetry: TelemetryValues,
   sessionInfo: SessionInfoData,
 ): MappedGameData {
   return {
-    isConnected: c,
     game: "iRacing",
     realtime: {
       throttle: telemetry.Throttle,

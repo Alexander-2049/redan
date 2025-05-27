@@ -45,7 +45,6 @@ export interface Session {
 
 export interface MappedGameData {
   game: GameName;
-  isConnected: boolean;
   realtime: RealtimeGameData;
   drivers: DriverElement[];
   session: Session;

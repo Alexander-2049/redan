@@ -1,5 +1,5 @@
 import Game from "./games/Game";
-import GameDataEmitter from "./games/GameEventEmitter";
+import GameDataEmitter from "./games/GameDataEmitter";
 import iRacing from "./games/iRacing/game";
 import { GameName } from "./types/GameName";
 
@@ -10,12 +10,9 @@ class GameDataHandler extends GameDataEmitter {
   private _gameName: GameName | null = null;
 
   public selectGame(gameName: GameName | null) {
-    // If currently connected to the game that we are trying to select
-    // then just ignore the call
     if (gameName === this._gameName) return;
 
-    // If currently connected to some game, then disconnect from it
-    if (gameName !== this._gameName && this.game) this.game.disconnect();
+    this.disconnectCurrentGame();
 
     switch (gameName) {
       case "iRacing":
@@ -26,23 +23,32 @@ class GameDataHandler extends GameDataEmitter {
         break;
     }
 
-    this.gameName = gameName;
+    this._gameName = gameName;
+    this.emit("game", this._gameName);
 
     if (this.game) {
-      this.game.addListener("data", (data) => {
-        this.emit("data", data);
-      });
+      this.forwardEventsFromGame(this.game);
       this.game.connect(GAME_DATA_UPDATE_INTERVAL);
+    }
+  }
+
+  private forwardEventsFromGame(game: Game) {
+    game.on("data", (data) => this.emit("data", data));
+    game.on("isConnected", (state) => (this.isConnected = state));
+    game.on("isInReplay", (state) => (this.isInReplay = state));
+    game.on("isOnTrack", (state) => (this.isOnTrack = state));
+  }
+
+  private disconnectCurrentGame() {
+    if (this.game) {
+      this.game.disconnect();
+      this.game.removeAllListeners();
+      this.game = null;
     }
   }
 
   public get gameName() {
     return this._gameName;
-  }
-
-  private set gameName(gameName: GameName | null) {
-    this._gameName = gameName;
-    this.emit("game", gameName);
   }
 }
 
