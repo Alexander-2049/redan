@@ -1,3 +1,4 @@
+import GameSelect from "../game-select";
 import Sidebar from "../side-bar";
 import { Outlet } from "react-router-dom";
 
@@ -8,6 +9,7 @@ const PageLayout = () => {
       <div className="flex-1 overflow-hidden">
         <Outlet />
       </div>
+      <GameSelect />
     </div>
   );
 };
