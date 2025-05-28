@@ -1,35 +1,39 @@
 import { useState } from "react";
 import { Lock, Unlock, ChevronUp } from "lucide-react";
 import { ASSETS_SERVER_PORT } from "@/shared/shared-constants";
+import { useSelectedGame } from "../api/game-select/get-selected-game";
+import { useSetSelectedGame } from "../api/game-select/set-selected-game";
+import { GameName } from "@/main/services/game-data/types/GameName";
 
 interface Game {
-  id: string;
-  name: string;
+  name: GameName;
   logo: string;
 }
 
 const games: Game[] = [
   {
-    id: "1",
     name: "iRacing",
     logo: `http://localhost:${ASSETS_SERVER_PORT}/images/logo-iracing.png`,
   },
   {
-    id: "2",
     name: "Emulator",
     logo: `http://localhost:${ASSETS_SERVER_PORT}/images/logo-gears.webp`,
   },
 ];
 
 export default function GameSelect() {
-  const [selectedGame, setSelectedGame] = useState<string>("1");
+  const selectedGame = useSelectedGame();
+  const { mutate: setSelectedGame } = useSetSelectedGame();
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
 
-  const selectedGameData = games.find((game) => game.id === selectedGame);
+  const selectedGameData = games.find(
+    (game) => game.name === selectedGame.data,
+  );
 
-  const handleGameSelect = (gameId: string) => {
-    setSelectedGame(gameId);
+  const handleGameSelect = (gameName: GameName) => {
+    setSelectedGame({ gameName });
     setIsExpanded(false);
   };
 
@@ -40,6 +44,8 @@ export default function GameSelect() {
   const toggleLock = () => {
     setIsLocked(!isLocked);
   };
+
+  if (selectedGame.isLoading) return;
 
   return (
     <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
@@ -58,10 +64,10 @@ export default function GameSelect() {
             <div className="flex items-center gap-1">
               {games.map((game) => (
                 <button
-                  key={game.id}
-                  onClick={() => handleGameSelect(game.id)}
+                  key={game.name}
+                  onClick={() => handleGameSelect(game.name)}
                   className={`group hover:bg-accent/50 relative flex min-w-0 flex-col items-center gap-2 rounded-xl p-3 transition-all duration-200 hover:scale-105 ${
-                    selectedGame === game.id
+                    selectedGame.data === game.name
                       ? "bg-primary/10 ring-primary/20 ring-2"
                       : ""
                   }`}
@@ -84,7 +90,7 @@ export default function GameSelect() {
                   </span>
 
                   {/* Selection indicator */}
-                  {selectedGame === game.id && (
+                  {selectedGame.data === game.name && (
                     <div className="bg-primary absolute -bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full transition-all duration-200" />
                   )}
                 </button>

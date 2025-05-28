@@ -2,6 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 // Preload (Isolated World)
+import { GameName } from "@/main/services/game-data/types/GameName";
 import { ILayout } from "@/main/services/layoutService/schemas/layoutSchema";
 import { contextBridge, ipcRenderer } from "electron";
 
@@ -72,6 +73,14 @@ contextBridge.exposeInMainWorld("electron", {
       overlayId,
     );
     return withTimeout("remove-overlay-from-layout-main-to-renderer");
+  },
+  getSelectedGame: async (): Promise<GameName | null> => {
+    ipcRenderer.send("get-selected-game-renderer-to-main");
+    return withTimeout("get-selected-game-main-to-renderer");
+  },
+  setSelectedGame: async (gameName: GameName | null) => {
+    ipcRenderer.send("set-selected-game-renderer-to-main", gameName);
+    return withTimeout("set-selected-game-main-to-renderer");
   },
 });
 

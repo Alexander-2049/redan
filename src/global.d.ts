@@ -31,6 +31,8 @@ interface MainWindowAPI {
     layoutFileName: string,
     overlayId: string,
   ) => Promise<IResponse>;
+  getSelectedGame: () => Promise<GameName | null>;
+  setSelectedGame: (gameName: GameName | null) => Promise<IResponse>;
 }
 
 interface WindowAction {

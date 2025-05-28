@@ -2,11 +2,13 @@ import { app, BrowserWindow, ipcMain, screen } from "electron";
 import OverlayHandler from "@/main/services/overlayService/overlayHandler";
 import { TitleBarEvent } from "@/shared/types/TitleBarEvent";
 import { openOverlaysFolder } from "@/main/utils/openOverlaysFolder";
-import { LayoutHandler } from "../layoutService/layoutHandler";
+import { IResponse, LayoutHandler } from "../layoutService/layoutHandler";
 import { ILayout } from "../layoutService/schemas/layoutSchema";
 import { ILayoutOverlaySetting } from "../layoutService/schemas/overlaySchema";
 import path from "path";
 import { overlayWindowManager } from "@/main";
+import gameDataHandler from "../game-data";
+import { GameName } from "../game-data/types/GameName";
 
 export interface IOverlayWindow {
   overlayId: string;
@@ -164,4 +166,23 @@ const addMessageHandlers = () => {
       event.reply("set-active-layout-main-to-renderer", response);
     },
   );
+
+  ipcMain.on(
+    "set-selected-game-renderer-to-main",
+    (event, gameName: GameName | null) => {
+      const success = gameDataHandler.selectGame(gameName);
+      const response: IResponse = success
+        ? { success: true }
+        : { success: false, error: "Failed to set the selected game." };
+
+      event.reply("set-selected-game-main-to-renderer", response);
+    },
+  );
+
+  ipcMain.on("get-selected-game-renderer-to-main", (event) => {
+    event.reply(
+      "get-selected-game-main-to-renderer",
+      gameDataHandler.getSelectedGame(),
+    );
+  });
 };

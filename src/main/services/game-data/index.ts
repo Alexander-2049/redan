@@ -10,29 +10,37 @@ class GameDataHandler extends GameDataEmitter {
   private game: Game | null = null;
   private _gameName: GameName | null = null;
 
-  public selectGame(gameName: GameName | null) {
-    if (gameName === this._gameName) return;
+  private static readonly games: {
+    name: GameName;
+    class: new () => Game;
+  }[] = [
+    { name: "iRacing", class: iRacing },
+    { name: "Emulator", class: EmulatorGame },
+  ];
+
+  public getSelectedGame() {
+    return this._gameName;
+  }
+
+  public selectGame(gameName: GameName | null): boolean {
+    if (gameName === this._gameName) return false;
 
     this.disconnectCurrentGame();
 
-    switch (gameName) {
-      case "iRacing":
-        this.game = new iRacing();
-        break;
-      case "Emulator":
-        this.game = new EmulatorGame();
-        break;
-      default:
-        this.game = null;
-        break;
-    }
+    const gameEntry = GameDataHandler.games.find((g) => g.name === gameName);
 
-    this._gameName = gameName;
-    this.emit("game", this._gameName);
-
-    if (this.game) {
+    if (gameEntry) {
+      this.game = new gameEntry.class();
+      this._gameName = gameName;
+      this.emit("game", this._gameName);
       this.forwardEventsFromGame(this.game);
       this.game.connect(GAME_DATA_UPDATE_INTERVAL);
+      return true;
+    } else {
+      this.game = null;
+      this._gameName = gameName;
+      this.emit("game", this._gameName);
+      return false;
     }
   }
 
