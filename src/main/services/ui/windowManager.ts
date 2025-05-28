@@ -185,4 +185,25 @@ const addMessageHandlers = () => {
       gameDataHandler.getSelectedGame(),
     );
   });
+
+  ipcMain.on(
+    "set-overlays-locked-renderer-to-main",
+    (event, locked: boolean) => {
+      if (locked) {
+        overlayWindowManager.lock();
+      } else {
+        overlayWindowManager.unlock();
+      }
+      event.reply("set-overlays-locked-main-to-renderer", {
+        success: true,
+      });
+    },
+  );
+
+  ipcMain.on("get-overlays-locked-renderer-to-main", (event) => {
+    event.reply(
+      "get-overlays-locked-main-to-renderer",
+      overlayWindowManager.isLocked,
+    );
+  });
 };

@@ -82,6 +82,14 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.send("set-selected-game-renderer-to-main", gameName);
     return withTimeout("set-selected-game-main-to-renderer");
   },
+  getOverlaysLocked: async () => {
+    ipcRenderer.send("get-overlays-locked-renderer-to-main");
+    return withTimeout("get-overlays-locked-main-to-renderer");
+  },
+  setOverlaysLocked: async (locked: boolean) => {
+    ipcRenderer.send("set-overlays-locked-renderer-to-main", locked);
+    return withTimeout("set-overlays-locked-main-to-renderer");
+  },
 });
 
 contextBridge.exposeInMainWorld("actions", {

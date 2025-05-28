@@ -4,6 +4,8 @@ import { ASSETS_SERVER_PORT } from "@/shared/shared-constants";
 import { useSelectedGame } from "../api/game-select/get-selected-game";
 import { useSetSelectedGame } from "../api/game-select/set-selected-game";
 import { GameName } from "@/main/services/game-data/types/GameName";
+import { useOverlaysLocked } from "../api/overlays-windows-locker/get-overlays-lock";
+import { useSetOverlaysLocked } from "../api/overlays-windows-locker/set-overlays-lock";
 
 interface Game {
   name: GameName;
@@ -25,8 +27,10 @@ export default function GameSelect() {
   const selectedGame = useSelectedGame();
   const { mutate: setSelectedGame } = useSetSelectedGame();
 
+  const isLocked = useOverlaysLocked();
+  const { mutate: setIsLocked } = useSetOverlaysLocked();
+
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
 
   const selectedGameData = games.find(
     (game) => game.name === selectedGame.data,
@@ -42,10 +46,12 @@ export default function GameSelect() {
   };
 
   const toggleLock = () => {
-    setIsLocked(!isLocked);
+    setIsLocked({
+      isLocked: !isLocked.data,
+    });
   };
 
-  if (selectedGame.isLoading) return;
+  if (selectedGame.isLoading || isLocked.isLoading) return;
 
   return (
     <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
@@ -105,13 +111,13 @@ export default function GameSelect() {
           <button
             onClick={toggleLock}
             className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 hover:scale-105 ${
-              isLocked
+              isLocked.data
                 ? "bg-red-500/10 text-red-500 ring-2 ring-red-500/20 hover:bg-red-500/20"
                 : "bg-green-500/10 text-green-500 ring-2 ring-green-500/20 hover:bg-green-500/20"
             }`}
-            title={isLocked ? "Unlock Overlays" : "Lock Overlays"}
+            title={isLocked.data ? "Unlock Overlays" : "Lock Overlays"}
           >
-            {isLocked ? (
+            {isLocked.data ? (
               <Lock className="h-5 w-5" />
             ) : (
               <Unlock className="h-5 w-5" />
@@ -143,7 +149,7 @@ export default function GameSelect() {
                   {selectedGameData.name}
                 </span>
                 <span className="text-muted-foreground text-xs">
-                  {isLocked ? "Overlays Locked" : "Overlays Unlocked"}
+                  {isLocked.data ? "Overlays Locked" : "Overlays Unlocked"}
                 </span>
               </div>
 
@@ -160,10 +166,10 @@ export default function GameSelect() {
         {/* Status Indicator */}
         <div className="absolute -top-2 -right-2">
           <div
-            className={`h-3 w-3 rounded-full ${isLocked ? "bg-red-500" : "bg-green-500"} shadow-lg`}
+            className={`h-3 w-3 rounded-full ${isLocked.data ? "bg-red-500" : "bg-green-500"} shadow-lg`}
           >
             <div
-              className={`h-3 w-3 animate-ping rounded-full ${isLocked ? "bg-red-500" : "bg-green-500"}`}
+              className={`h-3 w-3 animate-ping rounded-full ${isLocked.data ? "bg-red-500" : "bg-green-500"}`}
             />
           </div>
         </div>

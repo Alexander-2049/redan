@@ -18,6 +18,29 @@ export interface IOverlayWindow {
 export class OverlayWindowManager {
   private windows: IOverlayWindow[] = [];
   private layouts: ILayoutDataAndFilename[] = [];
+  private _isLocked = false;
+
+  public isLocked() {
+    return this._isLocked;
+  }
+
+  public lock() {
+    this._isLocked = true;
+    this.windows.forEach((w) => {
+      w.window.setIgnoreMouseEvents(true);
+    });
+
+    return true;
+  }
+
+  public unlock() {
+    this._isLocked = false;
+    this.windows.forEach((w) => {
+      w.window.setIgnoreMouseEvents(false);
+    });
+
+    return false;
+  }
 
   private getOverlayManifest(folderName: string): IOverlayManifest | null {
     const overlayManifest = OverlayHandler.loadOverlayManifest(folderName);
@@ -117,6 +140,7 @@ export class OverlayWindowManager {
     window.on("moved", updateOverlayPositionAndSize);
 
     window.on("focus", () => {
+      if (this.isLocked()) return;
       window.webContents.send("show-borders");
     });
     window.on("blur", () => {
@@ -237,6 +261,7 @@ export class OverlayWindowManager {
         this.attachOverlayWindowListeners(overlayDetails);
 
         this.windows.push(overlayDetails);
+        if (this.isLocked()) this.lock();
       }
     });
   }

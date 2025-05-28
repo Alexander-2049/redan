@@ -33,6 +33,8 @@ interface MainWindowAPI {
   ) => Promise<IResponse>;
   getSelectedGame: () => Promise<GameName | null>;
   setSelectedGame: (gameName: GameName | null) => Promise<IResponse>;
+  getOverlaysLocked: () => Promise<boolean>;
+  setOverlaysLocked: (boolean) => Promise<IResponse>;
 }
 
 interface WindowAction {
