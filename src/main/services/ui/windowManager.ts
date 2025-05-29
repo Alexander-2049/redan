@@ -203,7 +203,7 @@ const addMessageHandlers = () => {
   ipcMain.on("get-overlays-locked-renderer-to-main", (event) => {
     event.reply(
       "get-overlays-locked-main-to-renderer",
-      overlayWindowManager.isLocked,
+      overlayWindowManager.isLocked(),
     );
   });
 };
