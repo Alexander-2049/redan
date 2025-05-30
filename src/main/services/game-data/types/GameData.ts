@@ -38,6 +38,10 @@ export interface DriverElement {
   rpm?: number;
   gear?: number;
   isCarOnTrack?: boolean;
+  carClassShortName?: string | null;
+  carClassId?: number;
+  iRacingLicString?: string | null;
+  iRacingLicSubLevel?: number;
 }
 
 export interface Session {

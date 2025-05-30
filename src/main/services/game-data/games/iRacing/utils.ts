@@ -174,6 +174,10 @@ export function mapDriversData(
         telemetry.CarIdxTrackSurface[driver.CarIdx] !== "NotInWorld",
       iRating: driver.IRating,
       iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
+      carClassShortName: driver.CarClassShortName,
+      carClassId: driver.CarClassID,
+      iRacingLicString: driver.LicString[0] || null,
+      iRacingLicSubLevel: driver.LicSubLevel / 100,
     });
   }
 
