@@ -31,6 +31,7 @@ export interface DriverElement {
   teamId?: number | null;
   teamName?: string | null;
   iRating?: number;
+  iRatingChange?: number; // Live rating change calculation depending on current position on the grid
   lapDistPct?: number;
   lapDistTotalPct?: number;
   lapsCompleted?: number;

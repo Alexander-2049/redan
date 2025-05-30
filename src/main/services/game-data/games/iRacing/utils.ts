@@ -114,8 +114,34 @@ export function mapDriversData(
   const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
 
   for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
+    const classGroups: Record<
+      number,
+      { id: number; position: number; rating: number }[]
+    > = {};
+
+    for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
+      const driver = sessionInfo.DriverInfo.Drivers[i];
+      if (driver.CarIsPaceCar || driver.IsSpectator) continue;
+
+      const classId = driver.CarClassID;
+      const id = driver.CarIdx;
+      const position = livePosition.get(driver.CarIdx)?.classPosition || 0;
+      const rating = driver.IRating;
+
+      if (!classGroups[classId]) {
+        classGroups[classId] = [];
+      }
+      classGroups[classId].push({ id, position, rating });
+    }
+
+    const classArrays = Object.values(classGroups);
+
+    const ratingChanges = classArrays.map((e) => {
+      return calculateIRatingChanges(e);
+    });
+
     const driver = sessionInfo.DriverInfo.Drivers[i];
-    if (driver.CarIsPaceCar) continue;
+    if (driver.CarIsPaceCar || driver.IsSpectator) continue;
 
     const name = parseDriverName(driver.UserName);
 
@@ -129,6 +155,12 @@ export function mapDriversData(
       lapDistTotalPct = (1 - lapDistTotalPct) * -1;
     }
 
+    // Find the driver's class group and their iRating change
+    const classId = driver.CarClassID;
+    const iRatingChangeEntry = ratingChanges[
+      Object.keys(classGroups).indexOf(classId.toString())
+    ]?.find((e) => e.id === driver.CarIdx);
+
     drivers.push({
       carId: driver.CarIdx,
       firstName: name.firstName,
@@ -140,8 +172,146 @@ export function mapDriversData(
       classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
       isCarOnTrack:
         telemetry.CarIdxTrackSurface[driver.CarIdx] !== "NotInWorld",
+      iRating: driver.IRating,
+      iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
     });
   }
 
   return drivers;
+}
+
+/*
+EXAMPLE USAGE
+
+  console.log(
+    calculateIRatingChanges([
+      {
+        id: 1,
+        position: 1,
+        rating: 2521, // EXPECTED +60
+      },
+      {
+        id: 2,
+        position: 2,
+        rating: 1979, // EXPECTED +60
+      },
+      {
+        id: 3,
+        position: 3,
+        rating: 1617, // EXPECTED +56
+      },
+      {
+        id: 4,
+        position: 4,
+        rating: 1562, // EXPECTED +40
+      },
+      {
+        id: 5,
+        position: 5,
+        rating: 1649, // EXPECTED +19
+      },
+      {
+        id: 6,
+        position: 6,
+        rating: 1689, // EXPECTED -1
+      },
+      {
+        id: 7,
+        position: 7,
+        rating: 1428, // EXPECTED -8
+      },
+      {
+        id: 8,
+        position: 8,
+        rating: 1514, // EXPECTED -30
+      },
+      {
+        id: 9,
+        position: 9,
+        rating: 1634, // EXPECTED -53
+      },
+      {
+        id: 10,
+        position: 10,
+        rating: 1444, // EXPECTED -62
+      },
+      {
+        id: 11,
+        position: 11,
+        rating: 1422, // EXPECTED -79
+      },
+    ]),
+  );
+  */
+
+type DriverWithIRating = {
+  id: number;
+  position: number; // 1 = first place, 2 = second, etc.
+  rating: number;
+};
+
+type iRatingChange = {
+  id: number;
+  ratingChange: number;
+};
+
+export function calculateIRatingChanges(
+  drivers: DriverWithIRating[],
+): iRatingChange[] {
+  const iRatingChanges: iRatingChange[] = [];
+  const magicNumber = 2308.087; // Equivalent to 1600 / ln(2)
+  const driverCount = drivers.length;
+
+  // Precompute exponentials to avoid redundant calculations
+  const expMap = new Map<number, number>();
+  const oneMinusExpMap = new Map<number, number>();
+
+  for (const driver of drivers) {
+    const rating = driver.rating;
+    if (!expMap.has(rating)) {
+      const expVal = Math.exp(-rating / magicNumber);
+      expMap.set(rating, expVal);
+      oneMinusExpMap.set(rating, 1 - expVal);
+    }
+  }
+
+  for (const driver of drivers) {
+    const currentRating = driver.rating;
+    const currentPosition = driver.position;
+
+    const expCurrent = expMap.get(currentRating);
+    const oneMinusExpCurrent = oneMinusExpMap.get(currentRating);
+
+    if (expCurrent === undefined || oneMinusExpCurrent === undefined) continue;
+
+    let expectedScore = -0.5;
+
+    for (const opponent of drivers) {
+      const opponentRating = opponent.rating;
+
+      const expOpponent = expMap.get(opponentRating);
+      const oneMinusExpOpponent = oneMinusExpMap.get(opponentRating);
+
+      if (expOpponent === undefined || oneMinusExpOpponent === undefined)
+        continue;
+
+      const numerator = oneMinusExpCurrent * expOpponent;
+      const denominator =
+        oneMinusExpOpponent * expCurrent + oneMinusExpCurrent * expOpponent;
+
+      expectedScore += numerator / denominator;
+    }
+
+    const fudgeFactor = (driverCount / 2 - currentPosition) / 100;
+    const ratingDelta =
+      ((driverCount - currentPosition - expectedScore - fudgeFactor) * 200) /
+      driverCount;
+
+    iRatingChanges.push({
+      id: driver.id,
+      ratingChange: ratingDelta,
+    });
+  }
+
+  return iRatingChanges;
 }
