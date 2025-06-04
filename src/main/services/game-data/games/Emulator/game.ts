@@ -69,7 +69,7 @@ export default class EmulatorGame extends Game {
 
       this.frame++;
       if (this.frame >= this.data.length) {
-        this.disconnect(); // end of replay
+        this.frame = 0; // Loop the replay
       }
     }, TICK_RATE);
   }
