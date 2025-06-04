@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 
 type WebSocketData = Record<string, unknown>;
 
-const useWebSocket = (url: string, params: string[]) => {
+const useWebSocket = (params: string[]) => {
+  const isPreview = /\bpreview(\b|=true)/.test(
+    new URL(window.location.href).search,
+  );
+  const url = isPreview ? "ws://localhost:49794" : "ws://localhost:49791";
+
   const [data, setData] = useState<WebSocketData>(
     Object.fromEntries(params.map((param) => [param, null])),
   );
