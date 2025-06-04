@@ -6,7 +6,7 @@ import { GameName } from "./types/GameName";
 
 const GAME_DATA_UPDATE_INTERVAL = 1000 / 144;
 
-class GameDataHandler extends GameDataEmitter {
+export class GameDataHandler extends GameDataEmitter {
   private game: Game | null = null;
   private _gameName: GameName | null = null;
 
@@ -65,4 +65,6 @@ class GameDataHandler extends GameDataEmitter {
 }
 
 const gameDataHandler = new GameDataHandler();
+export const demoGameDataHandler = new GameDataHandler();
+demoGameDataHandler.selectGame("Emulator");
 export default gameDataHandler;

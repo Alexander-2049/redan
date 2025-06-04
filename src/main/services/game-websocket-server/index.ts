@@ -1,7 +1,7 @@
 import { WEBSOCKET_SERVER_PORT } from "../../../shared/shared-constants";
 import WebSocket from "ws";
 import { MappedGameData } from "../game-data/types/GameData";
-import gameDataHandler from "../game-data";
+import gameDataHandler, { GameDataHandler } from "../game-data";
 import { Response } from "./utils/response";
 import { extractFieldsFromObject } from "./utils/extractFieldsFromObject";
 import { getChangedFields } from "./utils/getChangedFields";
@@ -11,13 +11,22 @@ interface Listener {
   fields: string[];
 }
 
+interface ConstructorProps {
+  port?: number;
+  gameClient?: GameDataHandler;
+}
+
 export class GameWebSocketServer {
   private wss: WebSocket.Server | null = null;
   private listeners: Listener[] = [];
   private gameData: MappedGameData | null = null;
-  private client = gameDataHandler;
+  private client: GameDataHandler = gameDataHandler;
+  private port: number = WEBSOCKET_SERVER_PORT;
 
-  constructor() {
+  constructor(props?: ConstructorProps) {
+    this.port = props?.port || this.port;
+    this.client = props?.gameClient || this.client;
+
     this.client.addListener("data", (data) => {
       this.updateAndSendGameDataUpdateToAllListeners(data);
     });
@@ -29,7 +38,7 @@ export class GameWebSocketServer {
       return;
     }
 
-    this.wss = new WebSocket.Server({ port: WEBSOCKET_SERVER_PORT });
+    this.wss = new WebSocket.Server({ port: this.port });
 
     this.wss.on("connection", (socket, request) => {
       try {
