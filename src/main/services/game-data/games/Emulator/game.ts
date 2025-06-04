@@ -1,128 +1,78 @@
 import Game from "../Game";
-import {
-  MappedGameData,
-  RealtimeGameData,
-  DriverElement,
-  Session,
-} from "../../types/GameData";
-import { GameName } from "../../types/GameName";
+import { MappedGameData, MappedGameDataSchema } from "../../types/GameData";
+import { REPLAYS_PATH } from "@/main/main-constants";
+import fs from "fs";
+import path from "path";
+import { z } from "zod";
 
-const EMULATOR_GAME_NAME: GameName = "Emulator"; // Change as needed
+const TICK_RATE = 100; // 10 FPS
 
-const TICK_RATE = 333;
-
-const speedKphArray = [
-  0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170,
-  180, 190, 200,
-];
-const rpmArray = [
-  1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000,
-];
-const gearArray = [0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1];
-const throttleArray = [0, 0.1, 0.3, 0.6, 1, 0.8, 0.5, 0.2, 0];
-const brakeArray = [0, 0.1, 0.25, 0.5, 0.3, 0.1, 0];
-const isOnTrackArray = [
-  true,
-  true,
-  true,
-  false,
-  true,
-  true,
-  true,
-  true,
-  false,
-  true,
-];
-const isInReplayArray = [
-  false,
-  false,
-  true,
-  true,
-  false,
-  false,
-  false,
-  false,
-  false,
-  true,
-];
-
-const driverTemplate: DriverElement = {
-  carId: 1,
-  position: 1,
-  classPosition: 1,
-  firstName: "Alex",
-  lastName: "Emulator",
-  lapDistPct: 0,
-  lapDistTotalPct: 0,
-  isCarOnTrack: true,
-};
-
-const sessionTemplate: Session = {
-  trackName: "Emulator Raceway",
-};
-
-function getMockRealtimeData(frame: number): RealtimeGameData {
-  return {
-    speedKph: speedKphArray[frame % speedKphArray.length],
-    speedMph: speedKphArray[frame % speedKphArray.length] * 0.621371,
-    rpm: rpmArray[frame % rpmArray.length],
-    gear: gearArray[frame % gearArray.length],
-    throttle: throttleArray[frame % throttleArray.length],
-    brake: brakeArray[frame % brakeArray.length],
-    isOnTrack: isOnTrackArray[frame % isOnTrackArray.length],
-    isInReplay: isInReplayArray[frame % isInReplayArray.length],
-    displayUnits: "METRIC",
-  };
-}
-
-function getMockDriversData(frame: number): DriverElement[] {
-  return [
-    {
-      ...driverTemplate,
-      position: 1 + (frame % 5),
-      lapDistPct: ((frame * 2) % 100) / 100,
-      lapDistTotalPct: ((frame * 7) % 1000) / 1000,
-      isCarOnTrack: isOnTrackArray[frame % isOnTrackArray.length],
-    },
-  ];
-}
+const DEFAULT_REPLAY_PATH = path.join(REPLAYS_PATH, "replay.json");
 
 export default class EmulatorGame extends Game {
   private interval: NodeJS.Timeout | null = null;
   private frame = 0;
+  private data: MappedGameData[] = [];
+
+  constructor() {
+    super();
+    this.setup();
+  }
+
+  public setup() {
+    this.createReplaysFolder();
+    this.loadReplayData(DEFAULT_REPLAY_PATH);
+  }
+
+  private createReplaysFolder() {
+    if (!fs.existsSync(REPLAYS_PATH)) {
+      fs.mkdirSync(REPLAYS_PATH, { recursive: true });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private loadReplayData(fileName: string) {
+    const filePath = path.join(REPLAYS_PATH, fileName);
+
+    try {
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, "utf-8");
+        const rawJson = JSON.parse(content);
+
+        const validated = z.array(MappedGameDataSchema).parse(rawJson);
+        this.data = validated;
+
+        console.log(
+          `[EmulatorGame] Loaded and validated replay data (${this.data.length} frames)`,
+        );
+      } else {
+        console.warn(`[EmulatorGame] Replay file not found at ${filePath}`);
+      }
+    } catch (err) {
+      console.error(
+        "[EmulatorGame] Failed to load or validate replay data:",
+        err,
+      );
+    }
+  }
 
   connect(): void {
-    if (this.interval) return;
-
+    if (this.interval || !this.data.length) return;
     this.isConnected = true;
 
     this.interval = setInterval(() => {
-      const realtime = getMockRealtimeData(this.frame);
-      const drivers = getMockDriversData(this.frame);
+      const current = this.data[this.frame];
+      this.emit("data", current);
 
-      const data: MappedGameData = {
-        game: EMULATOR_GAME_NAME,
-        realtime,
-        drivers,
-        session: sessionTemplate,
-      };
+      this.isInReplay = !!current.realtime.isInReplay;
+      this.isOnTrack = !!current.realtime.isOnTrack;
 
-      this.emit("data", data);
-
-      this.isInReplay = !!realtime.isInReplay;
-      this.isOnTrack = !!realtime.isOnTrack;
-
-      // Use the longest array length to avoid early wrapping
-      const maxLength = Math.max(
-        speedKphArray.length,
-        rpmArray.length,
-        gearArray.length,
-        throttleArray.length,
-        brakeArray.length,
-        isOnTrackArray.length,
-        isInReplayArray.length,
-      );
-      this.frame = (this.frame + 1) % maxLength;
+      this.frame++;
+      if (this.frame >= this.data.length) {
+        this.disconnect(); // end of replay
+      }
     }, TICK_RATE);
   }
 
