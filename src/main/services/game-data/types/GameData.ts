@@ -5,8 +5,8 @@ import { GameNameSchema } from "./GameName";
 export const RealtimeGameDataSchema = z.object({
   throttle: z.number().min(0).max(1).optional(),
   brake: z.number().min(0).max(1).optional(),
-  steeringAnglePct: z.number().min(0).max(1).optional(),
-  gear: z.number().int().min(0).max(1).optional(),
+  steeringAnglePct: z.number().min(-1).max(1).optional(),
+  gear: z.number().int().min(-1).max(30).optional(),
   speedKph: z.number().optional(),
   speedMph: z.number().optional(),
   rpm: z.number().min(0).optional(),
