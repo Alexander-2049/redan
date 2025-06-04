@@ -20,7 +20,7 @@ const DebugRoute = () => {
           <Button
             onClick={() => {
               setIsRecording(false);
-              window.electron.recordDemo();
+              window.electron.stopRecordDemo();
             }}
           >
             Stop recording
@@ -29,7 +29,7 @@ const DebugRoute = () => {
           <Button
             onClick={() => {
               setIsRecording(true);
-              window.electron.stopRecordDemo();
+              window.electron.recordDemo();
             }}
           >
             Record replay
