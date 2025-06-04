@@ -9,3 +9,4 @@ export const RESOURCES_PATH = IS_DEV
 
 export const OVERLAYS_PATH = path.join(app.getPath("userData"), "Overlays");
 export const LAYOUTS_PATH = path.join(app.getPath("userData"), "Layouts");
+export const REPLAYS_PATH = path.join(app.getPath("userData"), "Replays");
