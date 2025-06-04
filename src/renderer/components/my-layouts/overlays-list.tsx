@@ -8,12 +8,35 @@ import {
   OVERLAY_SERVER_PORT,
 } from "@/shared/shared-constants";
 import OpenOverlaysFolderButton from "../open-overlays-folder-button";
+import { useState, useEffect } from "react";
+
+const useViewportWidth = () => {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    // Set initial width
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return width;
+};
 
 const OverlaysList = () => {
   const overlays = useOverlays();
   const layouts = useLayouts();
   const activeLayout = layouts.data?.find((layout) => layout.data.active);
   const { mutate: addOverlayToLayout } = useAddOverlayToLayout();
+  const viewportWidth = useViewportWidth();
+
+  // Determine if we should show two columns
+  const shouldShowTwoColumns = viewportWidth > 3300;
 
   return (
     <div className="h-full overflow-hidden">
@@ -24,7 +47,9 @@ const OverlaysList = () => {
         </div>
         <ScrollArea className="overflow-y-auto">
           <div className="p-4">
-            <div className="grid gap-4">
+            <div
+              className={`grid gap-4 ${shouldShowTwoColumns ? "grid-cols-2" : "grid-cols-1"}`}
+            >
               {overlays.data &&
                 overlays.data.map((overlay) => {
                   const iframeUrl = `http://localhost:${OVERLAY_SERVER_PORT}/${overlay.folderName}?preview=true`;
