@@ -31,7 +31,7 @@ const OverlaysList = () => {
 
                   const paddingY = 60;
                   const iframeHeight = overlay.data.defaultHeight;
-                  const parentHeight = 320;
+                  const parentHeight = 450;
                   const scale = Math.min(
                     (parentHeight - paddingY) / iframeHeight,
                     1,
@@ -44,6 +44,7 @@ const OverlaysList = () => {
                       style={{
                         backgroundImage: `url(http://localhost:${ASSETS_SERVER_PORT}/images/27bf1719-f700-4529-86f7-70655aefb90c.png)`,
                         backgroundPosition: "center",
+                        backgroundSize: "cover",
                         height: parentHeight,
                       }}
                     >
