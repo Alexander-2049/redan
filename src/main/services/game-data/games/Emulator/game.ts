@@ -7,8 +7,6 @@ import { z } from "zod";
 
 const TICK_RATE = 100; // 10 FPS
 
-const DEFAULT_REPLAY_PATH = path.join(REPLAYS_PATH, "replay.json");
-
 export default class EmulatorGame extends Game {
   private interval: NodeJS.Timeout | null = null;
   private frame = 0;
@@ -21,7 +19,7 @@ export default class EmulatorGame extends Game {
 
   public setup() {
     this.createReplaysFolder();
-    this.loadReplayData(DEFAULT_REPLAY_PATH);
+    this.loadReplayData("replay.json");
   }
 
   private createReplaysFolder() {

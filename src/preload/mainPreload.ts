@@ -90,6 +90,14 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.send("set-overlays-locked-renderer-to-main", locked);
     return withTimeout("set-overlays-locked-main-to-renderer");
   },
+  recordDemo: async () => {
+    ipcRenderer.send("record-demo-renderer-to-main");
+    return withTimeout("record-demo-main-to-renderer");
+  },
+  stopRecordDemo: async () => {
+    ipcRenderer.send("stop-record-demo-renderer-to-main");
+    return withTimeout("stop-record-demo-main-to-renderer");
+  },
 });
 
 contextBridge.exposeInMainWorld("actions", {

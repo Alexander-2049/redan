@@ -206,4 +206,17 @@ const addMessageHandlers = () => {
       overlayWindowManager.isLocked(),
     );
   });
+
+  ipcMain.on("record-demo-renderer-to-main", (event) => {
+    gameDataHandler.startRecording();
+    event.reply("record-demo-main-to-renderer", {
+      success: true,
+    });
+  });
+  ipcMain.on("stop-record-demo-renderer-to-main", (event) => {
+    gameDataHandler.stopRecording();
+    event.reply("stop-record-demo-main-to-renderer", {
+      success: true,
+    });
+  });
 };

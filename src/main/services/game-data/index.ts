@@ -78,7 +78,7 @@ export class GameDataHandler extends GameDataEmitter {
    * @param filename - Optional filename (default: 'recording.json')
    * @param fps - Optional recording FPS (default: 10)
    */
-  public startRecording(filename = "recording.json", fps = 10) {
+  public startRecording(filename = "replay.json", fps = 10) {
     if (this.recording) return;
 
     if (!fs.existsSync(REPLAYS_PATH)) {
