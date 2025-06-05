@@ -1,5 +1,5 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { DriverElement } from "../../types/GameData";
+import { DriverElement, Wetness } from "../../types/GameData";
 
 export function parseDriverName(fullName: string) {
   const parts = fullName.split(" ");
@@ -161,6 +161,13 @@ export function mapDriversData(
       Object.keys(classGroups).indexOf(classId.toString())
     ]?.find((e) => e.id === driver.CarIdx);
 
+    const currentSessionNumb = sessionInfo.SessionInfo.CurrentSessionNum;
+    const isRaceStage =
+      sessionInfo.SessionInfo.Sessions[currentSessionNumb].SessionName ===
+        "RACE" ||
+      sessionInfo.SessionInfo.Sessions[currentSessionNumb].SessionType ===
+        "Race";
+
     drivers.push({
       carId: driver.CarIdx,
       firstName: name.firstName,
@@ -173,7 +180,11 @@ export function mapDriversData(
       isCarOnTrack:
         telemetry.CarIdxTrackSurface[driver.CarIdx] !== "NotInWorld",
       iRating: driver.IRating,
-      iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
+      iRatingChange: isRaceStage
+        ? null
+        : iRatingChangeEntry
+          ? iRatingChangeEntry.ratingChange
+          : 0,
       carClassShortName: driver.CarClassShortName,
       carClassId: driver.CarClassID,
       iRacingLicString: driver.LicString[0] || null,
@@ -182,6 +193,21 @@ export function mapDriversData(
   }
 
   return drivers;
+}
+
+export function getTrackWetnessString(wetnessLevel: number): Wetness {
+  const wetnessLevels: Record<number, Wetness> = {
+    0: "",
+    1: "Dry",
+    2: "Mostly Dry",
+    3: "Very Lightly Wet",
+    4: "Lightly Wet",
+    5: "Moderately Wet",
+    6: "Very Wet",
+    7: "Extremely Wet",
+  };
+
+  return wetnessLevels[wetnessLevel] ?? "";
 }
 
 /*

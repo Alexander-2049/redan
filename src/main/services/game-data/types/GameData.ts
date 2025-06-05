@@ -43,13 +43,13 @@ export const DriverElementSchema = z.object({
   lastName: z.string().optional(),
   teamId: z.union([z.number(), z.null()]).optional(),
   teamName: z.union([z.string(), z.null()]).optional(),
-  iRating: z.number().optional(),
-  iRatingChange: z.number().optional(),
-  lapDistPct: z.number().optional(),
-  lapDistTotalPct: z.number().optional(),
-  lapsCompleted: z.number().optional(),
-  rpm: z.number().optional(),
-  gear: z.number().optional(),
+  iRating: z.number().nullable().optional(),
+  iRatingChange: z.number().nullable().optional(),
+  lapDistPct: z.number().nullable().optional(),
+  lapDistTotalPct: z.number().nullable().optional(),
+  lapsCompleted: z.number().nullable().optional(),
+  rpm: z.number().nullable().optional(),
+  gear: z.number().nullable().optional(),
   isCarOnTrack: z.boolean().optional(),
   carClassShortName: z.union([z.string(), z.null()]).optional(),
   carClassId: z.number().optional(),
@@ -58,9 +58,30 @@ export const DriverElementSchema = z.object({
 });
 export type DriverElement = z.infer<typeof DriverElementSchema>;
 
-// Session
+export const WetnessSchema = z.enum([
+  "",
+  "Dry",
+  "Mostly Dry",
+  "Very Lightly Wet",
+  "Lightly Wet",
+  "Moderately Wet",
+  "Very Wet",
+  "Extremely Wet",
+]);
+export type Wetness = z.infer<typeof WetnessSchema>;
+
 export const SessionSchema = z.object({
   trackName: z.string().optional(),
+  wetnessString: WetnessSchema.optional(),
+  wetnessLevel: z.number().optional(),
+  trackTempC: z.number().nullable().optional(),
+  trackTempCString: z.string().nullable().optional(),
+  airTempC: z.number().nullable().optional(),
+  airTempCString: z.string().nullable().optional(),
+  trackTempF: z.number().nullable().optional(),
+  trackTempFString: z.string().nullable().optional(),
+  airTempF: z.number().nullable().optional(),
+  airTempFString: z.string().nullable().optional(),
 });
 export type Session = z.infer<typeof SessionSchema>;
 
