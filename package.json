@@ -92,6 +92,7 @@
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "electron-squirrel-startup": "^1.0.1",
+    "framer-motion": "^12.16.0",
     "i18next": "^24.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
     "i18next-http-backend": "^3.0.2",
