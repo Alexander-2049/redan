@@ -25,10 +25,10 @@ export const createMainWindow = (
   entry: string,
 ): BrowserWindow => {
   const mainWindow = new BrowserWindow({
-    height: 800,
-    width: 1200,
-    minWidth: 640,
-    minHeight: 420,
+    height: 880,
+    width: 1280,
+    minWidth: 1280,
+    minHeight: 880,
     webPreferences: {
       preload,
       nodeIntegration: true,
