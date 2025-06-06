@@ -44,6 +44,7 @@ export default function getDriversFields(
 
     drivers.push({
       carId: driver.CarIdx,
+      carNumber: driver.CarNumberRaw,
       firstName: parseDriverName(driver.UserName).firstName,
       lastName: parseDriverName(driver.UserName).lastName,
       middleName: parseDriverName(driver.UserName).middleName,

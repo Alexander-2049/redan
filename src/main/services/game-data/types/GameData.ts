@@ -35,6 +35,7 @@ export type RealtimeGameData = z.infer<typeof RealtimeGameDataSchema>;
 // DriverElement
 export const DriverElementSchema = z.object({
   carId: z.number().optional(),
+  carNumber: z.number().optional(),
   position: z.number().nullable().optional(),
   classPosition: z.number().optional(),
   iRacingClass: z.number().optional(),
