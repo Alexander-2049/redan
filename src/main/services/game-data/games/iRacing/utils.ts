@@ -1,5 +1,5 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { DriverElement, Wetness } from "../../types/GameData";
+import { Wetness } from "../../types/GameData";
 
 export function parseDriverName(fullName: string) {
   const parts = fullName.split(" ");
@@ -54,7 +54,7 @@ export function calculateDriversLivePositions(
     } else {
       // Calculate distance traveled
 
-      const raceJustStarted = telemetry.SessionTime < 120 + 25;
+      const raceJustStarted = telemetry.SessionTime < 130;
       let lapDistTotalPct =
         telemetry.CarIdxLapCompleted[carIdx] +
         telemetry.CarIdxLapDistPct[carIdx];
@@ -106,81 +106,6 @@ export function calculateDriversLivePositions(
   return positions;
 }
 
-export function mapDriversData(
-  telemetry: TelemetryValues,
-  sessionInfo: SessionInfoData,
-): DriverElement[] {
-  const drivers: DriverElement[] = [];
-  const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
-  telemetry.CarIdxTrackSurface[telemetry.CamCarIdx] !== "NotInWorld";
-
-  for (const driver of sessionInfo.DriverInfo.Drivers) {
-    if (driver.CarIsPaceCar || driver.IsSpectator) continue;
-
-    const name = parseDriverName(driver.UserName);
-    const carId = driver.CarIdx;
-    const isCarOnTrack = telemetry.CarIdxTrackSurface[carId] !== "NotInWorld";
-    const lapDistPct = telemetry.CarIdxLapDistPct[carId];
-    const sessionTime = telemetry.SessionTime;
-
-    // Total lap distance including completed laps
-    const raceJustStarted = sessionTime < 120 + 25;
-    let lapDistTotalPct = telemetry.CarIdxLapCompleted[carId] + lapDistPct;
-
-    // Flip negative offset for early race jumpers
-    if (raceJustStarted && lapDistTotalPct > 0.75) {
-      lapDistTotalPct = (1 - lapDistTotalPct) * -1;
-    }
-
-    // Compute class-relative iRating changes
-    const classId = driver.CarClassID;
-    const classGroups: Record<
-      number,
-      { id: number; position: number; rating: number }[]
-    > = {};
-
-    for (const other of sessionInfo.DriverInfo.Drivers) {
-      if (other.CarIsPaceCar || other.IsSpectator) continue;
-
-      const id = other.CarIdx;
-      const position = livePosition.get(id)?.classPosition || 0;
-      const rating = other.IRating;
-      const cid = other.CarClassID;
-
-      if (!classGroups[cid]) classGroups[cid] = [];
-      classGroups[cid].push({ id, position, rating });
-    }
-
-    const classArray = classGroups[classId] || [];
-    const ratingChanges = calculateIRatingChanges(classArray);
-    const iRatingChangeEntry = ratingChanges.find((e) => e.id === carId);
-
-    drivers.push({
-      carId: carId,
-      firstName: name.firstName,
-      lastName: name.lastName,
-      middleName: name.middleName,
-      lapDistPct: lapDistPct,
-      lapDistTotalPct: lapDistTotalPct,
-      lapsCompleted: telemetry.CarIdxLapCompleted[carId],
-      position: livePosition.get(carId)?.position || 0,
-      classPosition: livePosition.get(carId)?.classPosition || 0,
-      isCarOnTrack,
-      iRating: driver.IRating,
-      iRatingChange: iRatingChangeEntry
-        ? Math.round(iRatingChangeEntry.ratingChange)
-        : 0,
-      carClassShortName: driver.CarClassShortName,
-      carClassId: classId,
-      iRacingLicString: driver.LicString[0] || null,
-      iRacingLicSubLevel: driver.LicSubLevel / 100,
-      // deltaToSelectedDriver: relativeTime,
-    });
-  }
-
-  return drivers;
-}
-
 export function getTrackWetnessString(wetnessLevel: number): Wetness {
   const wetnessLevels: Record<number, Wetness> = {
     0: "",
@@ -194,6 +119,23 @@ export function getTrackWetnessString(wetnessLevel: number): Wetness {
   };
 
   return wetnessLevels[wetnessLevel] ?? "";
+}
+
+export function getLapDistTotalPct(
+  telemetry: TelemetryValues,
+  carIdx: number,
+): number {
+  const lapCompleted = telemetry.CarIdxLapCompleted[carIdx];
+  const lapDistPct = telemetry.CarIdxLapDistPct[carIdx];
+  const totalPct = lapCompleted + lapDistPct;
+
+  return telemetry.SessionTime < 130 && totalPct > 0.75
+    ? (1 - totalPct) * -1
+    : totalPct;
+}
+
+export function getCarIsOnTrack(telemetry: TelemetryValues, carIdx: number) {
+  return telemetry.CarIdxTrackSurface[carIdx] !== "NotInWorld";
 }
 
 type DriverWithIRating = {
@@ -261,7 +203,7 @@ export function calculateIRatingChanges(
 
     iRatingChanges.push({
       id: driver.id,
-      ratingChange: ratingDelta,
+      ratingChange: Math.round(ratingDelta),
     });
   }
 
