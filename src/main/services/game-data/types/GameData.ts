@@ -55,6 +55,13 @@ export const DriverElementSchema = z.object({
   carClassId: z.number().optional(),
   iRacingLicString: z.union([z.string(), z.null()]).optional(),
   iRacingLicSubLevel: z.number().optional(),
+  // Time delta to the selected driver using the shortest path forward along the track.
+  // Positive means we are behind; negative means we are ahead (if ever applicable).
+  deltaToSelectedDriverForward: z.number().nullable().optional(),
+
+  // Time delta to the selected driver using the longer path in reverse (the other way around the track).
+  // Effectively represents how much we are ahead of the selected driver if measured in the reverse direction.
+  deltaToSelectedDriverReverse: z.number().nullable().optional(),
 });
 export type DriverElement = z.infer<typeof DriverElementSchema>;
 

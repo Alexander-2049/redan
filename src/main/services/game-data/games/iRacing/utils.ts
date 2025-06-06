@@ -112,83 +112,69 @@ export function mapDriversData(
 ): DriverElement[] {
   const drivers: DriverElement[] = [];
   const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
+  telemetry.CarIdxTrackSurface[telemetry.CamCarIdx] !== "NotInWorld";
 
-  for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
+  for (const driver of sessionInfo.DriverInfo.Drivers) {
+    if (driver.CarIsPaceCar || driver.IsSpectator) continue;
+
+    const name = parseDriverName(driver.UserName);
+    const carId = driver.CarIdx;
+    const isCarOnTrack = telemetry.CarIdxTrackSurface[carId] !== "NotInWorld";
+    const lapDistPct = telemetry.CarIdxLapDistPct[carId];
+    const sessionTime = telemetry.SessionTime;
+
+    // Total lap distance including completed laps
+    const raceJustStarted = sessionTime < 120 + 25;
+    let lapDistTotalPct = telemetry.CarIdxLapCompleted[carId] + lapDistPct;
+
+    // Flip negative offset for early race jumpers
+    if (raceJustStarted && lapDistTotalPct > 0.75) {
+      lapDistTotalPct = (1 - lapDistTotalPct) * -1;
+    }
+
+    // Compute class-relative iRating changes
+    const classId = driver.CarClassID;
     const classGroups: Record<
       number,
       { id: number; position: number; rating: number }[]
     > = {};
 
-    for (let i = 0; i < sessionInfo.DriverInfo.Drivers.length; i++) {
-      const driver = sessionInfo.DriverInfo.Drivers[i];
-      if (driver.CarIsPaceCar || driver.IsSpectator) continue;
+    for (const other of sessionInfo.DriverInfo.Drivers) {
+      if (other.CarIsPaceCar || other.IsSpectator) continue;
 
-      const classId = driver.CarClassID;
-      const id = driver.CarIdx;
-      const position = livePosition.get(driver.CarIdx)?.classPosition || 0;
-      const rating = driver.IRating;
+      const id = other.CarIdx;
+      const position = livePosition.get(id)?.classPosition || 0;
+      const rating = other.IRating;
+      const cid = other.CarClassID;
 
-      if (!classGroups[classId]) {
-        classGroups[classId] = [];
-      }
-      classGroups[classId].push({ id, position, rating });
+      if (!classGroups[cid]) classGroups[cid] = [];
+      classGroups[cid].push({ id, position, rating });
     }
 
-    const classArrays = Object.values(classGroups);
-
-    const ratingChanges = classArrays.map((e) => {
-      return calculateIRatingChanges(e);
-    });
-
-    const driver = sessionInfo.DriverInfo.Drivers[i];
-    if (driver.CarIsPaceCar || driver.IsSpectator) continue;
-
-    const name = parseDriverName(driver.UserName);
-
-    const raceJustStarted = telemetry.SessionTime < 120 + 25;
-    let lapDistTotalPct =
-      telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i];
-    if (
-      raceJustStarted &&
-      telemetry.CarIdxLapCompleted[i] + telemetry.CarIdxLapDistPct[i] > 0.75
-    ) {
-      lapDistTotalPct = (1 - lapDistTotalPct) * -1;
-    }
-
-    // Find the driver's class group and their iRating change
-    const classId = driver.CarClassID;
-    const iRatingChangeEntry = ratingChanges[
-      Object.keys(classGroups).indexOf(classId.toString())
-    ]?.find((e) => e.id === driver.CarIdx);
-
-    const currentSessionNumb = sessionInfo.SessionInfo.CurrentSessionNum;
-    const isRaceStage =
-      sessionInfo.SessionInfo.Sessions[currentSessionNumb].SessionName ===
-        "RACE" ||
-      sessionInfo.SessionInfo.Sessions[currentSessionNumb].SessionType ===
-        "Race";
+    const classArray = classGroups[classId] || [];
+    const ratingChanges = calculateIRatingChanges(classArray);
+    const iRatingChangeEntry = ratingChanges.find((e) => e.id === carId);
 
     drivers.push({
-      carId: driver.CarIdx,
+      carId: carId,
       firstName: name.firstName,
       lastName: name.lastName,
       middleName: name.middleName,
-      lapDistPct: telemetry.CarIdxLapDistPct[i],
-      lapDistTotalPct,
-      position: livePosition.get(driver.CarIdx)?.position || 0,
-      classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
-      isCarOnTrack:
-        telemetry.CarIdxTrackSurface[driver.CarIdx] !== "NotInWorld",
+      lapDistPct: lapDistPct,
+      lapDistTotalPct: lapDistTotalPct,
+      lapsCompleted: telemetry.CarIdxLapCompleted[carId],
+      position: livePosition.get(carId)?.position || 0,
+      classPosition: livePosition.get(carId)?.classPosition || 0,
+      isCarOnTrack,
       iRating: driver.IRating,
-      iRatingChange: isRaceStage
-        ? null
-        : iRatingChangeEntry
-          ? iRatingChangeEntry.ratingChange
-          : 0,
+      iRatingChange: iRatingChangeEntry
+        ? Math.round(iRatingChangeEntry.ratingChange)
+        : 0,
       carClassShortName: driver.CarClassShortName,
-      carClassId: driver.CarClassID,
+      carClassId: classId,
       iRacingLicString: driver.LicString[0] || null,
       iRacingLicSubLevel: driver.LicSubLevel / 100,
+      // deltaToSelectedDriver: relativeTime,
     });
   }
 
@@ -209,70 +195,6 @@ export function getTrackWetnessString(wetnessLevel: number): Wetness {
 
   return wetnessLevels[wetnessLevel] ?? "";
 }
-
-/*
-EXAMPLE USAGE
-
-  console.log(
-    calculateIRatingChanges([
-      {
-        id: 1,
-        position: 1,
-        rating: 2521, // EXPECTED +60
-      },
-      {
-        id: 2,
-        position: 2,
-        rating: 1979, // EXPECTED +60
-      },
-      {
-        id: 3,
-        position: 3,
-        rating: 1617, // EXPECTED +56
-      },
-      {
-        id: 4,
-        position: 4,
-        rating: 1562, // EXPECTED +40
-      },
-      {
-        id: 5,
-        position: 5,
-        rating: 1649, // EXPECTED +19
-      },
-      {
-        id: 6,
-        position: 6,
-        rating: 1689, // EXPECTED -1
-      },
-      {
-        id: 7,
-        position: 7,
-        rating: 1428, // EXPECTED -8
-      },
-      {
-        id: 8,
-        position: 8,
-        rating: 1514, // EXPECTED -30
-      },
-      {
-        id: 9,
-        position: 9,
-        rating: 1634, // EXPECTED -53
-      },
-      {
-        id: 10,
-        position: 10,
-        rating: 1444, // EXPECTED -62
-      },
-      {
-        id: 11,
-        position: 11,
-        rating: 1422, // EXPECTED -79
-      },
-    ]),
-  );
-  */
 
 type DriverWithIRating = {
   id: number;
