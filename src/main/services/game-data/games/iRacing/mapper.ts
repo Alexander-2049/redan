@@ -44,10 +44,10 @@ export function mapDataFromIRacing(
       trackName: sessionInfo.WeekendInfo.TrackName,
       wetnessString: getTrackWetnessString(telemetry.TrackWetness),
       wetnessLevel: telemetry.TrackWetness,
-      trackTempC: telemetry.TrackTemp,
-      trackTempF: (telemetry.TrackTemp * 9) / 5 + 32,
-      airTempC: telemetry.AirTemp,
-      airTempF: (telemetry.AirTemp * 9) / 5 + 32,
+      trackTempC: Math.floor(telemetry.TrackTemp * 100) / 100,
+      trackTempF: Math.floor(((telemetry.TrackTemp * 9) / 5 + 32) * 100) / 100,
+      airTempC: Math.floor(telemetry.AirTemp * 100) / 100,
+      airTempF: Math.floor(((telemetry.AirTemp * 9) / 5 + 32) * 100) / 100,
       trackTempCString: telemetry.TrackTemp
         ? `${telemetry.TrackTemp.toFixed(0)}°C`
         : null,
