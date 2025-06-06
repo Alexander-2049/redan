@@ -47,10 +47,20 @@ export default function getDriversFields(
       firstName: parseDriverName(driver.UserName).firstName,
       lastName: parseDriverName(driver.UserName).lastName,
       middleName: parseDriverName(driver.UserName).middleName,
-      lapDistPct: telemetry.CarIdxLapDistPct[driver.CarIdx],
+      lapDistPct:
+        telemetry.CarIdxLapDistPct[driver.CarIdx] > 0
+          ? telemetry.CarIdxLapDistPct[driver.CarIdx]
+          : null,
       lapDistTotalPct: getLapDistTotalPct(telemetry, driver.CarIdx),
-      lapsCompleted: telemetry.CarIdxLapCompleted[driver.CarIdx],
-      position: livePosition.get(driver.CarIdx)?.position || 0,
+      lapsCompleted:
+        telemetry.CarIdxLapCompleted[driver.CarIdx] >= 0
+          ? telemetry.CarIdxLapCompleted[driver.CarIdx]
+          : null,
+      currentLap:
+        telemetry.CarIdxLap[driver.CarIdx] > 0
+          ? telemetry.CarIdxLap[driver.CarIdx]
+          : null,
+      position: livePosition.get(driver.CarIdx)?.position || null,
       classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
       isCarOnTrack: getCarIsOnTrack(telemetry, driver.CarIdx),
       iRating: driver.IRating,

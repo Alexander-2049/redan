@@ -35,7 +35,7 @@ export type RealtimeGameData = z.infer<typeof RealtimeGameDataSchema>;
 // DriverElement
 export const DriverElementSchema = z.object({
   carId: z.number().optional(),
-  position: z.number().optional(),
+  position: z.number().nullable().optional(),
   classPosition: z.number().optional(),
   iRacingClass: z.number().optional(),
   firstName: z.string().optional(),
@@ -48,6 +48,7 @@ export const DriverElementSchema = z.object({
   lapDistPct: z.number().nullable().optional(),
   lapDistTotalPct: z.number().nullable().optional(),
   lapsCompleted: z.number().nullable().optional(),
+  currentLap: z.number().nullable().optional(),
   rpm: z.number().nullable().optional(),
   gear: z.number().nullable().optional(),
   isCarOnTrack: z.boolean().optional(),
