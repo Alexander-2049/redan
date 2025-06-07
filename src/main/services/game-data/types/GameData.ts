@@ -1,6 +1,33 @@
 import { z } from "zod";
 import { GameNameSchema } from "./GameName";
 
+export const RealtimeLapTimeSchema = z.object({
+  lapBestLap: z.number().nullable().optional(),
+  lapBestLapTime: z.number().nullable().optional(),
+  lapLastLapTime: z.number().nullable().optional(),
+  lapCurrentLapTime: z.number().nullable().optional(),
+  lapLasNLapSeq: z.number().nullable().optional(),
+  lapLastNLapTime: z.number().nullable().optional(),
+  lapBestNLapLap: z.number().nullable().optional(),
+  lapBestNLapTime: z.number().nullable().optional(),
+  lapDeltaToBestLap: z.number().nullable().optional(),
+  lapDeltaToBestLap_DD: z.number().nullable().optional(),
+  lapDeltaToBestLap_OK: z.boolean().nullable().optional(),
+  lapDeltaToOptimalLap: z.number().nullable().optional(),
+  lapDeltaToOptimalLap_DD: z.number().nullable().optional(),
+  lapDeltaToOptimalLap_OK: z.boolean().nullable().optional(),
+  lapDeltaToSessionBestLap: z.number().nullable().optional(),
+  lapDeltaToSessionBestLap_DD: z.number().nullable().optional(),
+  lapDeltaToSessionBestLap_OK: z.boolean().nullable().optional(),
+  lapDeltaToSessionOptimalLap: z.number().nullable().optional(),
+  lapDeltaToSessionOptimalLap_DD: z.number().nullable().optional(),
+  lapDeltaToSessionOptimalLap_OK: z.boolean().nullable().optional(),
+  lapDeltaToSessionLastlLap: z.number().nullable().optional(),
+  lapDeltaToSessionLastlLap_DD: z.number().nullable().optional(),
+  lapDeltaToSessionLastlLap_OK: z.boolean().nullable().optional(),
+});
+export type RealtimeLapTime = z.infer<typeof RealtimeLapTimeSchema>;
+
 // RealtimeGameData
 export const RealtimeGameDataSchema = z.object({
   throttle: z.number().min(0).max(1).optional(),
@@ -19,16 +46,7 @@ export const RealtimeGameDataSchema = z.object({
   isOnTrack: z.boolean().optional(),
   isInReplay: z.boolean().optional(),
   spectateCarId: z.number().optional(),
-  test: z
-    .union([
-      z.number(),
-      z.string(),
-      z.boolean(),
-      z.array(z.number()),
-      z.array(z.boolean()),
-      z.array(z.string()),
-    ])
-    .optional(),
+  lapTimes: RealtimeLapTimeSchema.optional(),
 });
 export type RealtimeGameData = z.infer<typeof RealtimeGameDataSchema>;
 
