@@ -28,4 +28,11 @@ export const rules: Required<ModuleOptions>["rules"] = [
       },
     },
   },
+  {
+    test: /\.(woff(2)?|ttf|eot|otf)$/,
+    type: "asset/resource",
+    generator: {
+      filename: "fonts/[name][ext]",
+    },
+  },
 ];
