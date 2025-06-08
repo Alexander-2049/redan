@@ -18,6 +18,7 @@ const Main = () => {
   return (
     <HashRouter>
       <Routes>
+        <Route path="/" element={<>Test</>} />
         <Route path="/" element={<AppLayout />}>
           <Route element={<PageLayout />}>
             <Route index element={<DashboardRoute />} />
