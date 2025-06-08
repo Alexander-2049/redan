@@ -7,7 +7,7 @@ export const createOverlayWindow = (
   options?: Electron.BrowserWindowConstructorOptions,
 ) => {
   // Create the browser window.
-  const overlayWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     show: false,
     height: 43,
     width: 474,
@@ -21,32 +21,36 @@ export const createOverlayWindow = (
     // resizable: false,
     webPreferences: {
       preload: OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY,
-      nodeIntegration: true,
+      contextIsolation: true, // ✅ Защита от доступа к Node.js из DOM
+      nodeIntegration: false, // ✅ Запрет Node.js в модах
+      sandbox: false, // ⛔ Не нужен, т.к. preload использует Node.js
+      webSecurity: true, // ✅ Важно
+      // devTools: false, // ⛔ или true, если надо отлаживать
     },
     minWidth: 80,
     minHeight: 80,
     ...options,
   });
   // and load the index.html of the app.
-  overlayWindow.loadURL(url).then(() => {
-    overlayWindow.showInactive();
+  win.loadURL(url).then(() => {
+    win.showInactive();
   });
 
-  overlayWindow.setAlwaysOnTop(true, "screen-saver");
-  overlayWindow.setVisibleOnAllWorkspaces(true); // Ensures it's visible across all workspaces
-  overlayWindow.setFullScreenable(false);
+  win.setAlwaysOnTop(true, "screen-saver");
+  win.setVisibleOnAllWorkspaces(true); // Ensures it's visible across all workspaces
+  win.setFullScreenable(false);
 
-  overlayWindow.on("minimize", () => {
-    overlayWindow.restore();
+  win.on("minimize", () => {
+    win.restore();
   });
 
-  overlayWindow.on("system-context-menu", (event) => {
+  win.on("system-context-menu", (event) => {
     event.preventDefault();
   });
 
-  overlayWindow.on("close", (event) => {
+  win.on("close", (event) => {
     event.preventDefault();
   });
 
-  return overlayWindow;
+  return win;
 };

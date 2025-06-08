@@ -32,6 +32,7 @@ export const createMainWindow = (
     webPreferences: {
       preload,
       nodeIntegration: true,
+      devTools: process.env.NODE_ENV === "development",
     },
     frame: false,
     titleBarStyle: "hidden",
@@ -41,10 +42,6 @@ export const createMainWindow = (
   addMessageHandlers();
   mainWindow.setMenuBarVisibility(false);
   mainWindow.webContents.setAudioMuted(true);
-
-  if (process.env.NODE_ENV === "development") {
-    mainWindow.webContents.openDevTools();
-  }
 
   mainWindow.loadURL(entry);
 
