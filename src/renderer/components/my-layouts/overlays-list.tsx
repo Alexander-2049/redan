@@ -124,8 +124,16 @@ const OverlaysList = () => {
     );
   }
 
-  // Determine if we should show two columns
-  const shouldShowTwoColumns = viewportWidth > 3300;
+  // Determine grid columns based on viewport width
+  const getGridColumns = () => {
+    if (viewportWidth >= 2900) {
+      return "grid-cols-3";
+    } else if (viewportWidth >= 1900) {
+      return "grid-cols-2";
+    } else {
+      return "grid-cols-1";
+    }
+  };
 
   return (
     <div className="h-full overflow-hidden">
@@ -136,9 +144,7 @@ const OverlaysList = () => {
         </div>
         <ScrollArea className="overflow-y-auto">
           <div className="p-4">
-            <div
-              className={`grid gap-4 ${shouldShowTwoColumns ? "grid-cols-2" : "grid-cols-1"}`}
-            >
+            <div className={`grid gap-4 ${getGridColumns()}`}>
               {overlays.data &&
                 overlays.data.map((overlay) => {
                   const iframeUrl = `http://localhost:${OVERLAY_SERVER_PORT}/${overlay.folderName}?preview=true`;
