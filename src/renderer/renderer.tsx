@@ -37,6 +37,7 @@ import { Toaster } from "./components/ui/sonner";
 import { Provider } from "react-redux";
 import { store } from "./store"; // путь к твоему store.ts
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "./styles/fonts.css";
 
 export const router = createHashRouter([
   {
