@@ -30,7 +30,7 @@ interface AddSampleProps {
   sessionId: SessionId;
 }
 
-export class TimePositionRecorder {
+export class LapTimeRecorder {
   private sessionId: SessionId = "";
   private cars: Map<CarIdx, Laps> = new Map();
 
