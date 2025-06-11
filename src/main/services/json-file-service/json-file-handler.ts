@@ -7,7 +7,7 @@ type FilePath = string;
 type Timestamp = number;
 type TimeMs = number;
 
-export class JsonFileHandler {
+class JsonFileHandler {
   private fileWriteInterval: TimeMs;
   private cache: Map<FilePath, any> = new Map();
   private lastWrite: Map<FilePath, Timestamp> = new Map();
@@ -66,3 +66,5 @@ export class JsonFileHandler {
     }
   }
 }
+
+export const jsonFileHandler = new JsonFileHandler();

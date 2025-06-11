@@ -1,2 +1,1 @@
-import { JsonFileHandler } from "./json-file-handler";
-export default JsonFileHandler;
+export * from "./json-file-handler";
