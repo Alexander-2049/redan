@@ -1,5 +1,5 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { DriverElement } from "../../../types/GameData";
+import { DriverElement } from "../../../types/game-data";
 import {
   calculateDriversLivePositions,
   calculateIRatingChanges,

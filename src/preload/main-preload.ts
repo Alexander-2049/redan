@@ -2,8 +2,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 // Preload (Isolated World)
-import { GameName } from "@/main/services/game-data/types/GameName";
-import { ILayout } from "@/main/services/layoutService/schemas/layoutSchema";
+import { GameName } from "@/main/services/game-data/types/game-name";
+import { ILayout } from "@/main/services/layout-service/schemas/layoutSchema";
 import { contextBridge, ipcRenderer } from "electron";
 
 function withTimeout<T>(channel: string, timeoutMs = 5000): Promise<T> {

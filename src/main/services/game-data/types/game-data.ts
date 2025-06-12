@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GameNameSchema } from "./GameName";
+import { GameNameSchema } from "./game-name";
 
 export const RealtimeLapTimeSchema = z.object({
   lapBestLap: z.number().nullable().optional(),

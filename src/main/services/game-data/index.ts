@@ -1,9 +1,9 @@
 import EmulatorGame from "./games/Emulator/game";
-import Game from "./games/Game";
-import GameDataEmitter from "./games/GameDataEmitter";
+import Game from "./games/game";
+import GameDataEmitter from "./games/game-data-emitter";
 import iRacing from "./games/iRacing/game";
-import { GameName } from "./types/GameName";
-import { MappedGameData } from "./types/GameData";
+import { GameName } from "./types/game-name";
+import { MappedGameData } from "./types/game-data";
 import { REPLAYS_PATH } from "@/main/main-constants";
 import fs from "fs";
 import path from "path";

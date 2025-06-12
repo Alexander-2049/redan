@@ -3,20 +3,20 @@ import fs from "fs";
 import {
   layoutSchema,
   ILayout,
-  ILayoutDataAndFilename,
+  ILayoutDataAndFilename as LayoutDataAndFilename,
 } from "./schemas/layoutSchema";
 import sanitize from "sanitize-filename";
 import { overlaySchema } from "./schemas/overlaySchema";
 import { z } from "zod";
-import OverlayHandler from "../overlayService/overlayHandler";
+import { OverlayHandler } from "../overlay-service/overlay-handler";
 
-interface ICreateNewLayoutResponse {
+interface CreateNewLayoutResponse {
   success: boolean;
   filePath?: string;
   error?: string;
 }
 
-type IResponse =
+type DefaultResponse =
   | {
       success: true;
     }
@@ -25,15 +25,15 @@ type IResponse =
       error: string;
     };
 
-interface IModifyLayoutResponse {
+interface ModifyLayoutResponse {
   success: boolean;
   error?: string;
 }
 
-export type ILayoutResponse =
+export type LayoutResponse =
   | {
       success: boolean;
-      layouts: ILayoutDataAndFilename[];
+      layouts: LayoutDataAndFilename[];
       error?: undefined;
     }
   | {
@@ -66,7 +66,7 @@ class LayoutHandler {
     description: string;
     screenWidth: number;
     screenHeight: number;
-  }): ICreateNewLayoutResponse {
+  }): CreateNewLayoutResponse {
     this.setup();
 
     let sanitizedFileName = sanitize(layoutName);
@@ -109,12 +109,12 @@ class LayoutHandler {
     }
   }
 
-  public static getAllLayouts(): ILayoutResponse {
+  public static getAllLayouts(): LayoutResponse {
     this.setup();
 
     try {
       const files = fs.readdirSync(LAYOUTS_PATH);
-      const layouts: ILayoutDataAndFilename[] = [];
+      const layouts: LayoutDataAndFilename[] = [];
 
       files
         .filter((file) => file.endsWith(".json"))
@@ -164,7 +164,7 @@ class LayoutHandler {
   public static modifyLayout(
     fileName: string,
     updatedData: Partial<ILayout>,
-  ): IModifyLayoutResponse {
+  ): ModifyLayoutResponse {
     this.setup();
 
     try {
@@ -194,7 +194,7 @@ class LayoutHandler {
     }
   }
 
-  public static deleteLayout(fileName: string): IResponse {
+  public static deleteLayout(fileName: string): DefaultResponse {
     this.setup();
 
     try {
@@ -216,7 +216,7 @@ class LayoutHandler {
   public static addOverlay(
     layoutFileName: string,
     overlayFolderName: string,
-  ): IResponse {
+  ): DefaultResponse {
     this.setup();
 
     const overlayManifest =
@@ -328,7 +328,7 @@ class LayoutHandler {
     }
   }
 
-  public static setActiveLayout(layoutFileName: string): IResponse {
+  public static setActiveLayout(layoutFileName: string): DefaultResponse {
     this.setup();
 
     try {
@@ -364,8 +364,8 @@ class LayoutHandler {
 }
 
 export {
-  ICreateNewLayoutResponse,
-  IResponse,
-  IModifyLayoutResponse,
+  CreateNewLayoutResponse,
+  DefaultResponse,
+  ModifyLayoutResponse,
   LayoutHandler,
 };

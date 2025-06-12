@@ -1,42 +1,42 @@
 import {
-  ICreateNewLayoutResponse,
-  IResponse,
-  IModifyLayoutResponse,
-} from "./main/services/layoutService/layoutHandler";
+  CreateNewLayoutResponse,
+  DefaultResponse,
+  ModifyLayoutResponse,
+} from "./main/services/layout-service/layout-handler";
 import {
   ILayout,
   ILayoutDataAndFilename,
-} from "./main/services/layoutService/schemas/layoutSchema";
-import { IOverlayAndFolderName } from "./shared/types/IOverlayAndFolderName";
+} from "./main/services/layout-service/schemas/layoutSchema";
+import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
 
 interface MainWindowAPI {
-  getOverlayList: () => Promise<IOverlayAndFolderName[]>;
+  getOverlayList: () => Promise<OverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;
   getLayouts: () => Promise<ILayoutDataAndFilename[]>;
   createEmptyLayout: (
     layoutName: string,
     layoutDescription: string,
-  ) => Promise<ICreateNewLayoutResponse>;
-  deleteLayout: (fileName: string) => Promise<IResponse>;
+  ) => Promise<CreateNewLayoutResponse>;
+  deleteLayout: (fileName: string) => Promise<DefaultResponse>;
   modifyLayout: (
     fileName: string,
     updatedData: Partial<ILayout>,
-  ) => Promise<IModifyLayoutResponse>;
-  setActiveLayout: (fileName: string) => Promise<IResponse>;
+  ) => Promise<ModifyLayoutResponse>;
+  setActiveLayout: (fileName: string) => Promise<DefaultResponse>;
   addOverlayToLayout: (
     layoutFileName: string,
     overlayFolderName: string,
-  ) => Promise<IResponse>;
+  ) => Promise<DefaultResponse>;
   removeOverlayFromLayout: (
     layoutFileName: string,
     overlayId: string,
-  ) => Promise<IResponse>;
+  ) => Promise<DefaultResponse>;
   getSelectedGame: () => Promise<GameName | null>;
-  setSelectedGame: (gameName: GameName | null) => Promise<IResponse>;
+  setSelectedGame: (gameName: GameName | null) => Promise<DefaultResponse>;
   getOverlaysLocked: () => Promise<boolean>;
-  setOverlaysLocked: (boolean) => Promise<IResponse>;
-  recordDemo: () => Promise<IResponse>;
-  stopRecordDemo: () => Promise<IResponse>;
+  setOverlaysLocked: (boolean) => Promise<DefaultResponse>;
+  recordDemo: () => Promise<DefaultResponse>;
+  stopRecordDemo: () => Promise<DefaultResponse>;
 }
 
 interface WindowAction {

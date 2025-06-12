@@ -1,5 +1,5 @@
-import Game from "../Game";
-import { MappedGameData, MappedGameDataSchema } from "../../types/GameData";
+import Game from "../game";
+import { MappedGameData, MappedGameDataSchema } from "../../types/game-data";
 import { REPLAYS_PATH } from "@/main/main-constants";
 import fs from "fs";
 import path from "path";

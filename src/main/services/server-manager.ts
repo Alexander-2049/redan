@@ -1,6 +1,6 @@
-import { GameWebSocketServer } from "./game-websocket-server";
-import AssetsServer from "./assetsServer";
-import OverlayHandler from "./overlayService/overlayHandler";
+import { GameWebSocketServer } from "./game-websocket-server-service";
+import { AssetsServer } from "./assets-server-service";
+import { OverlayHandler } from "./overlay-service";
 import {
   ASSETS_SERVER_PORT,
   OVERLAY_SERVER_PORT,

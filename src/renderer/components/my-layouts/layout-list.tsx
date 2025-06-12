@@ -6,7 +6,7 @@ import { cn } from "@/renderer/lib/utils";
 import { Input } from "@/renderer/components/ui/input";
 import { Button } from "@/renderer/components/ui/button";
 import { useLayouts } from "@/renderer/api/layouts/get-layouts";
-import type { ILayoutDataAndFilename } from "@/main/services/layoutService/schemas/layoutSchema";
+import type { ILayoutDataAndFilename } from "@/main/services/layout-service/schemas/layoutSchema";
 import { useDeleteLayout } from "@/renderer/api/layouts/delete-layout";
 import { ScrollArea } from "@/renderer/components/ui/scroll-area";
 import {

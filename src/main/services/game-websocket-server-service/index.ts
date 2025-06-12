@@ -1,6 +1,6 @@
 import { WEBSOCKET_SERVER_PORT } from "../../../shared/shared-constants";
 import WebSocket from "ws";
-import { MappedGameData } from "../game-data/types/GameData";
+import { MappedGameData } from "../game-data/types/game-data";
 import gameDataHandler, { GameDataHandler } from "../game-data";
 import { Response } from "./utils/response";
 import { extractFieldsFromObject } from "./utils/extractFieldsFromObject";

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ILayout } from "@/main/services/layoutService/schemas/layoutSchema";
+import { ILayout } from "@/main/services/layout-service/schemas/layoutSchema";
 
 export interface IModifyLayoutProps {
   fileName: string;

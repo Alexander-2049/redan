@@ -1,7 +1,7 @@
 import { TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { RealtimeGameData } from "../../../types/GameData";
-import { SpeedConverter } from "@/main/utils/speedConverter";
-import { iracingSteeringAngleToPercents } from "@/main/utils/iracingSteeringAngleToPercents";
+import { RealtimeGameData } from "../../../types/game-data";
+import { SpeedConverter } from "@/main/utils/speed-converter";
+import { iracingSteeringAngleToPercents } from "../../../utils/iracing-steering-angle-to-percents";
 
 export default function getRealtimeFields(
   telemetry: TelemetryValues,

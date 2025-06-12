@@ -30,9 +30,9 @@ import type {
   ILayoutOverlay,
   ILayoutOverlaySetting,
   ILayoutOverlaySettingValue,
-} from "@/main/services/layoutService/schemas/overlaySchema";
-import type { IOverlaySettingDescription } from "@/main/services/overlayService/schemas/overlayManifest";
-import type { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
+} from "@/main/services/layout-service/schemas/overlaySchema";
+import type { OverlaySettingDescription } from "@/main/services/overlay-service/types";
+import type { OverlayAndFolderName } from "@/shared/types/overlay-and-folder-name";
 
 const LayoutSettings = () => {
   const { data: layouts, isLoading: isLoadingLayouts } = useLayouts();
@@ -92,7 +92,7 @@ const LayoutSettings = () => {
 
   const getOverlayManifest = (
     folderName: string,
-  ): IOverlayAndFolderName | undefined => {
+  ): OverlayAndFolderName | undefined => {
     return overlayManifests?.find(
       (manifest) => manifest.folderName === folderName,
     );
@@ -218,7 +218,7 @@ const LayoutSettings = () => {
   const renderSettingControl = (
     overlay: ILayoutOverlay,
     setting: ILayoutOverlaySetting,
-    settingDescription?: IOverlaySettingDescription,
+    settingDescription?: OverlaySettingDescription,
   ) => {
     if (!settingDescription) return null;
 

@@ -1,5 +1,5 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { Wetness } from "../../types/GameData";
+import { Wetness } from "../../types/game-data";
 
 export function parseDriverName(fullName: string) {
   const parts = fullName.split(" ");

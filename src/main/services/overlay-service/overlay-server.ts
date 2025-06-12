@@ -2,7 +2,7 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { OVERLAYS_PATH } from "../../main-constants";
-import OverlayHandler from "./overlayHandler";
+import { OverlayHandler } from ".";
 
 const app = express();
 
@@ -53,4 +53,4 @@ app.get("/*", (req, res) => {
   }
 });
 
-export default app;
+export const overlayServer = app;

@@ -1,9 +1,8 @@
 import { app } from "electron";
 import path from "path";
+import { isDev } from "./utils/is-dev";
 
-export const IS_DEV = process.env.NODE_ENV === "development";
-
-export const RESOURCES_PATH = IS_DEV
+export const RESOURCES_PATH = isDev()
   ? path.join(__dirname, "../../", "assets")
   : path.join(process.resourcesPath);
 

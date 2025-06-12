@@ -1,6 +1,7 @@
 import winston from "winston";
 import path from "path";
 import { LOGS_PATH } from "./main-constants";
+import { isDev } from "./utils/is-dev";
 
 // Base transports used by all loggers
 const fileTransports: winston.transport[] = [
@@ -29,12 +30,12 @@ const consoleTransport = new winston.transports.Console({
 export function createServiceLogger(serviceName: string) {
   const transports: winston.transport[] = [...fileTransports];
 
-  if (process.env.NODE_ENV !== "production") {
+  if (isDev()) {
     transports.push(consoleTransport);
   }
 
   return winston.createLogger({
-    level: "info",
+    level: isDev() ? "debug" : "info",
     format: winston.format.combine(
       winston.format.timestamp(),
       winston.format.json(),
@@ -45,8 +46,14 @@ export function createServiceLogger(serviceName: string) {
 }
 
 export const overlayServiceLogger = createServiceLogger("overlay-service");
-export const uiServiceLogger = createServiceLogger("ui-service");
+export const windowManagerServiceLogger = createServiceLogger(
+  "window-manager-service",
+);
 export const jsonFileHandlerServiceLogger = createServiceLogger(
   "json-file-handler-service",
 );
 export const userServiceLogger = createServiceLogger("user-service");
+export const jsonFileServiceLogger = createServiceLogger("json-file-service");
+export const gameWebsocketServerService = createServiceLogger(
+  "game-websocket-server-service",
+);

@@ -1,4 +1,4 @@
-import GameDataEmitter from "./GameDataEmitter";
+import GameDataEmitter from "./game-data-emitter";
 
 abstract class Game extends GameDataEmitter {
   protected _isListening = false;

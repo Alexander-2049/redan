@@ -1,4 +1,4 @@
-import { GameWebSocketServer } from "@/main/services/game-websocket-server";
+import { GameWebSocketServer } from "@/main/services/game-websocket-server-service";
 import gameDataHandler from "../services/game-data";
 
 const client = new GameWebSocketServer();

@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-const versionRegex = /^\d+\.\d+(\.\d+)?$/;
-
-export type IOverlaySettingDescription = z.infer<
-  typeof overlaySettingDescriptionSchema
->;
-export type IOverlayManifest = z.infer<typeof overlayManifestFileSchema>;
-
 export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   z.object({
     id: z.string(),
@@ -57,19 +50,3 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
     defaultValue: z.string(),
   }),
 ]);
-
-export const overlayManifestFileSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  type: z.string().optional(),
-  author: z.string().optional(),
-  version: z.string().regex(versionRegex, "Invalid version format").optional(),
-  defaultWidth: z.number().optional().default(300),
-  defaultHeight: z.number().optional().default(160),
-  minWidth: z.number().optional().default(100),
-  minHeight: z.number().optional().default(50),
-  maxWidth: z.number().optional().default(1000),
-  maxHeight: z.number().optional().default(700),
-  publishDate: z.number().optional(),
-  settings: z.array(overlaySettingDescriptionSchema).optional(),
-});

@@ -1,23 +1,21 @@
 import { OVERLAYS_PATH } from "@/main/main-constants";
 import fs from "fs";
 import path from "path";
-import { overlayManifestFileSchema } from "./schemas/overlayManifest";
-import app from "./overlayServer";
-import { IOverlayAndFolderName } from "@/shared/types/IOverlayAndFolderName";
-import { z } from "zod";
+import { overlayManifestFileSchema } from "./schemas";
+import { overlayServer } from ".";
+import { OverlayAndFolderName } from "@/shared/types/overlay-and-folder-name";
 import { jsonFileHandler } from "../json-file-service";
-import { overlayServiceLogger } from "@/main/loggers";
+import { overlayServiceLogger as logger } from "@/main/loggers";
+import { OverlayManifest } from "./types";
 
-export default class OverlayHandler {
+export class OverlayHandler {
   static loadAllOverlays() {
-    overlayServiceLogger.info("Loading all overlays...");
+    logger.info("Loading all overlays...");
 
     if (!fs.existsSync(OVERLAYS_PATH)) {
-      overlayServiceLogger.info(
-        `Overlays folder does not exist at: ${OVERLAYS_PATH}`,
-      );
+      logger.info(`Overlays folder does not exist at: ${OVERLAYS_PATH}`);
       fs.mkdirSync(OVERLAYS_PATH, { recursive: true });
-      overlayServiceLogger.info(`Created overlays folder at: ${OVERLAYS_PATH}`);
+      logger.info(`Created overlays folder at: ${OVERLAYS_PATH}`);
     }
 
     const dir = fs.readdirSync(OVERLAYS_PATH);
@@ -25,21 +23,21 @@ export default class OverlayHandler {
       fs.statSync(path.join(OVERLAYS_PATH, item)).isDirectory(),
     );
 
-    overlayServiceLogger.debug(`Found overlay folders: ${folders.join(", ")}`);
+    logger.debug(`Found overlay folders: ${folders.join(", ")}`);
 
-    const overlaysData: IOverlayAndFolderName[] = folders.reduce(
-      (acc: IOverlayAndFolderName[], folderName) => {
+    const overlaysData: OverlayAndFolderName[] = folders.reduce(
+      (acc: OverlayAndFolderName[], folderName) => {
         const folderPath = path.join(OVERLAYS_PATH, folderName);
         const manifestPath = path.join(folderPath, "manifest.json");
 
         try {
-          overlayServiceLogger.debug(`Reading manifest: ${manifestPath}`);
+          logger.debug(`Reading manifest: ${manifestPath}`);
           const manifest = jsonFileHandler.read(manifestPath);
 
           const parsedManifest = overlayManifestFileSchema.safeParse(manifest);
 
           if (parsedManifest.success) {
-            overlayServiceLogger.info(
+            logger.info(
               `Successfully parsed manifest in folder: ${folderName}`,
             );
             acc.push({
@@ -47,13 +45,11 @@ export default class OverlayHandler {
               data: parsedManifest.data,
             });
           } else {
-            overlayServiceLogger.warn(
-              `Invalid manifest schema in folder: ${folderName}`,
-            );
+            logger.warn(`Invalid manifest schema in folder: ${folderName}`);
           }
         } catch (error) {
-          overlayServiceLogger.error(
-            `Error reading or parsing manifest.json in folder ${folderName}:`,
+          logger.error(
+            `[1] Error reading or parsing manifest.json in folder ${folderName}:`,
             error,
           );
         }
@@ -63,44 +59,36 @@ export default class OverlayHandler {
       [],
     );
 
-    overlayServiceLogger.info(
-      `Loaded ${overlaysData.length} overlays successfully.`,
-    );
+    logger.info(`Loaded ${overlaysData.length} overlays successfully.`);
     return overlaysData;
   }
 
-  static loadOverlayManifest(
-    folderName: string,
-  ): z.infer<typeof overlayManifestFileSchema> | null {
+  static loadOverlayManifest(folderName: string): OverlayManifest | null {
     const folderPath = path.join(OVERLAYS_PATH, folderName);
     const manifestPath = path.join(folderPath, "manifest.json");
 
     if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
-      overlayServiceLogger.debug(
-        `Attempting to load manifest from: ${manifestPath}`,
-      );
+      logger.debug(`Attempting to load manifest from: ${manifestPath}`);
       try {
         const manifest = jsonFileHandler.read(manifestPath);
         const parsedManifest = overlayManifestFileSchema.safeParse(manifest);
 
         if (parsedManifest.success) {
-          overlayServiceLogger.info(
+          logger.info(
             `Successfully loaded manifest for overlay: ${folderName}`,
           );
           return parsedManifest.data;
         } else {
-          overlayServiceLogger.warn(
-            `Manifest schema validation failed for: ${folderName}`,
-          );
+          logger.warn(`Manifest schema validation failed for: ${folderName}`);
         }
       } catch (error) {
-        overlayServiceLogger.error(
-          `Error reading or parsing manifest.json in folder ${folderName}:`,
+        logger.error(
+          `[2] Error reading or parsing manifest.json in folder ${folderName}:`,
           error,
         );
       }
     } else {
-      overlayServiceLogger.warn(
+      logger.warn(
         `Overlay folder does not exist or is not a directory: ${folderPath}`,
       );
     }
@@ -109,7 +97,7 @@ export default class OverlayHandler {
   }
 
   static get server() {
-    overlayServiceLogger.debug("Accessed overlay server instance.");
-    return app;
+    logger.debug("Accessed overlay server instance.");
+    return overlayServer;
   }
 }

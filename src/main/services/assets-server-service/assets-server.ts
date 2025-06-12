@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 
-class AssetsServer {
+export class AssetsServer {
   private app: express.Application;
   private port: number;
 
@@ -29,5 +29,3 @@ class AssetsServer {
     });
   }
 }
-
-export default AssetsServer;

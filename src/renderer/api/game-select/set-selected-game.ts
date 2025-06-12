@@ -1,4 +1,4 @@
-import { GameName } from "@/main/services/game-data/types/GameName";
+import { GameName } from "@/main/services/game-data/types/game-name";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export interface ISetSelectedGameProps {
