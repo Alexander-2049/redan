@@ -1,0 +1,373 @@
+{
+  "type": 1,
+  "data": {
+    "systemSettings": {
+      "OverlayTitleColor": "#D10404",
+      "OverlaysHidden": false
+    },
+    "standaloneOverlayModel": {
+      "isInGarage": true,
+      "positions": [
+        {
+          "rowIsEmpty": true,
+          "driverIdx": 200
+        },
+        {
+          "rowIsEmpty": true,
+          "driverIdx": 201
+        },
+        {
+          "rowIsEmpty": true,
+          "driverIdx": 202
+        },
+        {
+          "driverIdx": 4,
+          "driverNumber": "4",
+          "driverNumberMaxLetters": 2,
+          "userId": 761632,
+          "driverName": "anselm hörmann",
+          "distanceInTime": "0.0",
+          "distanceInPhysical": "",
+          "driverLicence": {
+            "name": "A",
+            "bgColor": "#2563EB",
+            "darkBgColor": "#1E3A8A",
+            "color": "#ffffff",
+            "safetyRank": "2.6",
+            "sim": "IRACING",
+            "kind": "NONE"
+          },
+          "carClassColorHex": "#ffffff",
+          "irating": "1.7k",
+          "iratingDelta": {
+            "Status": "CALCULATED",
+            "Value": 88
+          },
+          "showIratingDelta": true,
+          "position": 1,
+          "carOnPitRoad": false,
+          "carIsLapped": false,
+          "carIsLapping": false,
+          "carIsReference": true,
+          "gear": 2,
+          "pitEntry": {
+            "carIdx": 4,
+            "pits": [],
+            "currentPit": null,
+            "stints": [],
+            "lastStint": null,
+            "numberOfPits": 0,
+            "numberOfLapsSinceLastPitted": 0,
+            "initializedAtLap": 0,
+            "tireCompountUsedWhenEnteredPit": null
+          },
+          "showPitEntry": true,
+          "jokerLapsCompleted": 0,
+          "isRadioOn": false,
+          "carBrand": "mazda",
+          "tireCompoundsHistory": [
+            {
+              "compount": -1,
+              "laps": -1
+            }
+          ],
+          "fastestLapTime": {},
+          "lastLapTime": {},
+          "last5LapTimeAvg": null,
+          "last10LapTimeAvg": null,
+          "isOutLap": false,
+          "isTowing": false,
+          "lapNumber": 1,
+          "driverTags": [],
+          "lapDelta": []
+        },
+        {
+          "driverIdx": 8,
+          "driverNumber": "8",
+          "driverNumberMaxLetters": 2,
+          "userId": 828979,
+          "driverName": "jurre-jan smit",
+          "distanceInTime": "0.7",
+          "distanceInPhysical": "",
+          "driverLicence": {
+            "name": "C",
+            "bgColor": "#F59E0B",
+            "darkBgColor": "#715612",
+            "color": "#000000",
+            "safetyRank": "3.4",
+            "sim": "IRACING",
+            "kind": "NONE"
+          },
+          "carClassColorHex": "#ffffff",
+          "irating": "1.6k",
+          "iratingDelta": {
+            "Status": "CALCULATED",
+            "Value": 76
+          },
+          "showIratingDelta": true,
+          "position": 2,
+          "carOnPitRoad": false,
+          "carIsLapped": false,
+          "carIsLapping": false,
+          "carIsReference": false,
+          "gear": 2,
+          "pitEntry": {
+            "carIdx": 8,
+            "pits": [],
+            "currentPit": null,
+            "stints": [],
+            "lastStint": null,
+            "numberOfPits": 0,
+            "numberOfLapsSinceLastPitted": 0,
+            "initializedAtLap": 0,
+            "tireCompountUsedWhenEnteredPit": null
+          },
+          "showPitEntry": true,
+          "jokerLapsCompleted": 0,
+          "isRadioOn": false,
+          "carBrand": "mazda",
+          "tireCompoundsHistory": [
+            {
+              "compount": -1,
+              "laps": -1
+            }
+          ],
+          "fastestLapTime": {},
+          "lastLapTime": {},
+          "last5LapTimeAvg": null,
+          "last10LapTimeAvg": null,
+          "isOutLap": false,
+          "isTowing": false,
+          "lapNumber": 1,
+          "driverTags": [],
+          "lapDelta": []
+        },
+        {
+          "driverIdx": 11,
+          "driverNumber": "11",
+          "driverNumberMaxLetters": 2,
+          "userId": 874356,
+          "driverName": "oliver wadstrup",
+          "distanceInTime": "0.8",
+          "distanceInPhysical": "",
+          "driverLicence": {
+            "name": "A",
+            "bgColor": "#2563EB",
+            "darkBgColor": "#1E3A8A",
+            "color": "#ffffff",
+            "safetyRank": "2.2",
+            "sim": "IRACING",
+            "kind": "NONE"
+          },
+          "carClassColorHex": "#ffffff",
+          "irating": "1.5k",
+          "iratingDelta": {
+            "Status": "CALCULATED",
+            "Value": 62
+          },
+          "showIratingDelta": true,
+          "position": 3,
+          "carOnPitRoad": false,
+          "carIsLapped": false,
+          "carIsLapping": false,
+          "carIsReference": false,
+          "gear": 2,
+          "pitEntry": {
+            "carIdx": 11,
+            "pits": [],
+            "currentPit": null,
+            "stints": [],
+            "lastStint": null,
+            "numberOfPits": 0,
+            "numberOfLapsSinceLastPitted": 0,
+            "initializedAtLap": 0,
+            "tireCompountUsedWhenEnteredPit": null
+          },
+          "showPitEntry": true,
+          "jokerLapsCompleted": 0,
+          "isRadioOn": false,
+          "carBrand": "mazda",
+          "tireCompoundsHistory": [
+            {
+              "compount": -1,
+              "laps": -1
+            }
+          ],
+          "fastestLapTime": {},
+          "lastLapTime": {},
+          "last5LapTimeAvg": null,
+          "last10LapTimeAvg": null,
+          "isOutLap": false,
+          "isTowing": false,
+          "lapNumber": 1,
+          "driverTags": [],
+          "lapDelta": []
+        },
+        {
+          "driverIdx": 2,
+          "driverNumber": "2",
+          "driverNumberMaxLetters": 2,
+          "userId": 892286,
+          "driverName": "manuel gonzalez",
+          "distanceInTime": "0.9",
+          "distanceInPhysical": "",
+          "driverLicence": {
+            "name": "C",
+            "bgColor": "#F59E0B",
+            "darkBgColor": "#715612",
+            "color": "#000000",
+            "safetyRank": "3.5",
+            "sim": "IRACING",
+            "kind": "NONE"
+          },
+          "carClassColorHex": "#ffffff",
+          "irating": "1.7k",
+          "iratingDelta": {
+            "Status": "CALCULATED",
+            "Value": 37
+          },
+          "showIratingDelta": true,
+          "position": 4,
+          "carOnPitRoad": false,
+          "carIsLapped": false,
+          "carIsLapping": false,
+          "carIsReference": false,
+          "gear": 2,
+          "pitEntry": {
+            "carIdx": 2,
+            "pits": [],
+            "currentPit": null,
+            "stints": [],
+            "lastStint": null,
+            "numberOfPits": 0,
+            "numberOfLapsSinceLastPitted": 0,
+            "initializedAtLap": 0,
+            "tireCompountUsedWhenEnteredPit": null
+          },
+          "showPitEntry": true,
+          "jokerLapsCompleted": 0,
+          "isRadioOn": false,
+          "carBrand": "mazda",
+          "tireCompoundsHistory": [
+            {
+              "compount": -1,
+              "laps": -1
+            }
+          ],
+          "fastestLapTime": {},
+          "lastLapTime": {},
+          "last5LapTimeAvg": null,
+          "last10LapTimeAvg": null,
+          "isOutLap": false,
+          "isTowing": false,
+          "lapNumber": 1,
+          "driverTags": [],
+          "lapDelta": []
+        }
+      ],
+      "widgets": {
+        "5": {
+          "sof": "1.6k"
+        },
+        "7": {
+          "incidentLimit": 17,
+          "incidents": null
+        },
+        "8": {
+          "elapsedSeconds": 149,
+          "remainingTime": 720,
+          "title": "RACE",
+          "valueType": "exact"
+        },
+        "9": {
+          "elapsedLaps": 1,
+          "sessionTotalLaps": "7.0",
+          "valueType": "calculated"
+        }
+      }
+    },
+    "standaloneOverlaySettings": {
+      "VerticalAlignment": "TOP",
+      "HorizontalAlignment": "LEFT",
+      "ShowIrating": true,
+      "ShowIratingGain": true,
+      "ShowPhysicalDistance": false,
+      "ShowTimeDistance": true,
+      "ShowDriverNumber": false,
+      "ShowPosition": true,
+      "ShowCarClass": true,
+      "ShowLicence": true,
+      "ShowSafetyRating": true,
+      "ShowDriverGear": false,
+      "NumberOfLineAhead": 3,
+      "NumberOfLineBehind": 3,
+      "ShowAdvancedPanel": false,
+      "PositionsBackgroundSeparation": true,
+      "LineSeparator": false,
+      "TopWidgets": [
+        5,
+        7,
+        -1,
+        -1
+      ],
+      "TopWidgetThemes": [],
+      "BottomWidgets": [
+        8,
+        9,
+        -1,
+        -1
+      ],
+      "BottomWidgetThemes": [],
+      "Width": 220,
+      "FontSize": 16,
+      "Opacity": 0.8,
+      "FontFamily": "Montserrat",
+      "FontWeight": "Semibold",
+      "DriverNameFormat": 0,
+      "ShowPitLap": false,
+      "ShowPitTime": false,
+      "ShowCompletedStint": false,
+      "ShowCurrentStint": false,
+      "ShowJokerLap": false,
+      "ShowTitle": false,
+      "ShowTrackMap": false,
+      "ShowDriverClubName": false,
+      "ShowDriverCarBrand": false,
+      "BrandColorIsColored": true,
+      "HideInGarage": false,
+      "OnlyShowInGarage": false,
+      "NumberOfTireCompoundsToShow": 3,
+      "ShowLapsCompletedOnTireCompounds": false,
+      "ShowTireCompounds": false,
+      "RenderFPS": 10,
+      "TimeDistanceDecimals": 1,
+      "ShowFastestLapTime": false,
+      "ShowLastLapTime": false,
+      "ShowLast5LapTimeAvg": false,
+      "ShowLast10LapTimeAvg": false,
+      "ShowOutLap": true,
+      "ShowTowing": false,
+      "ShowLapNumber": false,
+      "DarkMode": false,
+      "DarkBackground": false,
+      "ExcludeCarsInPit": false,
+      "IsDriverTagColored": true,
+      "IsDriverTagEnabled": true,
+      "ShowFlagFrame": false,
+      "FlagFramePosition": "TOP",
+      "ShowPushToPass": false,
+      "ShowDriverFlag": false,
+      "LapDeltaCount": 1,
+      "ShowLapDelta": false,
+      "ReferenceCarCustomColors": false,
+      "ReferenceCarStripedBg": false,
+      "ReferenceCarBgColor": "#ffda59",
+      "ReferenceCarStripeColor": "#d8af0f",
+      "HighlightedLapTimeOpacity": 0.5
+    },
+    "screenLayoutOverlaySettings": {},
+    "screenOverlayModel": {},
+    "browserLayoutOverlaySettings": {},
+    "browserOverlayModel": {}
+  }
+}
