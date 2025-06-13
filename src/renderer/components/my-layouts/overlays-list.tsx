@@ -126,7 +126,9 @@ const OverlaysList = () => {
 
   // Determine grid columns based on viewport width
   const getGridColumns = () => {
-    if (viewportWidth >= 2900) {
+    if (viewportWidth === 0) {
+      return "hidden";
+    } else if (viewportWidth >= 2900) {
       return "grid-cols-3";
     } else if (viewportWidth >= 1900) {
       return "grid-cols-2";
@@ -174,7 +176,7 @@ const OverlaysList = () => {
                       {/* Main content container */}
                       <div className="relative h-full w-full transition-transform duration-300">
                         {/* Iframe container */}
-                        <div className="relative z-0 flex h-full items-center justify-center">
+                        <div className="animate-fadeIn relative z-0 flex h-full items-center justify-center">
                           <iframe
                             src={iframeUrl}
                             style={{
