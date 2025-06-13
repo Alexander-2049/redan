@@ -9,6 +9,7 @@ import sanitize from "sanitize-filename";
 import { overlaySchema } from "./schemas/overlaySchema";
 import { z } from "zod";
 import { OverlayHandler } from "../overlay-service/overlay-handler";
+import { jsonFileHandler } from "../json-file-service";
 
 interface CreateNewLayoutResponse {
   success: boolean;
@@ -94,11 +95,7 @@ class LayoutHandler {
 
     try {
       const parsedLayout = layoutSchema.parse(newLayout);
-      fs.writeFileSync(
-        filePath,
-        JSON.stringify(parsedLayout, null, 2),
-        "utf-8",
-      );
+      jsonFileHandler.write(filePath, parsedLayout, true);
       return { success: true, filePath };
     } catch (error) {
       console.error("Error creating new layout:", error);
@@ -121,10 +118,10 @@ class LayoutHandler {
         .forEach((file) => {
           const filePath = `${LAYOUTS_PATH}/${file}`;
           try {
-            const content = fs.readFileSync(filePath, "utf-8");
+            const content = jsonFileHandler.read(filePath);
             layouts.push({
               filename: file,
-              data: layoutSchema.parse(JSON.parse(content)),
+              data: layoutSchema.parse(content),
             });
           } catch (error) {
             console.warn(`Skipping invalid layout file: ${file}`, error);
@@ -149,8 +146,8 @@ class LayoutHandler {
       if (!fs.existsSync(filePath)) {
         throw new Error("Layout file does not exist");
       }
-      const content = fs.readFileSync(filePath, "utf-8");
-      const layout = layoutSchema.parse(JSON.parse(content));
+      const content = jsonFileHandler.read(filePath);
+      const layout = layoutSchema.parse(content);
       return { success: true, layout };
     } catch (error) {
       console.error("Error reading layout:", error);
@@ -172,18 +169,14 @@ class LayoutHandler {
       if (!fs.existsSync(filePath)) {
         throw new Error("Layout file does not exist");
       }
-      const content = fs.readFileSync(filePath, "utf-8");
-      const existingLayout = layoutSchema.parse(JSON.parse(content));
+      const content = jsonFileHandler.read(filePath);
+      const existingLayout = layoutSchema.parse(content);
       const updatedLayout = layoutSchema.parse({
         ...existingLayout,
         ...updatedData,
         updatedAt: Date.now(),
       });
-      fs.writeFileSync(
-        filePath,
-        JSON.stringify(updatedLayout, null, 2),
-        "utf-8",
-      );
+      jsonFileHandler.write(filePath, updatedLayout, true);
       return { success: true };
     } catch (error) {
       console.error("Error modifying layout:", error);
@@ -234,8 +227,8 @@ class LayoutHandler {
         throw new Error("Layout file does not exist");
       }
 
-      const content = fs.readFileSync(layoutFilePath, "utf-8");
-      const existingLayout = layoutSchema.parse(JSON.parse(content));
+      const content = jsonFileHandler.read(layoutFilePath);
+      const existingLayout = layoutSchema.parse(content);
 
       const newOverlay: z.infer<typeof overlaySchema> = {
         id: crypto.randomUUID(),
@@ -267,11 +260,7 @@ class LayoutHandler {
         updatedAt: Date.now(),
       });
 
-      fs.writeFileSync(
-        layoutFilePath,
-        JSON.stringify(updatedLayout, null, 2),
-        "utf-8",
-      );
+      jsonFileHandler.write(layoutFilePath, updatedLayout, true);
 
       return { success: true };
     } catch (error) {
@@ -292,8 +281,8 @@ class LayoutHandler {
         throw new Error("Layout file does not exist");
       }
 
-      const content = fs.readFileSync(layoutFilePath, "utf-8");
-      const existingLayout = layoutSchema.parse(JSON.parse(content));
+      const content = jsonFileHandler.read(layoutFilePath);
+      const existingLayout = layoutSchema.parse(content);
 
       const updatedOverlays = existingLayout.overlays.filter(
         (overlay) => overlay.id !== overlayId,
@@ -312,11 +301,7 @@ class LayoutHandler {
         updatedAt: Date.now(),
       });
 
-      fs.writeFileSync(
-        layoutFilePath,
-        JSON.stringify(updatedLayout, null, 2),
-        "utf-8",
-      );
+      jsonFileHandler.write(layoutFilePath, updatedLayout, true);
 
       return { success: true };
     } catch (error) {
@@ -345,11 +330,7 @@ class LayoutHandler {
         });
 
         const filePath = `${LAYOUTS_PATH}/${filename}`;
-        fs.writeFileSync(
-          filePath,
-          JSON.stringify(updatedLayout, null, 2),
-          "utf-8",
-        );
+        jsonFileHandler.write(filePath, updatedLayout, true);
       });
 
       return { success: true };
