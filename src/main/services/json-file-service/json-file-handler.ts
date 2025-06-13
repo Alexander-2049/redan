@@ -62,6 +62,7 @@ class JsonFileHandler {
       : JSON.stringify(data);
 
     this.cache.set(filePath, data);
+    this.lastWrite.set(filePath, Date.now());
     logger.debug(`Cache updated for ${filePath}`);
 
     return new Promise<void>((resolve) => {
@@ -104,6 +105,7 @@ class JsonFileHandler {
       .then(() => this.safeWrite(filePath, json))
       .then(() => {
         this.lastWrite.set(filePath, Date.now());
+        this.queuedWrites.delete(filePath);
         this.pendingWrites.delete(filePath);
         logger.info(`Successfully wrote to file: ${filePath}`);
       })
