@@ -11,6 +11,7 @@ import { z } from "zod";
 import { OverlayHandler } from "../overlay-service/overlay-handler";
 import { jsonFileHandler } from "../json-file-service";
 import path from "path";
+import EventEmitter from "events";
 
 interface CreateNewLayoutResponse {
   success: boolean;
@@ -44,12 +45,12 @@ export type LayoutResponse =
       layouts?: undefined;
     };
 
-class LayoutHandler {
-  public static setup() {
+class LayoutHandler extends EventEmitter {
+  public setup() {
     this.createLayoutsFolder();
   }
 
-  private static createLayoutsFolder() {
+  private createLayoutsFolder() {
     if (!fs.existsSync(LAYOUTS_PATH)) {
       fs.mkdirSync(LAYOUTS_PATH, { recursive: true });
       return true;
@@ -58,7 +59,7 @@ class LayoutHandler {
     }
   }
 
-  public static createNewLayout({
+  public createNewLayout({
     layoutName,
     description,
     screenWidth,
@@ -107,7 +108,7 @@ class LayoutHandler {
     }
   }
 
-  public static getAllLayouts(): LayoutResponse {
+  public getAllLayouts(): LayoutResponse {
     this.setup();
 
     try {
@@ -139,7 +140,7 @@ class LayoutHandler {
     }
   }
 
-  public static getLayout(fileName: string) {
+  public getLayout(fileName: string) {
     this.setup();
 
     try {
@@ -159,7 +160,7 @@ class LayoutHandler {
     }
   }
 
-  public static modifyLayout(
+  public modifyLayout(
     fileName: string,
     updatedData: Partial<ILayout>,
   ): ModifyLayoutResponse {
@@ -178,6 +179,7 @@ class LayoutHandler {
         updatedAt: Date.now(),
       });
       jsonFileHandler.write(filePath, updatedLayout, true);
+      this.emit("modified", { fileName, updatedLayout });
       return { success: true };
     } catch (error) {
       console.error("Error modifying layout:", error);
@@ -188,7 +190,7 @@ class LayoutHandler {
     }
   }
 
-  public static deleteLayout(fileName: string): DefaultResponse {
+  public deleteLayout(fileName: string): DefaultResponse {
     this.setup();
 
     try {
@@ -207,7 +209,7 @@ class LayoutHandler {
     }
   }
 
-  public static addOverlay(
+  public addOverlay(
     layoutFileName: string,
     overlayFolderName: string,
   ): DefaultResponse {
@@ -273,7 +275,7 @@ class LayoutHandler {
     }
   }
 
-  public static removeOverlay(layoutFileName: string, overlayId: string) {
+  public removeOverlay(layoutFileName: string, overlayId: string) {
     this.setup();
 
     try {
@@ -314,7 +316,7 @@ class LayoutHandler {
     }
   }
 
-  public static setActiveLayout(layoutFileName: string): DefaultResponse {
+  public setActiveLayout(layoutFileName: string): DefaultResponse {
     this.setup();
 
     try {
@@ -345,9 +347,10 @@ class LayoutHandler {
   }
 }
 
+const layoutHandler = new LayoutHandler();
 export {
   CreateNewLayoutResponse,
   DefaultResponse,
   ModifyLayoutResponse,
-  LayoutHandler,
+  layoutHandler as LayoutHandler,
 };

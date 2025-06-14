@@ -35,7 +35,11 @@ import type { OverlaySettingDescription } from "@/main/services/overlay-service/
 import type { OverlayAndFolderName } from "@/shared/types/overlay-and-folder-name";
 
 const LayoutSettings = () => {
-  const { data: layouts, isLoading: isLoadingLayouts } = useLayouts();
+  const {
+    data: layouts,
+    isLoading: isLoadingLayouts,
+    refetch: refetchLayouts,
+  } = useLayouts();
   const { data: overlayManifests, isLoading: isLoadingOverlays } =
     useOverlays();
   const { mutate: modifyLayout } = useModifyLayout();
@@ -47,6 +51,20 @@ const LayoutSettings = () => {
   >([]);
   const [activeLayoutFileName, setActiveLayoutFileName] = useState<string>("");
   const [overlayToDelete, setOverlayToDelete] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on(
+      "layout-modified",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      () => {
+        refetchLayouts();
+      },
+    );
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners("data-response");
+    };
+  }, []);
 
   useEffect(() => {
     if (layouts && layouts.length > 0) {

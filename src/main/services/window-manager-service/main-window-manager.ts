@@ -61,6 +61,10 @@ export const createMainWindow = (
     overlayWindowManager.closeAllOverlays();
   });
 
+  LayoutHandler.addListener("modified", (data) => {
+    mainWindow.webContents.send("layout-modified", data);
+  });
+
   return mainWindow;
 };
 

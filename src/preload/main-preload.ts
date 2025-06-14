@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
@@ -97,6 +98,14 @@ contextBridge.exposeInMainWorld("electron", {
   stopRecordDemo: async () => {
     ipcRenderer.send("stop-record-demo-renderer-to-main");
     return withTimeout("stop-record-demo-main-to-renderer");
+  },
+  ipcRenderer: {
+    send: (channel: string, data: any) => ipcRenderer.send(channel, data),
+    on: (channel: string, callback: (event: any, data: any) => void) => {
+      ipcRenderer.on(channel, callback);
+    },
+    removeAllListeners: (channel: string) =>
+      ipcRenderer.removeAllListeners(channel),
   },
 });
 

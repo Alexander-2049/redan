@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CreateNewLayoutResponse,
   DefaultResponse,
@@ -37,6 +38,11 @@ interface MainWindowAPI {
   setOverlaysLocked: (boolean) => Promise<DefaultResponse>;
   recordDemo: () => Promise<DefaultResponse>;
   stopRecordDemo: () => Promise<DefaultResponse>;
+  ipcRenderer: {
+    send: (channel: string, data: any) => void;
+    on: (channel: string, callback: (event: any, data: any) => void) => void;
+    removeAllListeners: (channel: string) => void;
+  };
 }
 
 interface WindowAction {
