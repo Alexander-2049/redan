@@ -7,6 +7,8 @@ import DebugRoute from "./routes/debug-route";
 import PageLayout from "./components/layout/page-layout";
 import NotFoundRoute from "./routes/not-found-route";
 import MyLayoutsRoute from "./routes/my-layouts-route";
+import { useEffect } from "react";
+import { useLayouts } from "./api/layouts/get-layouts";
 
 const Main = () => {
   // const { t } = useTranslation();
@@ -14,6 +16,21 @@ const Main = () => {
         The title is: {t("title")}
         Description: {t("description.part1")}
   */
+  const { refetch: refetchLayouts } = useLayouts();
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on(
+      "layout-modified",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      () => {
+        refetchLayouts();
+      },
+    );
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners("data-response");
+    };
+  }, []);
 
   return (
     <HashRouter>
