@@ -113,6 +113,9 @@ export class OverlayWindowManager {
 
     const updateOverlayPositionAndSize = () => {
       const bounds = window.getBounds();
+      const activeLayout = this.getActiveLayout();
+      if (!activeLayout) return;
+
       const overlayIndex = activeLayout.data.overlays.findIndex(
         (overlay) => overlay.id === overlayId,
       );
