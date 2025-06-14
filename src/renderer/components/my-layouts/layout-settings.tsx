@@ -1,3 +1,5 @@
+import type React from "react";
+
 import { useState, useEffect } from "react";
 import { Eye, EyeOff, Trash2 } from "lucide-react";
 import { Input } from "@/renderer/components/ui/input";
@@ -51,6 +53,9 @@ const LayoutSettings = () => {
   >([]);
   const [activeLayoutFileName, setActiveLayoutFileName] = useState<string>("");
   const [overlayToDelete, setOverlayToDelete] = useState<string | null>(null);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [pendingUpdates, setPendingUpdates] = useState<Record<string, any>>({});
 
   useEffect(() => {
     window.electron.ipcRenderer.on(
@@ -241,6 +246,7 @@ const LayoutSettings = () => {
     if (!settingDescription) return null;
 
     const currentValue = setting.value;
+    const sliderKey = `${overlay.id}-${setting.id}`;
 
     switch (settingDescription.type) {
       case "slider":
@@ -263,13 +269,46 @@ const LayoutSettings = () => {
               max={settingDescription.max}
               step={settingDescription.step}
               value={currentValue}
-              onChange={(e) =>
-                updateOverlaySetting(
-                  overlay.id,
-                  setting.id,
-                  Number(e.target.value),
-                )
-              }
+              onChange={(e) => {
+                const newValue = Number(e.target.value);
+                // Update local state immediately for responsive UI
+                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                  if (o.id !== overlay.id) return o;
+                  return {
+                    ...o,
+                    settings: o.settings.map((s) =>
+                      s.id === setting.id ? { ...s, value: newValue } : s,
+                    ),
+                  };
+                });
+                setActiveLayoutOverlays(updatedOverlays);
+
+                // Store pending update
+                setPendingUpdates((prev) => ({
+                  ...prev,
+                  [sliderKey]: {
+                    overlayId: overlay.id,
+                    settingId: setting.id,
+                    value: newValue,
+                  },
+                }));
+              }}
+              onMouseUp={() => {
+                // Apply the pending update
+                const pendingUpdate = pendingUpdates[sliderKey];
+                if (pendingUpdate) {
+                  updateOverlaySetting(
+                    pendingUpdate.overlayId,
+                    pendingUpdate.settingId,
+                    pendingUpdate.value,
+                  );
+                  setPendingUpdates((prev) => {
+                    const newPending = { ...prev };
+                    delete newPending[sliderKey];
+                    return newPending;
+                  });
+                }
+              }}
               className="accent-primary h-2 w-full"
             />
           </div>
@@ -330,13 +369,28 @@ const LayoutSettings = () => {
               min={settingDescription.min}
               max={settingDescription.max}
               value={currentValue}
-              onChange={(e) =>
+              onChange={(e) => {
+                // Update local state immediately for responsive UI
+                const newValue = Number(e.target.value);
+                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                  if (o.id !== overlay.id) return o;
+                  return {
+                    ...o,
+                    settings: o.settings.map((s) =>
+                      s.id === setting.id ? { ...s, value: newValue } : s,
+                    ),
+                  };
+                });
+                setActiveLayoutOverlays(updatedOverlays);
+              }}
+              onBlur={(e) => {
+                // Only call API on blur (when input becomes inactive)
                 updateOverlaySetting(
                   overlay.id,
                   setting.id,
                   Number(e.target.value),
-                )
-              }
+                );
+              }}
             />
           </div>
         );
@@ -352,12 +406,23 @@ const LayoutSettings = () => {
               id={`overlay-${overlay.id}-setting-${setting.id}`}
               type="text"
               value={currentValue}
-              onChange={(e) =>
-                updateOverlaySetting(overlay.id, setting.id, e.target.value)
-              }
-              onBlur={(e) =>
-                updateOverlaySetting(overlay.id, setting.id, e.target.value)
-              }
+              onChange={(e) => {
+                // Update local state immediately for responsive UI
+                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                  if (o.id !== overlay.id) return o;
+                  return {
+                    ...o,
+                    settings: o.settings.map((s) =>
+                      s.id === setting.id ? { ...s, value: e.target.value } : s,
+                    ),
+                  };
+                });
+                setActiveLayoutOverlays(updatedOverlays);
+              }}
+              onBlur={(e) => {
+                // Only call API on blur (when input becomes inactive)
+                updateOverlaySetting(overlay.id, setting.id, e.target.value);
+              }}
             />
           </div>
         );
@@ -383,7 +448,7 @@ const LayoutSettings = () => {
             <Input
               id="layout-name"
               value={layoutName}
-              onChange={(e) => updateLayoutField("name", e.target.value)}
+              onChange={(e) => setLayoutName(e.target.value)}
               onBlur={(e) => updateLayoutField("name", e.target.value)}
             />
           </div>
@@ -393,7 +458,7 @@ const LayoutSettings = () => {
             <Textarea
               id="layout-description"
               value={layoutDescription}
-              onChange={(e) => updateLayoutField("description", e.target.value)}
+              onChange={(e) => setLayoutDescription(e.target.value)}
               onBlur={(e) => updateLayoutField("description", e.target.value)}
               rows={3}
             />
