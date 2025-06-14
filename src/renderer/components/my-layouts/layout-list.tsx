@@ -21,6 +21,7 @@ import {
 } from "@/renderer/components/ui/alert-dialog";
 import { useSetActiveLayout } from "@/renderer/api/layouts/set-active-layout";
 import { NewLayoutButton } from "./new-layout-button";
+import { LayoutPreview } from "./layout-preview";
 
 function LayoutSelector() {
   const layouts = useLayouts();
@@ -31,6 +32,7 @@ function LayoutSelector() {
   const [newLayoutIds, setNewLayoutIds] = useState<Set<string>>(new Set());
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
   const previousLayoutsRef = useRef<ILayoutDataAndFilename[]>([]);
+  const parentWidth = 256;
 
   // Track new layouts
   useEffect(() => {
@@ -99,7 +101,12 @@ function LayoutSelector() {
   };
 
   return (
-    <div className="bg-muted/20 grid h-full w-64 grid-rows-[auto_1fr_auto] overflow-hidden border-r">
+    <div
+      className="bg-muted/20 grid h-full grid-rows-[auto_1fr_auto] overflow-hidden border-r"
+      style={{
+        width: `${parentWidth}px`,
+      }}
+    >
       {/* Search Header */}
       <div className="bg-background/95 sticky top-0 z-10 border-b p-3 backdrop-blur-sm">
         <div className="relative">
@@ -126,7 +133,7 @@ function LayoutSelector() {
                   role="button"
                   tabIndex={0}
                   className={cn(
-                    "border-border/50 group relative grid w-full cursor-default grid-cols-[auto_1fr_auto] items-center gap-2 border-b bg-white px-3 py-2 text-left transition-all duration-300",
+                    "border-border/50 group relative flex w-full cursor-default flex-col border-b bg-white text-left transition-all duration-300",
                     item.data.active
                       ? "border-blue-200 bg-blue-50 text-blue-600"
                       : "hover:bg-gray-50",
@@ -140,30 +147,36 @@ function LayoutSelector() {
                       : undefined,
                   }}
                 >
-                  <Layout
-                    size={16}
-                    className={cn(
-                      "text-muted-foreground",
-                      item.data.active ? "text-blue-500" : "",
-                    )}
-                    aria-hidden="true"
-                  />
-
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">
-                      {item.data.name}
+                  {/* Text content with padding */}
+                  <div className="flex w-full items-center gap-2 px-3 py-2">
+                    <Layout
+                      size={16}
+                      className={cn(
+                        "text-muted-foreground flex-shrink-0",
+                        item.data.active ? "text-blue-500" : "",
+                      )}
+                      aria-hidden="true"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-medium">
+                        {item.data.name}
+                      </div>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+                      onClick={(e) => handleDeleteClick(e, item.filename)}
+                      aria-label={`Delete ${item.data.name} layout`}
+                    >
+                      <Trash2 size={14} />
+                    </Button>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
-                    onClick={(e) => handleDeleteClick(e, item.filename)}
-                    aria-label={`Delete ${item.data.name} layout`}
-                  >
-                    <Trash2 size={14} />
-                  </Button>
+                  {/* Preview with full width, no padding */}
+                  <div className="w-full">
+                    <LayoutPreview layout={item} parentWidth={parentWidth} />
+                  </div>
                 </div>
               );
             })}
