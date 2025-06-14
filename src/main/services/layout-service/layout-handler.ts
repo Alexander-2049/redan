@@ -10,6 +10,7 @@ import { overlaySchema } from "./schemas/overlaySchema";
 import { z } from "zod";
 import { OverlayHandler } from "../overlay-service/overlay-handler";
 import { jsonFileHandler } from "../json-file-service";
+import path from "path";
 
 interface CreateNewLayoutResponse {
   success: boolean;
@@ -71,13 +72,13 @@ class LayoutHandler {
     this.setup();
 
     let sanitizedFileName = sanitize(layoutName);
-    let filePath = `${LAYOUTS_PATH}/${sanitizedFileName}.json`;
+    let filePath = path.join(`${LAYOUTS_PATH}`, `${sanitizedFileName}.json`);
     let counter = 1;
 
     // Check if file already exists and append a postfix if necessary
     while (fs.existsSync(filePath)) {
       sanitizedFileName = `${sanitize(layoutName)}(${counter})`;
-      filePath = `${LAYOUTS_PATH}/${sanitizedFileName}.json`;
+      filePath = path.join(`${LAYOUTS_PATH}`, `${sanitizedFileName}.json`);
       counter++;
     }
 
