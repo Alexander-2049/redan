@@ -20,7 +20,7 @@ const DashboardRoute = () => {
 
       <div className="absolute top-0 right-0 bottom-0 left-0 flex h-full w-full items-center justify-center">
         <BlurText
-          text="Sim Racing Universe"
+          text="Sim Racing Toolkit"
           delay={150}
           animateBy="words"
           direction="top"

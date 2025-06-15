@@ -1,8 +1,8 @@
 {
-  "name": "sim-racing-universe",
-  "productName": "SimRacingUniverse",
+  "name": "sim-racing-toolkit",
+  "productName": "SimRacingToolkit",
   "version": "1.0.0",
-  "description": "Utility application for Sim Racing Games",
+  "description": "Toolkit application for Sim Racing Games",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
