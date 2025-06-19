@@ -1,18 +1,4 @@
-import {
-  // BarChart3,
-  Bug,
-  // Clock,
-  // Flag,
-  // Gauge,
-  // HelpCircle,
-  Layout,
-  // LayoutDashboard,
-  // MonitorPlay,
-  // PlusCircle,
-  // Settings,
-  // Timer,
-  // Users,
-} from "lucide-react";
+import { Bug, Layout, LucideIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "./ui/scroll-area";
 import { cn } from "@/renderer/lib/utils";
@@ -22,53 +8,50 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useEffect, useState } from "react";
+interface SidebarLink {
+  text: string;
+  path: string;
+  icon: LucideIcon;
+}
 
-const sidebarLinks = [
-  {
-    group: "MAIN",
-    links: [
-      // { text: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-      { text: "My Layouts", path: "/my-layouts", icon: Layout },
-      // { text: "Live Preview", path: "/live-preview", icon: MonitorPlay },
-      // { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },
-    ],
-  },
-  // {
-  //   group: "RACING DATA",
-  //   links: [
-  // { text: "Lap Times", path: "/lap-times", icon: Timer },
-  // { text: "Telemetry", path: "/telemetry", icon: Gauge },
-  // { text: "Race Results", path: "/race-results", icon: Flag },
-  // { text: "Competitors", path: "/competitors", icon: Users },
-  //   ],
-  // },
-  // {
-  //   group: "TEMPLATES",
-  //   links: [
-  // { text: "Timing Screens", path: "/timing-screens", icon: Clock },
-  // {
-  //   text: "Performance Graphs",
-  //   path: "/performance-graphs",
-  //   icon: BarChart3,
-  // },
-  // { text: "HUD Elements", path: "/hud-elements", icon: Layers },
-  // ],
-  // },
-  {
-    group: "DEVELOPER",
-    links: [{ text: "Debug", path: "/debug", icon: Bug }],
-  },
-  // {
-  //   group: "OTHER",
-  //   links: [
-  //     { text: "Settings", path: "/settings", icon: Settings },
-  //     { text: "Help & Support", path: "/help-support", icon: HelpCircle },
-  //   ],
-  // },
-];
+interface SidebarLinkGroup {
+  group: string;
+  links: SidebarLink[];
+}
+
 const Sidebar = () => {
   const location = useLocation();
   const { pathname } = location;
+  const [isDebug, setIsDebug] = useState<boolean>(false);
+  const [sidebarLinks, setSidebarLinks] = useState<SidebarLinkGroup[]>([
+    {
+      group: "MAIN",
+      links: [
+        // { text: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+        { text: "My Layouts", path: "/my-layouts", icon: Layout },
+        // { text: "Live Preview", path: "/live-preview", icon: MonitorPlay },
+        // { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },
+      ],
+    },
+  ]);
+
+  useEffect(() => {
+    window.electron.isDebug().then((isDebug) => {
+      setIsDebug(isDebug);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isDebug)
+      setSidebarLinks((prev) => [
+        ...prev,
+        {
+          group: "DEVELOPER",
+          links: [{ text: "Debug", path: "/debug", icon: Bug }],
+        },
+      ]);
+  }, [isDebug]);
 
   return (
     <ScrollArea className="border-r">

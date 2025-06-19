@@ -5,7 +5,7 @@
   "description": "Toolkit application for Sim Racing Games",
   "main": ".webpack/main",
   "scripts": {
-    "start": "cross-env NODE_ENV=development electron-forge start",
+    "start": "cross-env NODE_ENV=development electron-forge start -- -- --debug",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

@@ -11,3 +11,4 @@ export const LAYOUTS_PATH = path.join(app.getPath("userData"), "Layouts");
 export const REPLAYS_PATH = path.join(app.getPath("userData"), "Replays");
 export const CACHE_PATH = path.join(app.getPath("userData"), "Cache");
 export const LOGS_PATH = path.join(app.getPath("userData"), "Logs");
+export const IS_DEBUG = process.argv.includes("--debug");

@@ -13,6 +13,7 @@ import { overlayWindowManager } from "@/main";
 import gameDataHandler from "../game-data";
 import { GameName } from "../game-data/types/game-name";
 import { windowManagerServiceLogger as logger } from "@/main/loggers";
+import { IS_DEBUG } from "@/main/main-constants";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -251,5 +252,10 @@ const addMessageHandlers = () => {
     event.reply("stop-record-demo-main-to-renderer", {
       success: true,
     });
+  });
+
+  ipcMain.on("is-debug-renderer-to-main", (event) => {
+    logger.info(`Sending to client IS_DEBUG: ${IS_DEBUG}`);
+    event.reply("is-debug-main-to-renderer", IS_DEBUG);
   });
 };

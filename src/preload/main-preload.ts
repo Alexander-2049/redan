@@ -99,6 +99,10 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.send("stop-record-demo-renderer-to-main");
     return withTimeout("stop-record-demo-main-to-renderer");
   },
+  isDebug: async () => {
+    ipcRenderer.send("is-debug-renderer-to-main");
+    return withTimeout("is-debug-main-to-renderer");
+  },
   ipcRenderer: {
     send: (channel: string, data: any) => ipcRenderer.send(channel, data),
     on: (channel: string, callback: (event: any, data: any) => void) => {
