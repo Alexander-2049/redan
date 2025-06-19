@@ -45,6 +45,7 @@ export function createServiceLogger(serviceName: string) {
   });
 }
 
+export const mainLogger = createServiceLogger("main");
 export const overlayServiceLogger = createServiceLogger("overlay-service");
 export const windowManagerServiceLogger = createServiceLogger(
   "window-manager-service",
