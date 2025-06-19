@@ -7,6 +7,8 @@ import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from "@electron-forge/plugin-webpack";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
+import path from "path";
+import fsp from "fs/promises";
 
 import { mainConfig } from "./webpack.main.config";
 import { rendererConfig } from "./webpack.renderer.config";
@@ -20,6 +22,35 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: "public/logo.ico",
+  },
+  hooks: {
+    async postPackage(config, results) {
+      const baseDir = results.outputPaths[0]; // Correct way to get the output path
+
+      const destPath = path.join(
+        baseDir,
+        "resources",
+        "app.asar.unpacked",
+        ".webpack",
+        "main",
+        "native_modules",
+        "dist",
+        "win64",
+      );
+
+      await fsp.mkdir(destPath, { recursive: true });
+
+      const filesToCopy = ["steam_api64.dll", "steam_api64.lib"];
+
+      for (const file of filesToCopy) {
+        const src = path.resolve(
+          `node_modules/steamworks.js/dist/win64/${file}`,
+        );
+        const dest = path.join(destPath, file);
+        await fsp.copyFile(src, dest);
+        console.log(`✔ Copied ${file} → ${dest}`);
+      }
+    },
   },
   rebuildConfig: {},
   makers: [
@@ -53,8 +84,6 @@ const config: ForgeConfig = {
         ],
       },
     }),
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,

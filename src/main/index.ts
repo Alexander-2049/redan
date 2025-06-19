@@ -1,3 +1,8 @@
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  process.exit(1);
+});
+
 import { app, globalShortcut } from "electron";
 import { createMainWindow } from "./services/window-manager-service/main-window-manager";
 import { startServers } from "./services/server-manager";
@@ -40,6 +45,7 @@ gameDataHandler.addListener("isConnected", (c) => {
     overlayWindowManager.updateOverlayWindows();
   }
 });
+
 app.on("ready", () => {
   createMainWindow(
     MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
