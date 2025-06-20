@@ -38,6 +38,13 @@ const DebugRoute = () => {
         <pre>
           <code>{JSON.stringify(data, null, "  ")}</code>
         </pre>
+        <input
+          type="file"
+          accept=".html"
+          onChange={(e) => {
+            console.log(e.target.files && e.target.files[0]?.path);
+          }}
+        />
       </ScrollArea>
       {/* <div>
         <p>Value: {value}</p>

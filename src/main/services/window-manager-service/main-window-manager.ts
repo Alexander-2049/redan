@@ -14,6 +14,11 @@ import gameDataHandler from "../game-data";
 import { GameName } from "../game-data/types/game-name";
 import { windowManagerServiceLogger as logger } from "@/main/loggers";
 import { IS_DEBUG } from "@/main/main-constants";
+import { STEAM_APP_ID } from "@/shared/shared-constants";
+import { getSteamClient } from "@/main/utils/steam-client";
+
+const RECEIVE_POSTFIX = "renderer-to-main";
+const SEND_POSTFIX = "main-to-renderer";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -70,10 +75,10 @@ export const createMainWindow = (
 };
 
 const addMessageHandlers = () => {
-  ipcMain.on("overlay-list-renderer-to-main", (event) => {
+  ipcMain.on("overlay-list-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Received overlay list request from renderer");
     const replyMessage = OverlayHandler.loadAllOverlays();
-    event.reply("overlay-list-main-to-renderer", replyMessage);
+    event.reply("overlay-list-" + SEND_POSTFIX, replyMessage);
   });
 
   ipcMain.on("title-bar-message", (event, data: TitleBarEvent) => {
@@ -93,30 +98,30 @@ const addMessageHandlers = () => {
     }
   });
 
-  ipcMain.on("open-overlays-folder-renderer-to-main", (event) => {
+  ipcMain.on("open-overlays-folder-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Received request to open overlays folder");
     openOverlaysFolder()
       .then(() => {
         logger.info("Overlays folder opened successfully");
-        event.reply("open-overlays-folder-main-to-renderer", true);
+        event.reply("open-overlays-folder-" + SEND_POSTFIX, true);
       })
       .catch((err) => {
         logger.error("Failed to open overlays folder", { error: err });
-        event.reply("open-overlays-folder-main-to-renderer", false);
+        event.reply("open-overlays-folder-" + SEND_POSTFIX, false);
       });
   });
 
-  ipcMain.on("get-layouts-renderer-to-main", (event) => {
+  ipcMain.on("get-layouts-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Received get-layouts request");
     const response = LayoutHandler.getAllLayouts();
     event.reply(
-      "get-layouts-main-to-renderer",
+      "get-layouts-" + SEND_POSTFIX,
       response.success ? response.layouts : [],
     );
   });
 
   ipcMain.on(
-    "create-empty-layout-renderer-to-main",
+    "create-empty-layout-" + RECEIVE_POSTFIX,
     (event, layoutName: string, layoutDescription: string) => {
       logger.info(`Creating layout: ${layoutName}`);
       const { width: screenWidth, height: screenHeight } =
@@ -129,31 +134,31 @@ const addMessageHandlers = () => {
         description: layoutDescription,
       });
 
-      event.reply("create-empty-layout-main-to-renderer", response);
+      event.reply("create-empty-layout-" + SEND_POSTFIX, response);
     },
   );
 
-  ipcMain.on("delete-layout-renderer-to-main", (event, fileName: string) => {
+  ipcMain.on("delete-layout-" + RECEIVE_POSTFIX, (event, fileName: string) => {
     logger.info(`Deleting layout: ${fileName}`);
     const response = LayoutHandler.deleteLayout(fileName);
     overlayWindowManager.updateOverlayWindows();
 
-    event.reply("delete-layout-main-to-renderer", response);
+    event.reply("delete-layout-" + SEND_POSTFIX, response);
   });
 
   ipcMain.on(
-    "modify-layout-renderer-to-main",
+    "modify-layout-" + RECEIVE_POSTFIX,
     (event, fileName: string, updatedData: Partial<ILayout>) => {
       logger.info(`Modifying layout: ${fileName}`);
       const response = LayoutHandler.modifyLayout(fileName, updatedData);
       overlayWindowManager.updateOverlayWindows();
 
-      event.reply("modify-layout-main-to-renderer", response);
+      event.reply("modify-layout-" + SEND_POSTFIX, response);
     },
   );
 
   ipcMain.on(
-    "add-overlay-to-layout-renderer-to-main",
+    "add-overlay-to-layout-" + RECEIVE_POSTFIX,
     (event, layoutFileName: string, overlayFolderName: string) => {
       logger.info(
         `Adding overlay ${overlayFolderName} to layout ${layoutFileName}`,
@@ -164,12 +169,12 @@ const addMessageHandlers = () => {
       );
       overlayWindowManager.updateOverlayWindows();
 
-      event.reply("add-overlay-to-layout-main-to-renderer", response);
+      event.reply("add-overlay-to-layout-" + SEND_POSTFIX, response);
     },
   );
 
   ipcMain.on(
-    "remove-overlay-from-layout-renderer-to-main",
+    "remove-overlay-from-layout-" + RECEIVE_POSTFIX,
     (event, layoutFileName: string, overlayId: string) => {
       logger.info(
         `Removing overlay ${overlayId} from layout ${layoutFileName}`,
@@ -177,23 +182,23 @@ const addMessageHandlers = () => {
       const response = LayoutHandler.removeOverlay(layoutFileName, overlayId);
       overlayWindowManager.updateOverlayWindows();
 
-      event.reply("remove-overlay-from-layout-main-to-renderer", response);
+      event.reply("remove-overlay-from-layout-" + SEND_POSTFIX, response);
     },
   );
 
   ipcMain.on(
-    "set-active-layout-renderer-to-main",
+    "set-active-layout-" + RECEIVE_POSTFIX,
     (event, layoutFileName: string) => {
       logger.info(`Setting active layout: ${layoutFileName}`);
       const response = LayoutHandler.setActiveLayout(layoutFileName);
       overlayWindowManager.updateOverlayWindows();
 
-      event.reply("set-active-layout-main-to-renderer", response);
+      event.reply("set-active-layout-" + SEND_POSTFIX, response);
     },
   );
 
   ipcMain.on(
-    "set-selected-game-renderer-to-main",
+    "set-selected-game-" + RECEIVE_POSTFIX,
     (event, gameName: GameName | null) => {
       logger.info(`Setting selected game: ${gameName}`);
       const success = gameDataHandler.selectGame(gameName);
@@ -203,20 +208,20 @@ const addMessageHandlers = () => {
 
       if (!success) logger.warn("Failed to set selected game");
 
-      event.reply("set-selected-game-main-to-renderer", response);
+      event.reply("set-selected-game-" + SEND_POSTFIX, response);
     },
   );
 
-  ipcMain.on("get-selected-game-renderer-to-main", (event) => {
+  ipcMain.on("get-selected-game-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Received get-selected-game request");
     event.reply(
-      "get-selected-game-main-to-renderer",
+      "get-selected-game-" + SEND_POSTFIX,
       gameDataHandler.getSelectedGame(),
     );
   });
 
   ipcMain.on(
-    "set-overlays-locked-renderer-to-main",
+    "set-overlays-locked-" + RECEIVE_POSTFIX,
     (event, locked: boolean) => {
       logger.info(`Setting overlays lock state: ${locked}`);
       if (locked) {
@@ -224,38 +229,119 @@ const addMessageHandlers = () => {
       } else {
         overlayWindowManager.unlock();
       }
-      event.reply("set-overlays-locked-main-to-renderer", {
+      event.reply("set-overlays-locked-" + SEND_POSTFIX, {
         success: true,
       });
     },
   );
 
-  ipcMain.on("get-overlays-locked-renderer-to-main", (event) => {
+  ipcMain.on("get-overlays-locked-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Received get-overlays-locked request");
     event.reply(
-      "get-overlays-locked-main-to-renderer",
+      "get-overlays-locked-" + SEND_POSTFIX,
       overlayWindowManager.isLocked(),
     );
   });
 
-  ipcMain.on("record-demo-renderer-to-main", (event) => {
+  ipcMain.on("record-demo-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Start demo recording");
     gameDataHandler.startRecording();
-    event.reply("record-demo-main-to-renderer", {
+    event.reply("record-demo-" + SEND_POSTFIX, {
       success: true,
     });
   });
 
-  ipcMain.on("stop-record-demo-renderer-to-main", (event) => {
+  ipcMain.on("stop-record-demo-" + RECEIVE_POSTFIX, (event) => {
     logger.info("Stop demo recording");
     gameDataHandler.stopRecording();
-    event.reply("stop-record-demo-main-to-renderer", {
+    event.reply("stop-record-demo-" + SEND_POSTFIX, {
       success: true,
     });
   });
 
-  ipcMain.on("is-debug-renderer-to-main", (event) => {
+  ipcMain.on("is-debug-" + RECEIVE_POSTFIX, (event) => {
     logger.info(`Sending to client IS_DEBUG: ${IS_DEBUG}`);
-    event.reply("is-debug-main-to-renderer", IS_DEBUG);
+    event.reply("is-debug-" + SEND_POSTFIX, IS_DEBUG);
   });
+
+  ipcMain.on(
+    "steam-get-workshop-subscribed-items-" + RECEIVE_POSTFIX,
+    (event) => {
+      const client = getSteamClient();
+      const subscribedItems = client.workshop.getSubscribedItems();
+      logger.info(
+        "Sending to renderer steam workshop subscribed items: ",
+        subscribedItems.join(", "),
+      );
+      event.reply(
+        "steam-get-workshop-subscribed-items-" + SEND_POSTFIX,
+        subscribedItems,
+      );
+    },
+  );
+
+  ipcMain.on(
+    "steam-get-all-workshop-items-" + RECEIVE_POSTFIX,
+    (event, page: number) => {
+      const client = getSteamClient();
+      const response = client.workshop.getAllItems(
+        page,
+        client.workshop.UGCQueryType.RankedByVote,
+        client.workshop.UGCType.All,
+        STEAM_APP_ID,
+        STEAM_APP_ID,
+      );
+      response
+        .then((e) => {
+          console.log(e);
+          event.reply("steam-get-all-workshop-items-" + SEND_POSTFIX, e);
+        })
+        .catch((e) => {
+          console.log(e);
+          event.reply("steam-get-all-workshop-items-" + SEND_POSTFIX, null);
+        });
+    },
+  );
 };
+
+// client.workshop.createItem(STEAM_APP_ID).then((data) => {
+//   client.workshop
+//     .updateItem(
+//       data.itemId,
+//       {
+//         contentPath:
+//           "C:/Users/ALEXANDER/Desktop/Development/sim-racing-toolkit/public",
+//       },
+//       STEAM_APP_ID,
+//     )
+//     .then((data) => {
+//       logger.info(
+//         `${data.itemId} has been added to workshop${data.needsToAcceptAgreement ? "and Needs to Accept Agreement" : ""}`,
+//       );
+//     })
+//     .catch((reason) => {
+//       logger.warn(`Failed to updateItem: ${reason}`);
+//     });
+//   client.workshop
+//     .updateItem(
+//       data.itemId,
+//       {
+//         // changeNote: "Test changeNote",
+//         description: "Test description",
+//         previewPath:
+//           "C:/Users/ALEXANDER/Desktop/Development/sim-racing-toolkit/public/logo.png",
+//         // tags: ["tag1", "tag2"],
+//         title: "Super title",
+//         visibility: client.workshop.UgcItemVisibility.Public,
+//       },
+//       STEAM_APP_ID,
+//     )
+//     .then((data) => {
+//       logger.info(
+//         `${data.itemId} has been added to workshop${data.needsToAcceptAgreement ? "and Needs to Accept Agreement" : ""}`,
+//       );
+//     })
+//     .catch((reason) => {
+//       logger.warn(`Failed to updateItem: ${reason}`);
+//     });
+// });
