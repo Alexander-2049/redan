@@ -70,7 +70,7 @@ export const createMainWindow = (
 };
 
 function registerHandlers(mainWindow: BrowserWindow) {
-  ipcMain.handle("overlay-list", () => {
+  ipcMain.handle(IPC_CHANNELS.GET_OVERLAY_LIST, () => {
     logger.info("Received overlay list request from renderer");
     return OverlayHandler.loadAllOverlays();
   });
