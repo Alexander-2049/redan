@@ -21,11 +21,15 @@ interface ConstructorProps {
 export class GameWebSocketServer {
   private wss: WebSocket.Server | null = null;
   private listeners: Listener[] = [];
-  private gameData: MappedGameData | null = null;
+  private gameData: MappedGameData = {
+    game: "None",
+    drivers: [],
+    realtime: {},
+    session: {},
+  };
   private client: GameDataHandler = gameDataHandler;
   private port: number = WEBSOCKET_SERVER_PORT;
   private bytesSentThisSecond = 0;
-  private listenersSentThisSecond = 0;
 
   constructor(props?: ConstructorProps) {
     this.port = props?.port || this.port;
@@ -150,10 +154,21 @@ export class GameWebSocketServer {
     this.listeners = this.listeners.filter(({ socket: s }) => s !== socket);
   }
 
+  private isGameOpen(data: MappedGameData) {
+    return (
+      data.drivers.length > 0 ||
+      Object.keys(data.realtime).length > 0 ||
+      Object.keys(data.session).length > 0
+    );
+  }
+
   private updateAndSendGameDataUpdateToAllListeners(data: MappedGameData) {
     this.listeners.forEach((listener) => {
       const oldData = this.gameData;
-      const updatedData = data;
+      const updatedData = {
+        ...data,
+        game: this.isGameOpen(data) ? data.game : "None",
+      };
       const extractedFields = getChangedFields(
         listener.fields,
         oldData,
@@ -164,7 +179,10 @@ export class GameWebSocketServer {
         listener.didReceiveDataThisSecond = true;
       }
     });
-    this.gameData = data;
+    this.gameData = {
+      ...data,
+      game: this.isGameOpen(data) ? data.game : "None",
+    };
   }
 
   private sendGameDataToListener<T>(listener: Listener, data: T) {

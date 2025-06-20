@@ -10,7 +10,7 @@ const DebugRoute = () => {
   // const value = useSelector((state: RootState) => state.example.value);
   // const dispatch = useDispatch();
 
-  const { data } = useWebSocket(["session", "drivers", "realtime"]);
+  const { data } = useWebSocket(["game", "session", "drivers", "realtime"]);
   const [isRecording, setIsRecording] = useState(false);
 
   return (

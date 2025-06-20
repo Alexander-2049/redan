@@ -60,7 +60,15 @@ export class GameDataHandler extends GameDataEmitter {
       this.emit("data", data);
       this.recordData(data);
     });
-    game.on("isConnected", (state) => (this.isConnected = state));
+    game.on("isConnected", (state) => {
+      this.emit("data", {
+        drivers: [],
+        game: "iRacing",
+        realtime: {},
+        session: {},
+      });
+      this.isConnected = state;
+    });
     game.on("isInReplay", (state) => (this.isInReplay = state));
     game.on("isOnTrack", (state) => (this.isOnTrack = state));
   }
