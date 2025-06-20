@@ -1,0 +1,21 @@
+export const IPC_CHANNELS = {
+  GET_LAYOUTS: "get-layouts",
+  CREATE_EMPTY_LAYOUT: "create-empty-layout",
+  DELETE_LAYOUT: "delete-layout",
+  MODIFY_LAYOUT: "modify-layout",
+  SET_ACTIVE_LAYOUT: "set-active-layout",
+  ADD_OVERLAY_TO_LAYOUT: "add-overlay-to-layout",
+  REMOVE_OVERLAY_FROM_LAYOUT: "remove-overlay-from-layout",
+  GET_OVERLAYS_LOCKED: "get-overlays-locked",
+  SET_OVERLAYS_LOCKED: "set-overlays-locked",
+  GET_SELECTED_GAME: "get-selected-game",
+  SET_SELECTED_GAME: "set-selected-game",
+  IS_DEBUG: "is-debug",
+  RECORD_DEMO: "record-demo",
+  STOP_RECORD_DEMO: "stop-record-demo",
+  GET_OVERLAY_LIST: "overlay-list",
+  OPEN_OVERLAYS_FOLDER: "open-overlays-folder",
+  STEAM_GET_WORKSHOP_SUBSCRIBED_ITEMS: "steam-get-workshop-subscribed-items",
+  STEAM_GET_WORKSHOP_ALL_ITEMS: "steam-get-all-workshop-items",
+  LAYOUT_MODIFIED: "layout-modified", // 👈 push-type event
+};

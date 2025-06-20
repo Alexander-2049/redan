@@ -19,16 +19,12 @@ const Main = () => {
   const { refetch: refetchLayouts } = useLayouts();
 
   useEffect(() => {
-    window.electron.ipcRenderer.on(
-      "layout-modified",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      () => {
-        refetchLayouts();
-      },
-    );
+    window.electron.onLayoutModified(() => {
+      refetchLayouts();
+    });
 
     return () => {
-      window.electron.ipcRenderer.removeAllListeners("data-response");
+      window.electron.removeLayoutModifiedListeners();
     };
   }, []);
 

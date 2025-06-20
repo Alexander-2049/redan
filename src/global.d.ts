@@ -9,6 +9,7 @@ import {
   ILayoutDataAndFilename,
 } from "./main/services/layout-service/schemas/layoutSchema";
 import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
+import { GameName } from "./main/services/game-data/types/game-name";
 
 interface MainWindowAPI {
   getOverlayList: () => Promise<OverlayAndFolderName[]>;
@@ -35,15 +36,14 @@ interface MainWindowAPI {
   getSelectedGame: () => Promise<GameName | null>;
   setSelectedGame: (gameName: GameName | null) => Promise<DefaultResponse>;
   getOverlaysLocked: () => Promise<boolean>;
-  setOverlaysLocked: (boolean) => Promise<DefaultResponse>;
+  setOverlaysLocked: (locked: boolean) => Promise<DefaultResponse>;
   recordDemo: () => Promise<DefaultResponse>;
   stopRecordDemo: () => Promise<DefaultResponse>;
   isDebug: () => Promise<boolean>;
-  ipcRenderer: {
-    send: (channel: string, data: any) => void;
-    on: (channel: string, callback: (event: any, data: any) => void) => void;
-    removeAllListeners: (channel: string) => void;
-  };
+  getSteamWorkshopSubscribedItems: () => Promise<string[]>;
+  getAllSteamWorkshopItems: (page: number) => Promise<any | null>;
+  onLayoutModified: (callback: () => void) => void;
+  removeLayoutModifiedListeners: () => void;
 }
 
 interface WindowAction {
