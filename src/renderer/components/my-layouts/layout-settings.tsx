@@ -232,7 +232,6 @@ const LayoutSettings = () => {
 
     switch (settingDescription.type) {
       case "slider":
-        if (typeof currentValue !== "number") return null;
         return (
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
@@ -250,7 +249,11 @@ const LayoutSettings = () => {
               min={settingDescription.min}
               max={settingDescription.max}
               step={settingDescription.step}
-              value={currentValue}
+              value={
+                typeof currentValue === "number"
+                  ? currentValue
+                  : settingDescription.defaultValue
+              }
               onChange={(e) => {
                 const newValue = Number(e.target.value);
                 // Update local state immediately for responsive UI
@@ -302,7 +305,11 @@ const LayoutSettings = () => {
           <div className="flex items-center space-x-2">
             <Switch
               id={`overlay-${overlay.id}-setting-${setting.id}`}
-              checked={currentValue}
+              checked={
+                typeof currentValue === "boolean"
+                  ? currentValue
+                  : settingDescription.defaultValue
+              }
               onCheckedChange={(checked) =>
                 updateOverlaySetting(overlay.id, setting.id, checked)
               }
@@ -314,8 +321,6 @@ const LayoutSettings = () => {
         );
 
       case "select":
-        if (typeof currentValue !== "string" || !settingDescription.selectList)
-          return null;
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -323,7 +328,11 @@ const LayoutSettings = () => {
             </Label>
             <select
               id={`overlay-${overlay.id}-setting-${setting.id}`}
-              value={currentValue}
+              value={
+                typeof currentValue === "string"
+                  ? currentValue
+                  : settingDescription.defaultValue
+              }
               onChange={(e) =>
                 updateOverlaySetting(overlay.id, setting.id, e.target.value)
               }
@@ -339,7 +348,6 @@ const LayoutSettings = () => {
         );
 
       case "number":
-        if (typeof currentValue !== "number") return null;
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -350,7 +358,11 @@ const LayoutSettings = () => {
               type="number"
               min={settingDescription.min}
               max={settingDescription.max}
-              value={currentValue}
+              value={
+                typeof currentValue === "number"
+                  ? currentValue
+                  : settingDescription.defaultValue
+              }
               onChange={(e) => {
                 // Update local state immediately for responsive UI
                 const newValue = Number(e.target.value);
@@ -378,7 +390,6 @@ const LayoutSettings = () => {
         );
 
       case "string":
-        if (typeof currentValue !== "string") return null;
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -387,7 +398,11 @@ const LayoutSettings = () => {
             <Input
               id={`overlay-${overlay.id}-setting-${setting.id}`}
               type="text"
-              value={currentValue}
+              value={
+                typeof currentValue === "string"
+                  ? currentValue
+                  : settingDescription.defaultValue
+              }
               onChange={(e) => {
                 // Update local state immediately for responsive UI
                 const updatedOverlays = activeLayoutOverlays.map((o) => {
@@ -405,6 +420,42 @@ const LayoutSettings = () => {
                 // Only call API on blur (when input becomes inactive)
                 updateOverlaySetting(overlay.id, setting.id, e.target.value);
               }}
+            />
+          </div>
+        );
+
+      case "color":
+        return (
+          <div className="grid gap-2">
+            <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
+              {settingDescription.name}
+            </Label>
+            <Input
+              id={`overlay-${overlay.id}-setting-${setting.id}`}
+              type="color"
+              value={
+                typeof currentValue === "string"
+                  ? currentValue
+                  : settingDescription.defaultValue
+              }
+              onChange={(e) => {
+                // Update local state immediately for responsive UI
+                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                  if (o.id !== overlay.id) return o;
+                  return {
+                    ...o,
+                    settings: o.settings.map((s) =>
+                      s.id === setting.id ? { ...s, value: e.target.value } : s,
+                    ),
+                  };
+                });
+                setActiveLayoutOverlays(updatedOverlays);
+              }}
+              onBlur={(e) => {
+                // Only call API on blur (when input becomes inactive)
+                updateOverlaySetting(overlay.id, setting.id, e.target.value);
+              }}
+              className="h-10 w-16 border-none bg-transparent p-0"
             />
           </div>
         );

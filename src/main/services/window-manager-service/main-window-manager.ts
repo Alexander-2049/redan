@@ -103,7 +103,7 @@ function registerHandlers(mainWindow: BrowserWindow) {
     }
   });
 
-  ipcMain.handle("get-layouts", () => {
+  ipcMain.handle(IPC_CHANNELS.GET_LAYOUTS, () => {
     const response = LayoutHandler.getAllLayouts();
     return response.success ? response.layouts : [];
   });

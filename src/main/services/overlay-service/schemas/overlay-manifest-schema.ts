@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
 export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   z.object({
     id: z.string(),
@@ -45,8 +47,16 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
     id: z.string(),
     type: z.literal("string"),
     name: z.string(),
-    value: z.string().optional(),
     group: z.string().optional(),
     defaultValue: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    type: z.literal("color"),
+    name: z.string(),
+    group: z.string().optional(),
+    defaultValue: z
+      .string()
+      .regex(hexColorRegex, { message: "Invalid hex color" }),
   }),
 ]);
