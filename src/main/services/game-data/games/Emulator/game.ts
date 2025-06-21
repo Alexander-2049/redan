@@ -1,5 +1,8 @@
 import Game from "../game";
-import { MappedGameData, MappedGameDataSchema } from "../../types/game-data";
+import {
+  MappedGameData,
+  MappedGameDataSchema,
+} from "../../types/game-data-schema";
 import { REPLAYS_PATH } from "@/main/main-constants";
 import fs from "fs";
 import path from "path";
@@ -81,5 +84,9 @@ export default class EmulatorGame extends Game {
     }
     this.isConnected = false;
     this.frame = 0;
+  }
+
+  shape() {
+    return {};
   }
 }

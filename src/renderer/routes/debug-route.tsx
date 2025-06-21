@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { ScrollArea } from "../components/ui/scroll-area";
 import useWebSocket from "../hooks/useWebSocket";
+import { ClickableSchemaViewer } from "../components/clickable-schema-view";
 // import { useSelector, useDispatch } from "react-redux";
 // import { RootState } from "../store";
 // import { increment } from "../slices/exampleSlice";
@@ -12,10 +13,20 @@ const DebugRoute = () => {
 
   const { data } = useWebSocket(["game", "session", "drivers", "realtime"]);
   const [isRecording, setIsRecording] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [shape, setShape] = useState<string | null>(null);
 
+  useEffect(() => {
+    window.electron.getGameDataShape("iRacing").then((e) => setShape(e));
+  }, []);
+
+  if (!shape) return;
   return (
     <>
       <ScrollArea className="h-full">
+        <pre>
+          <ClickableSchemaViewer schema={JSON.parse(shape)} />
+        </pre>
         {isRecording ? (
           <Button
             onClick={() => {

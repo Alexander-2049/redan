@@ -18,4 +18,5 @@ export const IPC_CHANNELS = {
   STEAM_GET_WORKSHOP_SUBSCRIBED_ITEMS: "steam-get-workshop-subscribed-items",
   STEAM_GET_WORKSHOP_ALL_ITEMS: "steam-get-all-workshop-items",
   LAYOUT_MODIFIED: "layout-modified", // 👈 push-type event
+  GET_GAME_DATA_SHAPE: "get-game-data-shape",
 };

@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
-import { MappedGameData } from "../types/game-data";
-import { GameName } from "../types/game-name";
+import { MappedGameData } from "../types/game-data-schema";
+import { GameName } from "../types/game-name-schema";
 
 interface GameDataEvents {
   game: GameName | null;

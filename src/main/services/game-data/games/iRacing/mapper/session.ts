@@ -1,11 +1,11 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { Session } from "../../../types/game-data";
 import { getTrackWetnessString } from "../utils";
+import { IRacingSessionData } from "./schema";
 
 export default function getSessionFields(
   telemetry: TelemetryValues,
   sessionInfo: SessionInfoData,
-): Session {
+): IRacingSessionData {
   return {
     trackName: sessionInfo.WeekendInfo.TrackName,
     wetnessString: getTrackWetnessString(telemetry.TrackWetness),
@@ -16,15 +16,15 @@ export default function getSessionFields(
     airTempF: Math.floor(((telemetry.AirTemp * 9) / 5 + 32) * 100) / 100,
     trackTempCString: telemetry.TrackTemp
       ? `${telemetry.TrackTemp.toFixed(0)}°C`
-      : null,
+      : "0",
     trackTempFString: telemetry.TrackTemp
       ? `${((telemetry.TrackTemp * 9) / 5 + 32).toFixed(0)}°F`
-      : null,
+      : "0",
     airTempCString: telemetry.AirTemp
       ? `${telemetry.AirTemp.toFixed(0)}°C`
-      : null,
+      : "0",
     airTempFString: telemetry.AirTemp
       ? `${((telemetry.AirTemp * 9) / 5 + 32).toFixed(0)}°F`
-      : null,
+      : "0",
   };
 }

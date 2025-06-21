@@ -7,7 +7,7 @@ import {
   TelemetryValues,
   SessionInfoData,
 } from "iracing-sdk-2025/src/JsIrSdk";
-import { mapDataFromIRacing } from "./mapper";
+import { mapDataFromIRacing } from "./mapper/mapper";
 import { fixCarIdxLapCompleted } from "./utils";
 
 class iRacing extends Game {

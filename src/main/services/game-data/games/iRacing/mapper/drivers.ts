@@ -1,5 +1,4 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
-import { DriverElement } from "../../../types/game-data";
 import {
   calculateDriversLivePositions,
   calculateIRatingChanges,
@@ -7,12 +6,13 @@ import {
   getLapDistTotalPct,
   parseDriverName,
 } from "../utils";
+import { IRacingDriverData } from "./schema";
 
 export default function getDriversFields(
   telemetry: TelemetryValues,
   sessionInfo: SessionInfoData,
-): DriverElement[] {
-  const drivers: DriverElement[] = [];
+): IRacingDriverData[] {
+  const drivers: IRacingDriverData[] = [];
   const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
   telemetry.CarIdxTrackSurface[telemetry.CamCarIdx] !== "NotInWorld";
 
@@ -51,29 +51,28 @@ export default function getDriversFields(
       lapDistPct:
         telemetry.CarIdxLapDistPct[driver.CarIdx] > 0
           ? telemetry.CarIdxLapDistPct[driver.CarIdx]
-          : null,
-      lapDistTotalPct: getLapDistTotalPct(telemetry, driver.CarIdx),
+          : 0,
+      lapDistTotalPct: getLapDistTotalPct(telemetry, driver.CarIdx) || 0,
       lapsCompleted:
         telemetry.CarIdxLapCompleted[driver.CarIdx] >= 0
           ? telemetry.CarIdxLapCompleted[driver.CarIdx]
-          : null,
+          : 0,
       currentLap:
         telemetry.CarIdxLap[driver.CarIdx] > 0
           ? telemetry.CarIdxLap[driver.CarIdx]
-          : null,
-      position: livePosition.get(driver.CarIdx)?.position || null,
+          : 0,
+      position: livePosition.get(driver.CarIdx)?.position || 0,
       classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
       isCarOnTrack: getCarIsOnTrack(telemetry, driver.CarIdx),
       iRating: driver.IRating,
       iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
-
       /*
        * driver.CarClassShortName might be null (probably in replays)
        * so it would be a good option to save car class short names in cache and relate them to driver.CarID
        */
       carClassShortName: driver.CarClassShortName,
       carClassId: driver.CarClassID,
-      iRacingLicString: driver.LicString[0] || null,
+      iRacingLicString: driver.LicString[0] || "",
       iRacingLicSubLevel: driver.LicSubLevel / 100,
       // deltaToSelectedDriver: relativeTime,
     });

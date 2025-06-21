@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GameNameSchema } from "./game-name";
+import { GameNameSchema } from "./game-name-schema";
 
 export const RealtimeLapTimeSchema = z.object({
   lapBestLap: z.number().nullable().optional(),
@@ -86,7 +86,7 @@ export const DriverElementSchema = z.object({
 export type DriverElement = z.infer<typeof DriverElementSchema>;
 
 export const WetnessSchema = z.enum([
-  "",
+  "None",
   "Dry",
   "Mostly Dry",
   "Very Lightly Wet",

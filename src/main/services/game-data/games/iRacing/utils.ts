@@ -3,7 +3,7 @@ import {
   TelemetryEvent,
   TelemetryValues,
 } from "iracing-sdk-2025/src/JsIrSdk";
-import { Wetness } from "../../types/game-data";
+import { Wetness } from "../../types/game-data-schema";
 
 export function parseDriverName(fullName: string) {
   const parts = fullName.split(" ");
@@ -112,7 +112,7 @@ export function calculateDriversLivePositions(
 
 export function getTrackWetnessString(wetnessLevel: number): Wetness {
   const wetnessLevels: Record<number, Wetness> = {
-    0: "",
+    0: "None",
     1: "Dry",
     2: "Mostly Dry",
     3: "Very Lightly Wet",

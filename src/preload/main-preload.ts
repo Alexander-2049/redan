@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { GameName } from "@/main/services/game-data/types/game-name";
+import { GameName } from "@/main/services/game-data/types/game-name-schema";
 import { ILayout } from "@/main/services/layout-service/schemas/layoutSchema";
 import { IPC_CHANNELS } from "@/shared/ipc-channels";
 
@@ -48,6 +48,8 @@ contextBridge.exposeInMainWorld("electron", {
   removeLayoutModifiedListeners: () => {
     ipcRenderer.removeAllListeners(IPC_CHANNELS.LAYOUT_MODIFIED);
   },
+  getGameDataShape: (game: GameName) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GET_GAME_DATA_SHAPE, game),
 });
 
 contextBridge.exposeInMainWorld("actions", {

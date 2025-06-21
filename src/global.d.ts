@@ -9,7 +9,7 @@ import {
   ILayoutDataAndFilename,
 } from "./main/services/layout-service/schemas/layoutSchema";
 import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
-import { GameName } from "./main/services/game-data/types/game-name";
+import { GameName } from "./main/services/game-data/types/game-name-schema";
 
 interface MainWindowAPI {
   getOverlayList: () => Promise<OverlayAndFolderName[]>;
@@ -44,6 +44,7 @@ interface MainWindowAPI {
   getAllSteamWorkshopItems: (page: number) => Promise<any | null>;
   onLayoutModified: (callback: () => void) => void;
   removeLayoutModifiedListeners: () => void;
+  getGameDataShape: (game: GameName) => Promise<string>;
 }
 
 interface WindowAction {

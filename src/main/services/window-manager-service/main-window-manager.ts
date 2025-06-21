@@ -11,12 +11,14 @@ import { ILayoutOverlaySetting } from "../layout-service/schemas/overlaySchema";
 import path from "path";
 import { overlayWindowManager } from "@/main";
 import gameDataHandler from "../game-data";
-import { GameName } from "../game-data/types/game-name";
+import { GameName } from "../game-data/types/game-name-schema";
 import { windowManagerServiceLogger as logger } from "@/main/loggers";
 import { IS_DEBUG } from "@/main/main-constants";
 import { STEAM_APP_ID } from "@/shared/shared-constants";
 import { getSteamClient } from "@/main/utils/steam-client";
 import { IPC_CHANNELS } from "@/shared/ipc-channels";
+import { iRacingDataSchema } from "../game-data/games/iRacing/mapper/schema";
+import { zodSchemaToJSON } from "../game-data/utils/zod-schema-to-json";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -36,8 +38,8 @@ export const createMainWindow = (
   const mainWindow = new BrowserWindow({
     height: 880,
     width: 1280,
-    minWidth: 1280,
-    minHeight: 880,
+    minWidth: 800,
+    minHeight: 680,
     webPreferences: {
       preload,
       nodeIntegration: true,
@@ -251,6 +253,13 @@ function registerHandlers(mainWindow: BrowserWindow) {
       }
     },
   );
+
+  ipcMain.handle(IPC_CHANNELS.GET_GAME_DATA_SHAPE, (_, game: GameName) => {
+    if (game === "iRacing") {
+      return JSON.stringify(zodSchemaToJSON(iRacingDataSchema, false));
+    }
+    return {};
+  });
 }
 
 // client.workshop.createItem(STEAM_APP_ID).then((data) => {

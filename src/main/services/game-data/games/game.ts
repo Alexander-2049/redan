@@ -9,6 +9,7 @@ abstract class Game extends GameDataEmitter {
 
   abstract connect(updateInterval: number): void;
   abstract disconnect(): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }
 
 export default Game;
