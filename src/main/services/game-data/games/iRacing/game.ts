@@ -8,6 +8,7 @@ import {
   SessionInfoData,
 } from "iracing-sdk-2025/src/JsIrSdk";
 import { mapDataFromIRacing } from "./mapper";
+import { fixCarIdxLapCompleted } from "./utils";
 
 class iRacing extends Game {
   private client: JsIrSdk | null = null;
@@ -37,6 +38,7 @@ class iRacing extends Game {
     });
 
     this.client.addListener("Telemetry", (e: TelemetryEvent) => {
+      fixCarIdxLapCompleted(e);
       this.data.telemetry = e.data;
       if (!this.data.telemetry || !this.data.sessionInfo) return;
 
