@@ -226,6 +226,7 @@ function registerHandlers(mainWindow: BrowserWindow) {
 
   ipcMain.handle(IPC_CHANNELS.STEAM_GET_WORKSHOP_SUBSCRIBED_ITEMS, () => {
     const client = getSteamClient();
+    if (!client) return null;
     const subscribedItems = client.workshop.getSubscribedItems();
     logger.info(
       "Sending to renderer steam workshop subscribed items: ",
@@ -238,6 +239,7 @@ function registerHandlers(mainWindow: BrowserWindow) {
     IPC_CHANNELS.STEAM_GET_WORKSHOP_ALL_ITEMS,
     async (_, page: number) => {
       const client = getSteamClient();
+      if (!client) return null;
       try {
         const response = await client.workshop.getAllItems(
           page,

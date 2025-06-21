@@ -58,3 +58,4 @@ export const jsonFileServiceLogger = createServiceLogger("json-file-service");
 export const gameWebsocketServerService = createServiceLogger(
   "game-websocket-server-service",
 );
+export const steamLogger = createServiceLogger("steam");
