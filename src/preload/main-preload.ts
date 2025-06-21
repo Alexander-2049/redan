@@ -53,7 +53,8 @@ contextBridge.exposeInMainWorld("electron", {
 });
 
 contextBridge.exposeInMainWorld("actions", {
-  minimize: () => ipcRenderer.send("title-bar-message", "minimize"),
-  restore: () => ipcRenderer.send("title-bar-message", "restore"),
-  close: () => ipcRenderer.send("title-bar-message", "close"),
+  minimize: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.TITLE_BAR_MESSAGE, "minimize"),
+  restore: () => ipcRenderer.invoke(IPC_CHANNELS.TITLE_BAR_MESSAGE, "restore"),
+  close: () => ipcRenderer.invoke(IPC_CHANNELS.TITLE_BAR_MESSAGE, "close"),
 });

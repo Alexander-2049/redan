@@ -260,6 +260,26 @@ function registerHandlers(mainWindow: BrowserWindow) {
     }
     return {};
   });
+
+  ipcMain.handle(
+    IPC_CHANNELS.TITLE_BAR_MESSAGE,
+    (event, action: TitleBarEvent) => {
+      const window = BrowserWindow.fromId(event.sender.id);
+      if (!window) return;
+
+      if (action === "close") {
+        window.close();
+      } else if (action === "minimize") {
+        window.minimize();
+      } else if (action === "restore") {
+        if (window.isMaximized()) {
+          window.restore();
+        } else {
+          window.maximize();
+        }
+      }
+    },
+  );
 }
 
 // client.workshop.createItem(STEAM_APP_ID).then((data) => {
