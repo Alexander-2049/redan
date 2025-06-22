@@ -17,7 +17,7 @@ import { IS_DEBUG } from "@/main/main-constants";
 import { STEAM_APP_ID } from "@/shared/shared-constants";
 import { getSteamClient } from "@/main/utils/steam-client";
 import { IPC_CHANNELS } from "@/shared/ipc-channels";
-import { iRacingDataSchema } from "../game-data/games/iRacing/mapper/schema";
+import { iRacingDataSchema } from "../game-data/games/iRacing/schema";
 import { zodSchemaToJSON } from "../game-data/utils/zod-schema-to-json";
 
 export interface OverlayWindow {

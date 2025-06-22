@@ -1,6 +1,6 @@
 import { SessionInfoData, TelemetryValues } from "iracing-sdk-2025/src/JsIrSdk";
 import { getTrackWetnessString } from "../utils";
-import { IRacingSessionData } from "./schema";
+import { IRacingSessionData } from "../schema";
 
 export default function getSessionFields(
   telemetry: TelemetryValues,

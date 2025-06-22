@@ -6,7 +6,7 @@ import {
   getLapDistTotalPct,
   parseDriverName,
 } from "../utils";
-import { IRacingDriverData } from "./schema";
+import { IRacingDriverData } from "../schema";
 
 export default function getDriversFields(
   telemetry: TelemetryValues,
