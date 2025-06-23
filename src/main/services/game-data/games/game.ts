@@ -1,3 +1,4 @@
+import { MappedGameData } from "../types/game-data-schema";
 import GameDataEmitter from "./game-data-emitter";
 
 abstract class Game extends GameDataEmitter {
@@ -9,6 +10,7 @@ abstract class Game extends GameDataEmitter {
 
   abstract connect(updateInterval: number): void;
   abstract disconnect(): void;
+  abstract getMock(tick: number): MappedGameData;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }
 

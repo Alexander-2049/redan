@@ -5,6 +5,7 @@ export interface ISetOverlaysLockedProps {
 }
 
 export const setOverlaysLocked = ({ isLocked }: ISetOverlaysLockedProps) => {
+  window.electron.setIsPreview(!isLocked);
   return window.electron.setOverlaysLocked(isLocked);
 };
 

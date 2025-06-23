@@ -20,4 +20,6 @@ export const IPC_CHANNELS = {
   LAYOUT_MODIFIED: "layout-modified", // 👈 push-type event
   GET_GAME_DATA_SHAPE: "get-game-data-shape",
   TITLE_BAR_MESSAGE: "title-bar-message",
+  SET_IS_PREVIEW_MODE: "set-preview-mode",
+  GET_IS_PREVIEW_MODE: "get-is-preview-mode",
 };

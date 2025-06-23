@@ -5,12 +5,13 @@ import gameDataHandler, { GameDataHandler } from "../game-data";
 import { Response } from "./utils/response";
 import { extractFieldsFromObject } from "./utils/extractFieldsFromObject";
 import { getChangedFields } from "./utils/getChangedFields";
-import { gameWebsocketServerService as logger } from "@/main/loggers";
+import { gameWebsocketServerServiceLogger as logger } from "@/main/loggers";
 
 interface Listener {
   socket: WebSocket;
   fields: string[];
   didReceiveDataThisSecond?: boolean;
+  previewOnly?: boolean;
 }
 
 interface ConstructorProps {
@@ -27,25 +28,31 @@ export class GameWebSocketServer {
     realtime: {},
     session: {},
   };
+  private mockTick = 0;
+  private mockIntervalMs = 400;
+  private mockInterval: NodeJS.Timeout | null = null;
   private client: GameDataHandler = gameDataHandler;
   private port: number = WEBSOCKET_SERVER_PORT;
-  private bytesSentThisSecond = 0;
+  private bytesSentThisPeriod = 0;
+  private isPreviewMode = false;
 
-  constructor(props?: ConstructorProps) {
+  public start(props?: ConstructorProps) {
     this.port = props?.port || this.port;
     this.client = props?.gameClient || this.client;
 
     this.client.addListener("data", (data) => {
-      this.updateAndSendGameDataUpdateToAllListeners(data);
+      if (!this.isPreviewMode) {
+        this.updateAndSendGameDataUpdateToAllListeners(data);
+      }
     });
 
-    // Set up interval for logging bytes sent per second
+    // Log bandwidth usage for both mock and real data every 10 seconds
     setInterval(() => {
       if (this.listeners.length === 0) return;
 
       const N = this.listeners.length;
       const n = this.listeners.filter((l) => l.didReceiveDataThisSecond).length;
-      const bytes = this.bytesSentThisSecond;
+      const bytes = this.bytesSentThisPeriod;
 
       let sizeStr = `${bytes} B`;
       if (bytes >= 1024 * 1024) {
@@ -54,17 +61,45 @@ export class GameWebSocketServer {
         sizeStr = `${(bytes / 1024).toFixed(2)} KB`;
       }
 
-      logger.debug(`Sent ${sizeStr} this second to ${n}/${N} listeners.`);
+      logger.debug(
+        `Sent ${sizeStr} in the last 10 seconds to ${n}/${N} listeners.`,
+      );
 
-      // Reset counters and flags
-      this.bytesSentThisSecond = 0;
+      this.bytesSentThisPeriod = 0;
       this.listeners.forEach((listener) => {
         listener.didReceiveDataThisSecond = false;
       });
-    }, 1000);
-  }
+    }, 10_000);
 
-  public start() {
+    // Always-running mock interval
+    this.mockInterval = setInterval(() => {
+      const mockData = this.client.getMock(this.mockTick++);
+      if (!mockData || typeof mockData !== "object") return;
+
+      const updatedData = {
+        ...mockData,
+        game: this.isGameOpen(mockData) ? mockData.game : "None",
+      };
+
+      this.listeners.forEach((listener) => {
+        if (!this.shouldReceiveMockData(listener)) return;
+
+        const extractedFields = extractFieldsFromObject(
+          listener.fields,
+          updatedData,
+        );
+
+        this.sendGameDataToListener(listener, extractedFields);
+        listener.didReceiveDataThisSecond = true;
+      });
+
+      if (this.isPreviewMode) {
+        this.gameData = updatedData;
+      }
+    }, this.mockIntervalMs);
+
+    logger.info("Mock data interval started.");
+
     if (this.wss) {
       logger.warn("WebSocket server is already running.");
       return;
@@ -78,6 +113,7 @@ export class GameWebSocketServer {
           "ws://localhost:" + WEBSOCKET_SERVER_PORT + (request.url ?? "/"),
         );
         const query = url.searchParams.get("q");
+        const isPreviewOnly = url.searchParams.get("preview") === "true";
 
         if (!query) {
           socket.send(Response.failure("'q' parameter is required").toJSON());
@@ -112,12 +148,12 @@ export class GameWebSocketServer {
           const data = extractFieldsFromObject(fields, this.gameData);
           const payload = Response.success(data).toJSON();
           socket.send(payload);
-          this.bytesSentThisSecond += Buffer.byteLength(payload, "utf8");
+          this.bytesSentThisPeriod += Buffer.byteLength(payload, "utf8");
         }
 
-        this.addListenerSocket(socket, fields);
+        this.addListenerSocket(socket, fields, isPreviewOnly);
         logger.info(
-          `New listener connected with ${fields.length} fields: [${fields.join(", ")}]`,
+          `New listener connected with ${fields.length} fields: [${fields.join(", ")}], previewOnly=${isPreviewOnly}`,
         );
       } catch (error) {
         logger.error("Error during connection handling:", error);
@@ -144,10 +180,24 @@ export class GameWebSocketServer {
     this.listeners.forEach(({ socket }) => socket.close());
     this.listeners = [];
     this.wss = null;
+
+    if (this.mockInterval) {
+      clearInterval(this.mockInterval);
+      this.mockInterval = null;
+    }
   }
 
-  private addListenerSocket(socket: WebSocket, fields: string[]) {
-    this.listeners.push({ socket, fields, didReceiveDataThisSecond: false });
+  private addListenerSocket(
+    socket: WebSocket,
+    fields: string[],
+    previewOnly = false,
+  ) {
+    this.listeners.push({
+      socket,
+      fields,
+      previewOnly,
+      didReceiveDataThisSecond: false,
+    });
   }
 
   private removeListenerSocket(socket: WebSocket) {
@@ -163,12 +213,12 @@ export class GameWebSocketServer {
   }
 
   private updateAndSendGameDataUpdateToAllListeners(data: MappedGameData) {
+    if (this.isPreviewMode) return;
+
     this.listeners.forEach((listener) => {
+      if (listener.previewOnly) return;
       const oldData = this.gameData;
-      const updatedData = {
-        ...data,
-        game: this.isGameOpen(data) ? data.game : "None",
-      };
+      const updatedData = data;
       const extractedFields = getChangedFields(
         listener.fields,
         oldData,
@@ -179,6 +229,7 @@ export class GameWebSocketServer {
         listener.didReceiveDataThisSecond = true;
       }
     });
+
     this.gameData = {
       ...data,
       game: this.isGameOpen(data) ? data.game : "None",
@@ -190,14 +241,29 @@ export class GameWebSocketServer {
 
     const payload = Response.success(data).toJSON();
     listener.socket.send(payload);
-    this.bytesSentThisSecond += Buffer.byteLength(payload, "utf8");
+    this.bytesSentThisPeriod += Buffer.byteLength(payload, "utf8");
   }
 
   public acceptGameData(data: MappedGameData) {
     this.gameData = data;
   }
 
+  public setIsPreview(isPreview: boolean) {
+    this.isPreviewMode = isPreview;
+
+    logger.info(
+      `Preview mode set to ${this.isPreviewMode}. ` +
+        `PreviewOnly listeners: ${this.listeners.filter((l) => l.previewOnly).length}`,
+    );
+  }
+
+  private shouldReceiveMockData(listener: Listener): boolean {
+    return this.isPreviewMode || listener.previewOnly === true;
+  }
+
   get game() {
     return this.gameData?.game || "none";
   }
 }
+
+export const gameWebSocketServer = new GameWebSocketServer();

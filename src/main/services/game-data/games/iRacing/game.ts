@@ -9,6 +9,8 @@ import {
 } from "iracing-sdk-2025/src/JsIrSdk";
 import { mapDataFromIRacing } from "./mapper";
 import { fixCarIdxLapCompleted } from "./utils";
+import { iRacingMockData } from "./mock";
+import { MappedGameData } from "../../types/game-data-schema";
 
 class iRacing extends Game {
   private client: JsIrSdk | null = null;
@@ -59,6 +61,10 @@ class iRacing extends Game {
 
     this.isConnected = false;
     this._isListening = false;
+  }
+
+  getMock(tick: number): MappedGameData {
+    return iRacingMockData[tick % iRacingMockData.length];
   }
 }
 

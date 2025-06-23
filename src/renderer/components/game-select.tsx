@@ -17,10 +17,6 @@ const games: Game[] = [
     name: "iRacing",
     logo: `http://localhost:${ASSETS_SERVER_PORT}/images/logo-iracing.png`,
   },
-  {
-    name: "Emulator",
-    logo: `http://localhost:${ASSETS_SERVER_PORT}/images/logo-gears.webp`,
-  },
 ];
 
 export default function GameSelect() {

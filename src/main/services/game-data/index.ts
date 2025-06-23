@@ -1,4 +1,3 @@
-import EmulatorGame from "./games/Emulator/game";
 import Game from "./games/game";
 import GameDataEmitter from "./games/game-data-emitter";
 import iRacing from "./games/iRacing/game";
@@ -24,10 +23,19 @@ export class GameDataHandler extends GameDataEmitter {
   private static readonly games: {
     name: GameName;
     class: new () => Game;
-  }[] = [
-    { name: "iRacing", class: iRacing },
-    { name: "Emulator", class: EmulatorGame },
-  ];
+  }[] = [{ name: "iRacing", class: iRacing }];
+
+  public getMock(tick: number): MappedGameData {
+    if (this.game) {
+      return this.game.getMock(tick);
+    }
+    return {
+      drivers: [],
+      game: "None",
+      realtime: {},
+      session: {},
+    };
+  }
 
   public getSelectedGame() {
     return this._gameName;
@@ -61,12 +69,14 @@ export class GameDataHandler extends GameDataEmitter {
       this.recordData(data);
     });
     game.on("isConnected", (state) => {
-      this.emit("data", {
-        drivers: [],
-        game: "iRacing",
-        realtime: {},
-        session: {},
-      });
+      if (state !== this.isConnected && !state) {
+        this.emit("data", {
+          drivers: [],
+          game: "iRacing",
+          realtime: {},
+          session: {},
+        });
+      }
       this.isConnected = state;
     });
     game.on("isInReplay", (state) => (this.isInReplay = state));
@@ -146,6 +156,4 @@ export class GameDataHandler extends GameDataEmitter {
 }
 
 const gameDataHandler = new GameDataHandler();
-export const demoGameDataHandler = new GameDataHandler();
-demoGameDataHandler.selectGame("Emulator");
 export default gameDataHandler;

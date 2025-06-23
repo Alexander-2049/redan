@@ -19,7 +19,8 @@ export interface IOverlayWindow {
 export class OverlayWindowManager {
   private windows: IOverlayWindow[] = [];
   private layouts: ILayoutDataAndFilename[] = [];
-  private _isLocked = false;
+  private _isLocked = true;
+  private isUpdating = false;
 
   public isLocked() {
     return this._isLocked;
@@ -32,6 +33,12 @@ export class OverlayWindowManager {
       w.window.setIgnoreMouseEvents(true);
     });
 
+    // If the game is not connected, hide overlays when locked
+    if (!gameDataHandler.isConnected) {
+      logger.info("Game is not connected. Locking will close all overlays.");
+      this.closeAllOverlays();
+    }
+
     return true;
   }
 
@@ -41,6 +48,24 @@ export class OverlayWindowManager {
     this.windows.forEach((w) => {
       w.window.setIgnoreMouseEvents(false);
     });
+
+    // Ensure overlays from the active layout are all visible
+    const activeLayout = this.getActiveLayout();
+    if (activeLayout) {
+      activeLayout.data.overlays.forEach((overlay) => {
+        if (overlay.visible) {
+          const existingWindow = this.windows.find(
+            (w) => w.overlayId === overlay.id,
+          );
+          if (!existingWindow) {
+            logger.info(
+              `Overlay "${overlay.id}" was missing during unlock, triggering update.`,
+            );
+            this.updateOverlayWindows();
+          }
+        }
+      });
+    }
 
     return false;
   }
@@ -156,127 +181,156 @@ export class OverlayWindowManager {
   }
 
   public updateOverlayWindows() {
-    const previousLayoutFilename = this.getActiveLayout()?.filename;
-
-    this.updateLayouts();
-
-    const newActiveLayout = this.getActiveLayout();
-
-    if (!newActiveLayout) {
-      logger.warn("No active layout found after update. Closing all overlays.");
-      this.closeAllOverlays();
+    if (this.isUpdating) {
+      logger.info("Overlay update already in progress, skipping.");
       return;
     }
 
-    if (!gameDataHandler.isConnected) {
-      logger.warn("Game is not connected. Closing all overlays.");
-      this.closeAllOverlays();
-      return;
-    }
+    this.isUpdating = true;
 
-    const isLayoutChanged =
-      this.windows.length > 0 &&
-      newActiveLayout.filename !== previousLayoutFilename;
+    try {
+      const previousLayoutFilename = this.getActiveLayout()?.filename;
 
-    if (isLayoutChanged) {
-      logger.info(
-        `Active layout changed: ${previousLayoutFilename} → ${newActiveLayout.filename}`,
-      );
-      this.windows.forEach((w) => this.closeOverlayWindow(w));
-      this.windows = [];
-    }
+      this.updateLayouts();
+      const newActiveLayout = this.getActiveLayout();
 
-    const newOverlayIds = newActiveLayout.data.overlays.map((o) => o.id);
-    const removedWindows = this.windows.filter(
-      (w) => !newOverlayIds.includes(w.overlayId),
-    );
-    removedWindows.forEach((w) => {
-      logger.info(
-        `Overlay "${w.overlayId}" removed from layout, closing window.`,
-      );
-      this.closeOverlayWindow(w);
-    });
-
-    this.windows = this.windows.filter((w) =>
-      newOverlayIds.includes(w.overlayId),
-    );
-
-    newActiveLayout.data.overlays.forEach((updatedOverlay) => {
-      const existingWindow = this.windows.find(
-        (w) => w.overlayId === updatedOverlay.id,
-      );
-
-      const queryParams = updatedOverlay.settings
-        .map(
-          (setting) =>
-            `${encodeURIComponent(setting.id)}=${encodeURIComponent(setting.value)}`,
-        )
-        .join("&");
-
-      const url = `http://localhost:${OVERLAY_SERVER_PORT}/${updatedOverlay.folderName}${
-        queryParams.length > 0 ? "?" + queryParams : ""
-      }`;
-
-      if (existingWindow && !updatedOverlay.visible) {
-        logger.info(
-          `Overlay "${updatedOverlay.id}" set to invisible. Closing window.`,
+      if (!newActiveLayout) {
+        logger.warn(
+          "No active layout found after update. Closing all overlays.",
         );
-        this.closeOverlayWindow(existingWindow);
+        this.closeAllOverlays();
         return;
       }
 
-      if (
-        existingWindow &&
-        this.settingsChanged(existingWindow.settings, updatedOverlay.settings)
-      ) {
+      const isLayoutChanged =
+        this.windows.length > 0 &&
+        newActiveLayout.filename !== previousLayoutFilename;
+
+      if (isLayoutChanged) {
         logger.info(
-          `Overlay "${updatedOverlay.id}" settings changed. Reloading URL.`,
+          `Active layout changed: ${previousLayoutFilename} → ${newActiveLayout.filename}`,
         );
-        existingWindow.window.loadURL(url);
-        existingWindow.settings = updatedOverlay.settings;
-        return;
+        this.windows.forEach((w) => this.closeOverlayWindow(w));
+        this.windows = [];
       }
 
-      if (!existingWindow && updatedOverlay.visible) {
-        const manifest = this.getOverlayManifest(updatedOverlay.folderName);
-        if (!manifest) {
-          logger.warn(
-            `Cannot create window: manifest not found for "${updatedOverlay.folderName}"`,
+      const newOverlayIds = newActiveLayout.data.overlays.map((o) => o.id);
+      const removedWindows = this.windows.filter(
+        (w) => !newOverlayIds.includes(w.overlayId),
+      );
+      removedWindows.forEach((w) => {
+        logger.info(
+          `Overlay "${w.overlayId}" removed from layout, closing window.`,
+        );
+        this.closeOverlayWindow(w);
+      });
+
+      this.windows = this.windows.filter((w) =>
+        newOverlayIds.includes(w.overlayId),
+      );
+
+      newActiveLayout.data.overlays.forEach((updatedOverlay) => {
+        const existingWindow = this.windows.find(
+          (w) => w.overlayId === updatedOverlay.id,
+        );
+
+        const queryParams = updatedOverlay.settings
+          .map(
+            (setting) =>
+              `${encodeURIComponent(setting.id)}=${encodeURIComponent(setting.value)}`,
+          )
+          .join("&");
+
+        const url = `http://localhost:${OVERLAY_SERVER_PORT}/${updatedOverlay.folderName}${
+          queryParams.length > 0 ? "?" + queryParams : ""
+        }`;
+
+        if (existingWindow && !updatedOverlay.visible) {
+          logger.info(
+            `Overlay "${updatedOverlay.id}" set to invisible. Closing window.`,
           );
+          this.closeOverlayWindow(existingWindow);
           return;
         }
 
-        const { minWidth, minHeight, maxWidth, maxHeight } = manifest;
-        logger.info(`Creating overlay window: ${updatedOverlay.id}`);
-
-        const overlayWindow = createOverlayWindow(url, {
-          width: updatedOverlay.position.width,
-          height: updatedOverlay.position.height,
-          x: updatedOverlay.position.x,
-          y: updatedOverlay.position.y,
-          minWidth,
-          minHeight,
-          maxWidth,
-          maxHeight,
-        });
-
-        const overlayDetails = {
-          manifest,
-          overlayId: updatedOverlay.id,
-          settings: updatedOverlay.settings,
-          window: overlayWindow,
-        };
-
-        this.attachOverlayWindowListeners(overlayDetails);
-        this.windows.push(overlayDetails);
-
-        if (this.isLocked()) {
+        if (
+          existingWindow &&
+          this.settingsChanged(existingWindow.settings, updatedOverlay.settings)
+        ) {
           logger.info(
-            `Reapplying lock for new overlay "${updatedOverlay.id}".`,
+            `Overlay "${updatedOverlay.id}" settings changed. Reloading URL.`,
           );
-          this.lock();
+          existingWindow.window.loadURL(url);
+          existingWindow.settings = updatedOverlay.settings;
+          return;
+        }
+
+        const shouldCreateWindow = !existingWindow && updatedOverlay.visible;
+        const shouldSkipDueToGameDisconnected = !this.isLocked()
+          ? false
+          : !gameDataHandler.isConnected;
+
+        if (shouldCreateWindow && !shouldSkipDueToGameDisconnected) {
+          const manifest = this.getOverlayManifest(updatedOverlay.folderName);
+          if (!manifest) {
+            logger.warn(
+              `Cannot create window: manifest not found for "${updatedOverlay.folderName}"`,
+            );
+            return;
+          }
+
+          const { minWidth, minHeight, maxWidth, maxHeight } = manifest;
+          logger.info(`Creating overlay window: ${updatedOverlay.id}`);
+
+          const overlayWindow = createOverlayWindow(url, {
+            width: updatedOverlay.position.width,
+            height: updatedOverlay.position.height,
+            x: updatedOverlay.position.x,
+            y: updatedOverlay.position.y,
+            minWidth,
+            minHeight,
+            maxWidth,
+            maxHeight,
+          });
+
+          const overlayDetails = {
+            manifest,
+            overlayId: updatedOverlay.id,
+            settings: updatedOverlay.settings,
+            window: overlayWindow,
+          };
+
+          this.attachOverlayWindowListeners(overlayDetails);
+          this.windows.push(overlayDetails);
+
+          if (this.isLocked()) {
+            logger.info(
+              `Reapplying lock for new overlay "${updatedOverlay.id}".`,
+            );
+            this.lock();
+          } else {
+            overlayWindow.setIgnoreMouseEvents(false);
+          }
+        }
+      });
+
+      // Ensure visible overlays are created when unlocked
+      if (!this.isLocked()) {
+        const missingVisible = newActiveLayout.data.overlays.filter(
+          (overlay) =>
+            overlay.visible &&
+            !this.windows.find((w) => w.overlayId === overlay.id),
+        );
+
+        if (missingVisible.length > 0) {
+          logger.info(
+            `Detected ${missingVisible.length} missing visible overlays in unlocked mode. Reinvoking update.`,
+          );
+          setTimeout(() => this.updateOverlayWindows(), 100); // prevent recursion loop
         }
       }
-    });
+    } finally {
+      this.isUpdating = false;
+    }
   }
 }

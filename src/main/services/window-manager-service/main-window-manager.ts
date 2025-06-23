@@ -19,6 +19,7 @@ import { getSteamClient } from "@/main/utils/steam-client";
 import { IPC_CHANNELS } from "@/shared/ipc-channels";
 import { iRacingDataSchema } from "../game-data/games/iRacing/schema";
 import { zodSchemaToJSON } from "../game-data/utils/zod-schema-to-json";
+import { gameWebSocketServer } from "../game-websocket-server-service";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -282,6 +283,15 @@ function registerHandlers(mainWindow: BrowserWindow) {
       }
     },
   );
+
+  ipcMain.handle(IPC_CHANNELS.SET_IS_PREVIEW_MODE, (_, isPreview: boolean) => {
+    gameWebSocketServer.setIsPreview(isPreview);
+    return isPreview;
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GET_IS_PREVIEW_MODE, () => {
+    return false;
+  });
 }
 
 // client.workshop.createItem(STEAM_APP_ID).then((data) => {

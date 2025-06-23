@@ -55,7 +55,7 @@ export const jsonFileHandlerServiceLogger = createServiceLogger(
 );
 export const userServiceLogger = createServiceLogger("user-service");
 export const jsonFileServiceLogger = createServiceLogger("json-file-service");
-export const gameWebsocketServerService = createServiceLogger(
+export const gameWebsocketServerServiceLogger = createServiceLogger(
   "game-websocket-server-service",
 );
 export const steamLogger = createServiceLogger("steam");

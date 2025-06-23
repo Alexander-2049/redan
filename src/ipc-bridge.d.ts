@@ -10,7 +10,6 @@ import {
 } from "./main/services/layout-service/schemas/layoutSchema";
 import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
 import { GameName } from "./main/services/game-data/types/game-name-schema";
-
 interface MainWindowAPI {
   getOverlayList: () => Promise<OverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;
@@ -45,6 +44,8 @@ interface MainWindowAPI {
   onLayoutModified: (callback: () => void) => void;
   removeLayoutModifiedListeners: () => void;
   getGameDataShape: (game: GameName) => Promise<string>;
+  isPreview: () => Promise<boolean>;
+  setIsPreview: (isPreview: boolean) => Promise<boolean>;
 }
 
 interface WindowAction {

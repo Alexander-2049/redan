@@ -50,6 +50,9 @@ contextBridge.exposeInMainWorld("electron", {
   },
   getGameDataShape: (game: GameName) =>
     ipcRenderer.invoke(IPC_CHANNELS.GET_GAME_DATA_SHAPE, game),
+  isPreview: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_IS_PREVIEW_MODE),
+  setIsPreview: async (isPreview: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SET_IS_PREVIEW_MODE, isPreview),
 });
 
 contextBridge.exposeInMainWorld("actions", {

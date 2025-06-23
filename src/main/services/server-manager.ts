@@ -1,36 +1,24 @@
-import { GameWebSocketServer } from "./game-websocket-server-service";
+import { gameWebSocketServer } from "./game-websocket-server-service";
 import { AssetsServer } from "./assets-server-service";
 import { OverlayHandler } from "./overlay-service";
 import {
   ASSETS_SERVER_PORT,
   OVERLAY_SERVER_PORT,
-  WEBSOCKET_SERVER_DEMO_PORT,
   WEBSOCKET_SERVER_PORT,
 } from "../../shared/shared-constants";
-import gameDataHandler, { demoGameDataHandler } from "./game-data";
+import gameDataHandler from "./game-data";
 
 export const startServers = () => {
   /* WebSocket server with an actual data from games */
-  const gameWsServer = new GameWebSocketServer({
+  gameWebSocketServer.start({
     port: WEBSOCKET_SERVER_PORT,
     gameClient: gameDataHandler,
   });
-  gameWsServer.start();
   console.log(
     `WebSocket server (real data) is running on port ${WEBSOCKET_SERVER_PORT}`,
   );
   // Remove later
   gameDataHandler.selectGame("iRacing");
-
-  /* WebSocket server with demo data for overlay previews */
-  const demoGameWsServer = new GameWebSocketServer({
-    port: WEBSOCKET_SERVER_DEMO_PORT,
-    gameClient: demoGameDataHandler,
-  });
-  demoGameWsServer.start();
-  console.log(
-    `WebSocket server (demo data) is running on port ${WEBSOCKET_SERVER_DEMO_PORT}`,
-  );
 
   const assetsServer = new AssetsServer(ASSETS_SERVER_PORT);
   assetsServer.start();
