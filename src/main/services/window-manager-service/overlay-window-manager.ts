@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, ipcMain } from "electron";
 import { ILayoutOverlaySetting } from "../layout-service/schemas/overlaySchema";
 import { OverlayManifest } from "../overlay-service/types";
 import { OverlayHandler } from "../overlay-service";
@@ -22,6 +22,12 @@ export class OverlayWindowManager {
   private _isLocked = true;
   private isUpdating = false;
 
+  constructor() {
+    ipcMain.handle("is-editable-mode", () => {
+      return !this.isLocked();
+    });
+  }
+
   public isLocked() {
     return this._isLocked;
   }
@@ -31,6 +37,7 @@ export class OverlayWindowManager {
     logger.info("Overlay windows locked (ignoring mouse events)");
     this.windows.forEach((w) => {
       w.window.setIgnoreMouseEvents(true);
+      w.window.webContents.send("set-editable-mode", false);
     });
 
     // If the game is not connected, hide overlays when locked
@@ -47,6 +54,7 @@ export class OverlayWindowManager {
     logger.info("Overlay windows unlocked (accepting mouse events)");
     this.windows.forEach((w) => {
       w.window.setIgnoreMouseEvents(false);
+      w.window.webContents.send("set-editable-mode", true);
     });
 
     // Ensure overlays from the active layout are all visible
@@ -164,15 +172,6 @@ export class OverlayWindowManager {
 
     window.on("resized", updateOverlayPositionAndSize);
     window.on("moved", updateOverlayPositionAndSize);
-
-    window.on("focus", () => {
-      if (this.isLocked()) return;
-      window.webContents.send("show-borders");
-    });
-
-    window.on("blur", () => {
-      window.webContents.send("hide-borders");
-    });
   }
 
   public closeAllOverlays() {
