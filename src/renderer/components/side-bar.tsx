@@ -1,4 +1,4 @@
-import { Bug, Layout, LucideIcon } from "lucide-react";
+import { Bug, Globe, Layout, LucideIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "./ui/scroll-area";
 import { cn } from "@/renderer/lib/utils";
@@ -30,7 +30,7 @@ const Sidebar = () => {
       links: [
         // { text: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
         { text: "My Layouts", path: "/my-layouts", icon: Layout },
-        // { text: "Live Preview", path: "/live-preview", icon: MonitorPlay },
+        { text: "Browse", path: "/browse-workshop", icon: Globe },
         // { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },
       ],
     },
