@@ -15,7 +15,7 @@ interface WorkshopFiltersProps {
 
 export function WorkshopFilters({ onResetFilters }: WorkshopFiltersProps) {
   return (
-    <div className="w-64 space-y-4 border-r border-gray-200 bg-gray-50 p-4">
+    <div className="w-64 space-y-4">
       <div className="space-y-2">
         <Button
           onClick={onResetFilters}
@@ -30,29 +30,6 @@ export function WorkshopFilters({ onResetFilters }: WorkshopFiltersProps) {
         <div>
           <h3 className="mb-3 font-medium text-gray-900">Show only:</h3>
           <div className="space-y-1">
-            <label className="flex cursor-pointer items-center space-x-3 rounded p-2 transition-colors hover:bg-gray-100">
-              <Checkbox
-                id="approved"
-                className="border-gray-400 bg-white data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
-              />
-              <span className="flex-1 text-sm text-gray-700">Approved</span>
-            </label>
-            <label className="flex cursor-pointer items-center space-x-3 rounded p-2 transition-colors hover:bg-gray-100">
-              <Checkbox
-                id="ready-to-use"
-                className="border-gray-400 bg-white data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
-              />
-              <span className="flex-1 text-sm text-gray-700">Ready-to-use</span>
-            </label>
-            <label className="flex cursor-pointer items-center space-x-3 rounded p-2 transition-colors hover:bg-gray-100">
-              <Checkbox
-                id="audio-responsive"
-                className="border-gray-400 bg-white data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
-              />
-              <span className="flex-1 text-sm text-gray-700">
-                Audio responsive
-              </span>
-            </label>
             <label className="flex cursor-pointer items-center space-x-3 rounded p-2 transition-colors hover:bg-gray-100">
               <Checkbox
                 id="customizable"
@@ -142,7 +119,7 @@ export function WorkshopFilters({ onResetFilters }: WorkshopFiltersProps) {
 
         <div>
           <h3 className="mb-3 font-medium text-gray-900">Tags</h3>
-          <div className="max-h-40 space-y-1 overflow-y-auto">
+          <div className="max-h-80 space-y-1 overflow-y-auto">
             {[
               "Anime",
               "Abstract",

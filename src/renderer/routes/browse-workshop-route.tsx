@@ -102,7 +102,11 @@ const BrowseWorkshopRoute = () => {
 
   return (
     <div className="flex h-full bg-gray-100">
-      <WorkshopFilters onResetFilters={handleResetFilters} />
+      <div className="flex h-full min-w-0 border-r border-gray-200 bg-gray-50 p-4">
+        <ScrollArea className="h-full">
+          <WorkshopFilters onResetFilters={handleResetFilters} />
+        </ScrollArea>
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex-shrink-0 border-b border-gray-200 bg-white p-4">
