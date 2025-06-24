@@ -1,22 +1,22 @@
 import { Card } from "@/renderer/components/ui/card";
+import { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
 
-interface WorkshopItemProps {
-  id: string;
-  title: string;
-  author: string;
-  image: string;
-  rating: number;
-  downloads: number;
-  views: number;
-  tags: string[];
-  isApproved?: boolean;
+interface WorkshopItemProps extends WorkshopItem {
+  // id: string;
+  // title: string;
+  // author: string;
+  // image: string;
+  // rating: number;
+  // downloads: number;
+  // views: number;
+  // tags: string[];
+  // isApproved?: boolean;
   onClick?: () => void;
 }
 
 export function WorkshopItem({
   title,
-  author,
-  image,
+  previewUrl,
   onClick,
 }: WorkshopItemProps) {
   return (
@@ -28,7 +28,7 @@ export function WorkshopItem({
         {/* Image */}
         <img
           src={
-            image ||
+            previewUrl ||
             "https://kzmklrq8vvrkua5n7z9d.lite.vusercontent.net/placeholder.svg?height=600&width=600"
           }
           alt={title}
@@ -41,7 +41,6 @@ export function WorkshopItem({
             <h3 className="mb-1 line-clamp-2 text-sm leading-tight font-medium text-white drop-shadow-lg">
               {title}
             </h3>
-            <p className="text-xs text-white/90 drop-shadow-lg">by {author}</p>
           </div>
         </div>
 

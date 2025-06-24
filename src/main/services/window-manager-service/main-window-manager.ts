@@ -20,6 +20,7 @@ import { IPC_CHANNELS } from "@/shared/ipc-channels";
 import { iRacingDataSchema } from "../game-data/games/iRacing/schema";
 import { zodSchemaToJSON } from "../game-data/utils/zod-schema-to-json";
 import { gameWebSocketServer } from "../game-websocket-server-service";
+import { WorkshopItemQueryConfig } from "@/shared/schemas/steamworks-schemas";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -292,6 +293,28 @@ function registerHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle(IPC_CHANNELS.GET_IS_PREVIEW_MODE, () => {
     return false;
   });
+
+  /*
+  STEAM_IS_ONLINE: "get-steam-is-online",
+  STEAM_GET_ALL_WORKSHOP_ITEMS: "get-steam-all-workshop-items",
+  STEAM_WORKSHOP_SUBSCRIBE: "steam-worshop-subscribe",
+  STEAM_WORKSHOP_UNUBSCRIBE: "steam-worshop-unsubscribe",
+  */
+  ipcMain.handle(
+    IPC_CHANNELS.STEAM_GET_ALL_WORKSHOP_ITEMS,
+    (e, page: number, queryConfig?: WorkshopItemQueryConfig) => {
+      const client = getSteamClient();
+      if (!client) return;
+      return client.workshop.getAllItems(
+        page,
+        client.workshop.UGCQueryType.RankedByVote,
+        client.workshop.UGCType.Items,
+        STEAM_APP_ID,
+        STEAM_APP_ID,
+        queryConfig,
+      );
+    },
+  );
 }
 
 // client.workshop.createItem(STEAM_APP_ID).then((data) => {

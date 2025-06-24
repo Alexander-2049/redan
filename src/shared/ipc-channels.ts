@@ -22,4 +22,8 @@ export const IPC_CHANNELS = {
   TITLE_BAR_MESSAGE: "title-bar-message",
   SET_IS_PREVIEW_MODE: "set-preview-mode",
   GET_IS_PREVIEW_MODE: "get-is-preview-mode",
+  STEAM_IS_ONLINE: "get-steam-is-online",
+  STEAM_GET_ALL_WORKSHOP_ITEMS: "get-steam-all-workshop-items",
+  STEAM_WORKSHOP_SUBSCRIBE: "steam-worshop-subscribe",
+  STEAM_WORKSHOP_UNUBSCRIBE: "steam-worshop-unsubscribe",
 };

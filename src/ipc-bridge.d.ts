@@ -10,6 +10,10 @@ import {
 } from "./main/services/layout-service/schemas/layoutSchema";
 import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
 import { GameName } from "./main/services/game-data/types/game-name-schema";
+import {
+  WorkshopItemQueryConfig,
+  WorkshopPaginatedResult,
+} from "./shared/schemas/steamworks-schemas";
 interface MainWindowAPI {
   getOverlayList: () => Promise<OverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;
@@ -54,10 +58,21 @@ interface WindowAction {
   close: () => void;
 }
 
+interface SteamAction {
+  isSteamOnline: () => Promise<boolean>;
+  fetchWorkshopItems: (
+    page: number,
+    queryConfig?: WorkshopItemQueryConfig,
+  ) => Promise<WorkshopPaginatedResult>;
+  subscribeWorkshopItem: (item: bigint) => Promise<void>;
+  unsubscribeWorkshopItem: (item: bigint) => Promise<void>;
+}
+
 declare global {
   interface Window {
     electron: MainWindowAPI;
     actions: WindowAction;
+    steam: SteamAction;
   }
 }
 

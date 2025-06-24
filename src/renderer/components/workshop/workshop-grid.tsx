@@ -1,17 +1,19 @@
+import { WorkshopItem as WorkshopItemType } from "@/shared/schemas/steamworks-schemas";
 import { WorkshopItem } from "./workshop-item";
 
 interface WorkshopGridProps {
-  items: Array<{
-    id: string;
-    title: string;
-    author: string;
-    image: string;
-    rating: number;
-    downloads: number;
-    views: number;
-    tags: string[];
-    isApproved?: boolean;
-  }>;
+  // items: Array<{
+  //   id: string;
+  //   title: string;
+  //   author: string;
+  //   image: string;
+  //   rating: number;
+  //   downloads: number;
+  //   views: number;
+  //   tags: string[];
+  //   isApproved?: boolean;
+  // }>;
+  items: WorkshopItemType[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onItemClick?: (item: any) => void;
 }
@@ -27,7 +29,7 @@ export function WorkshopGrid({ items, onItemClick }: WorkshopGridProps) {
     >
       {items.map((item) => (
         <div
-          key={item.id}
+          key={item.publishedFileId}
           className="w-full"
           style={{
             minWidth: "300px",

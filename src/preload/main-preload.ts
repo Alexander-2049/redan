@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import { GameName } from "@/main/services/game-data/types/game-name-schema";
 import { ILayout } from "@/main/services/layout-service/schemas/layoutSchema";
 import { IPC_CHANNELS } from "@/shared/ipc-channels";
+import { WorkshopItemQueryConfig } from "@/shared/schemas/steamworks-schemas";
 
 contextBridge.exposeInMainWorld("electron", {
   getLayouts: () => ipcRenderer.invoke(IPC_CHANNELS.GET_LAYOUTS),
@@ -60,4 +61,13 @@ contextBridge.exposeInMainWorld("actions", {
     ipcRenderer.invoke(IPC_CHANNELS.TITLE_BAR_MESSAGE, "minimize"),
   restore: () => ipcRenderer.invoke(IPC_CHANNELS.TITLE_BAR_MESSAGE, "restore"),
   close: () => ipcRenderer.invoke(IPC_CHANNELS.TITLE_BAR_MESSAGE, "close"),
+});
+
+contextBridge.exposeInMainWorld("steam", {
+  fetchWorkshopItems: (page: number, queryConfig?: WorkshopItemQueryConfig) =>
+    ipcRenderer.invoke(
+      IPC_CHANNELS.STEAM_GET_ALL_WORKSHOP_ITEMS,
+      page,
+      queryConfig,
+    ),
 });
