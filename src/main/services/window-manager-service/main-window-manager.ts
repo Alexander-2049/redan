@@ -22,6 +22,7 @@ import { zodSchemaToJSON } from "../game-data/utils/zod-schema-to-json";
 import { gameWebSocketServer } from "../game-websocket-server-service";
 import {
   DownloadInfo,
+  InstallInfo,
   WorkshopItemQueryConfig,
 } from "@/shared/schemas/steamworks-schemas";
 
@@ -399,6 +400,15 @@ function registerHandlers(mainWindow: BrowserWindow) {
 
     return getItems();
   });
+
+  ipcMain.handle(
+    IPC_CHANNELS.GET_WORKSHOP_INSTALL_INFO,
+    (_, itemId: bigint): InstallInfo | null => {
+      const client = getSteamClient();
+      if (!client) return null;
+      return client.workshop.installInfo(itemId);
+    },
+  );
 }
 
 // client.workshop.createItem(STEAM_APP_ID).then((data) => {

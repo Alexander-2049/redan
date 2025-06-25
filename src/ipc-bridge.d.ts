@@ -12,6 +12,7 @@ import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
 import { GameName } from "./main/services/game-data/types/game-name-schema";
 import {
   DownloadInfo,
+  InstallInfo,
   WorkshopItemQueryConfig,
   WorkshopPaginatedResult,
 } from "./shared/schemas/steamworks-schemas";
@@ -70,6 +71,7 @@ interface SteamAction {
   workshopGetSubscribedItems: () => Promise<bigint[]>;
   workshopDownloadItem: (item: bigint) => Promise<boolean>;
   workshopDownloadInfo: (item: bigint) => Promise<DownloadInfo | null>;
+  workshopGetInstallInfo: (item: bigint) => Promise<InstallInfo | null>;
 }
 
 declare global {

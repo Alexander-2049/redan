@@ -29,4 +29,5 @@ export const IPC_CHANNELS = {
   STEAM_WORKSHOP_SUBSCRIBED_ITEMS: "steam-worshop-subscribed-items",
   STEAM_WORKSHOP_DOWNLOAD_ITEM: "steam-workshop-download-item",
   STEAM_WORKSHOP_DOWNLOAD_INFO: "steam-workshop-download-info",
+  GET_WORKSHOP_INSTALL_INFO: "get-workshop-install-info",
 };

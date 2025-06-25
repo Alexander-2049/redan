@@ -138,3 +138,8 @@ export interface DownloadInfo {
   current: bigint;
   total: bigint;
 }
+export interface InstallInfo {
+  folder: string;
+  sizeOnDisk: bigint;
+  timestamp: number;
+}

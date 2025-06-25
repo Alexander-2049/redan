@@ -80,4 +80,6 @@ contextBridge.exposeInMainWorld("steam", {
     ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_DOWNLOAD_ITEM, itemId),
   workshopDownloadInfo: (itemId: bigint) =>
     ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_DOWNLOAD_INFO, itemId),
+  workshopGetInstallInfo: (itemId: bigint) =>
+    ipcRenderer.invoke(IPC_CHANNELS.GET_WORKSHOP_INSTALL_INFO, itemId),
 });
