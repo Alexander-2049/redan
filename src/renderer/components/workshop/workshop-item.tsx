@@ -12,16 +12,22 @@ interface WorkshopItemProps extends WorkshopItem {
   // tags: string[];
   // isApproved?: boolean;
   onClick?: () => void;
+  isItemsSelected?: boolean;
 }
 
 export function WorkshopItem({
   title,
   previewUrl,
   onClick,
+  isItemsSelected,
 }: WorkshopItemProps) {
   return (
     <Card
-      className="group cursor-pointer overflow-hidden border-gray-200 bg-white p-0 transition-colors hover:bg-gray-50"
+      className={`group cursor-pointer overflow-hidden border-2 bg-white p-0 transition-all hover:bg-gray-50 ${
+        isItemsSelected
+          ? "border-sky-400 shadow-lg"
+          : "border-gray-200 hover:border-sky-300"
+      }`}
       onClick={onClick}
     >
       <div className="relative aspect-square">
@@ -29,10 +35,11 @@ export function WorkshopItem({
         <img
           src={
             previewUrl ||
-            "https://kzmklrq8vvrkua5n7z9d.lite.vusercontent.net/placeholder.svg?height=600&width=600"
+            "/placeholder.svg?height=600&width=600" ||
+            "/placeholder.svg"
           }
           alt={title}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform group-hover:scale-105"
         />
 
         {/* Text overlay at the bottom */}
@@ -44,8 +51,10 @@ export function WorkshopItem({
           </div>
         </div>
 
-        {/* Hover overlay */}
-        {/* <div className="bg-opacity-0 group-hover:bg-opacity-20 absolute inset-0 bg-black transition-all" /> */}
+        {/* Optional: Inner glow effect for selected state */}
+        {isItemsSelected && (
+          <div className="pointer-events-none absolute inset-0 bg-sky-400/10" />
+        )}
       </div>
     </Card>
   );

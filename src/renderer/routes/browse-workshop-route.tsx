@@ -124,7 +124,11 @@ const BrowseWorkshopRoute = () => {
         <div className="min-h-0 flex-1">
           <ScrollArea className="h-full">
             <div className="p-4">
-              <WorkshopGrid items={items} onItemClick={handleItemClick} />
+              <WorkshopGrid
+                items={items}
+                onItemClick={handleItemClick}
+                selectedItemId={selectedItem?.publishedFileId}
+              />
               <WorkshopPagination
                 currentPage={currentPage}
                 totalPages={totalPages}

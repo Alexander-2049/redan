@@ -14,16 +14,21 @@ interface WorkshopGridProps {
   //   isApproved?: boolean;
   // }>;
   items: WorkshopItemType[];
+  selectedItemId?: bigint | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onItemClick?: (item: any) => void;
 }
 
-export function WorkshopGrid({ items, onItemClick }: WorkshopGridProps) {
+export function WorkshopGrid({
+  items,
+  selectedItemId,
+  onItemClick,
+}: WorkshopGridProps) {
   return (
     <div
       className="grid gap-[7px]"
       style={{
-        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
         maxWidth: "100%",
       }}
     >
@@ -32,11 +37,15 @@ export function WorkshopGrid({ items, onItemClick }: WorkshopGridProps) {
           key={item.publishedFileId}
           className="w-full"
           style={{
-            minWidth: "300px",
-            maxWidth: "600px",
+            minWidth: "200px",
+            maxWidth: "400px",
           }}
         >
-          <WorkshopItem {...item} onClick={() => onItemClick?.(item)} />
+          <WorkshopItem
+            {...item}
+            onClick={() => onItemClick?.(item)}
+            isItemsSelected={selectedItemId === item.publishedFileId}
+          />
         </div>
       ))}
     </div>
