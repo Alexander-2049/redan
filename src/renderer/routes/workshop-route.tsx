@@ -10,7 +10,7 @@ import type { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
 import { useWorkshopSubscribeItem } from "../api/steam/workshop-subscribe-item";
 import { useWorkshopUnsubscribeItem } from "../api/steam/workshop-unsubscribe-item";
 
-const BrowseWorkshopRoute = () => {
+const WorkshopRoute = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("popular-year");
   const [currentPage, setCurrentPage] = useState(1);
@@ -127,4 +127,4 @@ const BrowseWorkshopRoute = () => {
   );
 };
 
-export default BrowseWorkshopRoute;
+export default WorkshopRoute;

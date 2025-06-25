@@ -30,7 +30,7 @@ const Sidebar = () => {
       links: [
         // { text: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
         { text: "My Layouts", path: "/my-layouts", icon: Layout },
-        { text: "Browse", path: "/browse-workshop", icon: Globe },
+        { text: "Workshop", path: "/workshop", icon: Globe },
         // { text: "Data Analysis", path: "/data-analysis", icon: BarChart3 },
       ],
     },

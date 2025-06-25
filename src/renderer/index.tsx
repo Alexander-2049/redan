@@ -1,54 +1,65 @@
-// import { useTranslation } from "react-i18next";
-import "./i18n";
-import { HashRouter, Route, Routes } from "react-router-dom";
-import AppLayout from "./components/layout/app-layout";
+/**
+ * This file will automatically be loaded by webpack and run in the "renderer" context.
+ * To learn more about the differences between the "main" and the "renderer" context in
+ * Electron, visit:
+ *
+ * https://electronjs.org/docs/latest/tutorial/process-model
+ *
+ * By default, Node.js integration in this file is disabled. When enabling Node.js integration
+ * in a renderer process, please be aware of potential security implications. You can read
+ * more about security risks here:
+ *
+ * https://electronjs.org/docs/tutorial/security
+ *
+ * To enable Node.js integration in this file, open up `main.js` and enable the `nodeIntegration`
+ * flag:
+ *
+ * ```
+ *  // Create the browser window.
+ *  mainWindow = new BrowserWindow({
+ *    width: 800,
+ *    height: 600,
+ *    webPreferences: {
+ *      nodeIntegration: true
+ *    }
+ *  });
+ * ```
+ */
+
+import "./index.css";
+import "./styles/globals.css";
+import Main from "./routes";
+import React from "react";
 import DashboardRoute from "./routes/dashboard-route";
-import DebugRoute from "./routes/debug-route";
-import PageLayout from "./components/layout/page-layout";
-import NotFoundRoute from "./routes/not-found-route";
-import MyLayoutsRoute from "./routes/my-layouts-route";
-import { useEffect } from "react";
-import { useLayouts } from "./api/layouts/get-layouts";
-import BrowseWorkshopRoute from "./routes/browse-workshop-route";
+import { createRoot } from "react-dom/client";
+import { createHashRouter } from "react-router-dom";
+import { Toaster } from "./components/ui/sonner";
+import { Provider } from "react-redux";
+import { store } from "./store"; // путь к твоему store.ts
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "./styles/fonts.css";
 
-const Main = () => {
-  // const { t } = useTranslation();
-  /*
-        The title is: {t("title")}
-        Description: {t("description.part1")}
-  */
-  const { refetch: refetchLayouts } = useLayouts();
+export const router = createHashRouter([
+  {
+    path: "/",
+    element: <DashboardRoute />,
+  },
+]);
 
-  useEffect(() => {
-    window.electron.onLayoutModified(() => {
-      refetchLayouts();
-    });
+const queryClient = new QueryClient();
 
-    return () => {
-      window.electron.removeLayoutModifiedListeners();
-    };
-  }, []);
+const app = document.getElementById("app");
+if (!app) throw new Error("root element with app id was not found");
 
-  return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<>Test</>} />
-        <Route path="/" element={<AppLayout />}>
-          <Route element={<PageLayout />}>
-            <Route index element={<DashboardRoute />} />
-            <Route path="/dashboard" element={<DashboardRoute />} />
-            <Route path="/debug" element={<DebugRoute />} />
-            <Route path="/my-layouts" element={<MyLayoutsRoute />} />
-            <Route path="/browse-workshop" element={<BrowseWorkshopRoute />} />
-          </Route>
-          <Route path="*" element={<PageLayout />}>
-            <Route path="*" element={<NotFoundRoute />} />
-          </Route>
-        </Route>
-        <Route path="*" element={<AppLayout />} />
-      </Routes>
-    </HashRouter>
-  );
-};
+const root = createRoot(app);
 
-export default Main;
+root.render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <Main />
+        <Toaster />
+      </Provider>
+    </QueryClientProvider>
+  </React.StrictMode>,
+);
