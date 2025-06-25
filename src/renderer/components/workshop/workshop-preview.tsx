@@ -9,6 +9,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   MessageCircle,
+  X,
 } from "lucide-react";
 import { ScrollArea } from "@/renderer/components/ui/scroll-area";
 import { useState } from "react";
@@ -20,6 +21,7 @@ interface Item extends WorkshopItem {
 
 interface WorkshopPreviewProps {
   item: Item;
+  isSubscribed?: boolean;
   //   id: string;
   //   title: string;
   //   author: string;
@@ -36,13 +38,16 @@ interface WorkshopPreviewProps {
   // } | null;
   onClose: () => void;
   onSubscribe: (itemId: bigint) => void;
+  onUnsubscribe: (itemId: bigint) => void;
   onRate: (itemId: bigint, rating: "like" | "dislike") => void;
 }
 
 export function WorkshopPreview({
   item,
   // onClose,
+  isSubscribed,
   onSubscribe,
+  onUnsubscribe,
   onRate,
 }: WorkshopPreviewProps) {
   const [userRating, setUserRating] = useState<"like" | "dislike" | null>(null);
@@ -95,13 +100,24 @@ export function WorkshopPreview({
             </div>
 
             <div className="space-y-2">
-              <Button
-                onClick={() => onSubscribe(item.publishedFileId)}
-                className="w-full bg-green-600 text-white hover:bg-green-700"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Subscribe
-              </Button>
+              {!isSubscribed && (
+                <Button
+                  onClick={() => onSubscribe(item.publishedFileId)}
+                  className="w-full bg-green-600 text-white hover:bg-green-700"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Subscribe
+                </Button>
+              )}
+              {isSubscribed && (
+                <Button
+                  onClick={() => onUnsubscribe(item.publishedFileId)}
+                  className="w-full bg-red-600 text-white hover:bg-red-700"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Unsubscribe
+                </Button>
+              )}
 
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm" className="flex-1">

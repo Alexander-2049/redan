@@ -315,6 +315,69 @@ function registerHandlers(mainWindow: BrowserWindow) {
       );
     },
   );
+
+  let subscriptionSequence = 0;
+  let latestSubscribedItemsRequest = 0;
+
+  ipcMain.handle(
+    IPC_CHANNELS.STEAM_WORKSHOP_SUBSCRIBE,
+    async (e, itemId: bigint) => {
+      const client = getSteamClient();
+      if (!client) return;
+
+      logger.info(`Subscribing to workshop item: ${itemId}`);
+      subscriptionSequence++;
+      await client.workshop.subscribe(itemId);
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.STEAM_WORKSHOP_UNSUBSCRIBE,
+    async (e, itemId: bigint) => {
+      const client = getSteamClient();
+      if (!client) return;
+
+      logger.info(`Unsubscribing from workshop item: ${itemId}`);
+      subscriptionSequence++;
+      await client.workshop.unsubscribe(itemId);
+    },
+  );
+
+  ipcMain.handle(IPC_CHANNELS.STEAM_WORKSHOP_SUBSCRIBED_ITEMS, async () => {
+    const client = getSteamClient();
+    if (!client) return [];
+
+    const requestId = ++latestSubscribedItemsRequest;
+    const currentSequence = subscriptionSequence;
+
+    const getItems = () => {
+      const items = client.workshop.getSubscribedItems();
+      logger.info("Subscribed items:", items);
+      return items;
+    };
+
+    // Wait 1s to allow client to update (default delay)
+    await new Promise((r) => setTimeout(r, 1000));
+
+    // If during the delay a new subscribe/unsubscribe occurred, re-fetch and delay again
+    if (currentSequence !== subscriptionSequence) {
+      logger.info(
+        "Subscription list possibly changed mid-request, re-fetching...",
+      );
+      // Optional: prevent infinite loop if changes keep happening
+      await new Promise((r) => setTimeout(r, 500));
+    }
+
+    // If a newer subscribed_items request has been made, cancel this one
+    if (requestId < latestSubscribedItemsRequest) {
+      logger.info(
+        "Newer subscribed_items request superseded this one. Returning stale data.",
+      );
+      return []; // or you can throw/cancel
+    }
+
+    return getItems();
+  });
 }
 
 // client.workshop.createItem(STEAM_APP_ID).then((data) => {

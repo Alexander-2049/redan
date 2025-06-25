@@ -9,12 +9,15 @@ import { useWorkshopItems } from "../api/steam/workshop-get-all-items";
 import type { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
 import { useWorkshopSubscribeItem } from "../api/steam/workshop-subscribe-item";
 import { useWorkshopUnsubscribeItem } from "../api/steam/workshop-unsubscribe-item";
+import { useWorkshopSubscribedItems } from "../api/steam/workshop-get-subscribed-items";
 
 const WorkshopRoute = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("popular-year");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState<WorkshopItem | null>(null);
+  const [isSubscribedOnSelectedItem, setIsSubscribedOnSelectedItem] =
+    useState(false);
   const {
     mutate: getWorkshopItems,
     data: workshop,
@@ -23,6 +26,24 @@ const WorkshopRoute = () => {
   const [items, setItems] = useState<WorkshopItem[]>([]);
   const { mutate: subscribe } = useWorkshopSubscribeItem();
   const { mutate: unsubscribe } = useWorkshopUnsubscribeItem();
+  const { data: subscribedItems } = useWorkshopSubscribedItems();
+
+  // useEffect(() => {
+  //   console.log(
+  //     subscribedItems,
+  //     isSubscribedItemsPending,
+  //     isLoading,
+  //     isRefetching,
+  //   );
+  // }, [subscribedItems, isSubscribedItemsPending, isLoading, isRefetching]);
+
+  useEffect(() => {
+    if (!subscribedItems || !selectedItem) return;
+    const a = selectedItem.publishedFileId.toString();
+    const b = subscribedItems.map((c) => c.toString());
+
+    setIsSubscribedOnSelectedItem(b.includes(a));
+  }, [subscribedItems, selectedItem]);
 
   useEffect(() => {
     getWorkshopItems({ page: currentPage });
@@ -61,6 +82,10 @@ const WorkshopRoute = () => {
   const handleSubscribe = (itemId: bigint) => {
     console.log("Subscribing to item:", itemId);
     subscribe({ item: itemId });
+  };
+  const handleUnsubscribe = (itemId: bigint) => {
+    console.log("Unsubscribing item:", itemId);
+    unsubscribe({ item: itemId });
   };
 
   const handleRate = (itemId: bigint, rating: "like" | "dislike") => {
@@ -120,7 +145,9 @@ const WorkshopRoute = () => {
           item={selectedItem}
           onClose={handleClosePreview}
           onSubscribe={handleSubscribe}
+          onUnsubscribe={handleUnsubscribe}
           onRate={handleRate}
+          isSubscribed={isSubscribedOnSelectedItem}
         />
       )}
     </div>

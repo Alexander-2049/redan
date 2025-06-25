@@ -70,4 +70,10 @@ contextBridge.exposeInMainWorld("steam", {
       page,
       queryConfig,
     ),
+  workshopSubscribe: (itemId: bigint) =>
+    ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_SUBSCRIBE, itemId),
+  workshopUnsubscribe: (itemId: bigint) =>
+    ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_UNSUBSCRIBE, itemId),
+  workshopGetSubscribedItems: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_SUBSCRIBED_ITEMS),
 });

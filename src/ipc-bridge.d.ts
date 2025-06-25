@@ -64,8 +64,9 @@ interface SteamAction {
     page: number,
     queryConfig?: WorkshopItemQueryConfig,
   ) => Promise<WorkshopPaginatedResult>;
-  subscribeWorkshopItem: (item: bigint) => Promise<void>;
-  unsubscribeWorkshopItem: (item: bigint) => Promise<void>;
+  workshopSubscribe: (item: bigint) => Promise<void>;
+  workshopUnsubscribe: (item: bigint) => Promise<void>;
+  workshopGetSubscribedItems: () => Promise<bigint[]>;
 }
 
 declare global {

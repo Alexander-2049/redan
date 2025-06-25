@@ -25,5 +25,6 @@ export const IPC_CHANNELS = {
   STEAM_IS_ONLINE: "get-steam-is-online",
   STEAM_GET_ALL_WORKSHOP_ITEMS: "get-steam-all-workshop-items",
   STEAM_WORKSHOP_SUBSCRIBE: "steam-worshop-subscribe",
-  STEAM_WORKSHOP_UNUBSCRIBE: "steam-worshop-unsubscribe",
+  STEAM_WORKSHOP_UNSUBSCRIBE: "steam-worshop-unsubscribe",
+  STEAM_WORKSHOP_SUBSCRIBED_ITEMS: "steam-worshop-subscribed-items",
 };
