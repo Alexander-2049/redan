@@ -12,26 +12,31 @@ import {
 } from "lucide-react";
 import { ScrollArea } from "@/renderer/components/ui/scroll-area";
 import { useState } from "react";
+import { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
+
+interface Item extends WorkshopItem {
+  author?: string;
+}
 
 interface WorkshopPreviewProps {
-  item: {
-    id: string;
-    title: string;
-    author: string;
-    image: string;
-    rating: number;
-    downloads: number;
-    views: number;
-    tags: string[];
-    isApproved?: boolean;
-    description?: string;
-    fileSize: string;
-    uploadDate: string;
-    lastUpdate: string;
-  } | null;
+  item: Item;
+  //   id: string;
+  //   title: string;
+  //   author: string;
+  //   image: string;
+  //   rating: number;
+  //   downloads: number;
+  //   views: number;
+  //   tags: string[];
+  //   isApproved?: boolean;
+  //   description?: string;
+  //   fileSize: string;
+  //   uploadDate: string;
+  //   lastUpdate: string;
+  // } | null;
   onClose: () => void;
-  onSubscribe: (itemId: string) => void;
-  onRate: (itemId: string, rating: "like" | "dislike") => void;
+  onSubscribe: (itemId: bigint) => void;
+  onRate: (itemId: bigint, rating: "like" | "dislike") => void;
 }
 
 export function WorkshopPreview({
@@ -41,12 +46,17 @@ export function WorkshopPreview({
   onRate,
 }: WorkshopPreviewProps) {
   const [userRating, setUserRating] = useState<"like" | "dislike" | null>(null);
+  const totalVotes = item.numUpvotes + item.numDownvotes;
+  const rating =
+    totalVotes === 0
+      ? 0
+      : Math.round((item.numUpvotes / totalVotes) * 5 * 10) / 10;
 
   if (!item) return null;
 
   const handleRate = (rating: "like" | "dislike") => {
     setUserRating(rating);
-    onRate(item.id, rating);
+    onRate(item.publishedFileId, rating);
   };
 
   return (
@@ -56,7 +66,7 @@ export function WorkshopPreview({
           <div className="space-y-4 p-4">
             <div className="relative aspect-square">
               <img
-                src={item.image || "/placeholder.svg?height=300&width=300"}
+                src={item.previewUrl || "/placeholder.svg?height=300&width=300"}
                 alt={item.title}
                 className="h-full w-full rounded-lg object-cover"
               />
@@ -64,23 +74,29 @@ export function WorkshopPreview({
 
             <div className="space-y-2">
               <h3 className="text-xl font-bold text-gray-900">{item.title}</h3>
-              <p className="text-gray-600">by {item.author}</p>
+              {item.author && <p className="text-gray-600">by {item.author}</p>}
             </div>
 
             <div className="flex items-center space-x-4 text-sm text-gray-600">
               <div className="flex items-center">
                 <Star className="mr-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span>{item.rating.toFixed(1)}</span>
+                <span>
+                  {totalVotes < 5 ? "Not enough votes" : rating.toFixed(1)}
+                </span>
               </div>
-              <div className="flex items-center">
-                <Download className="mr-1 h-4 w-4" />
-                <span>{item.downloads.toLocaleString()}</span>
-              </div>
+              {item.statistics.numSubscriptions !== undefined && (
+                <div className="flex items-center">
+                  <Download className="mr-1 h-4 w-4" />
+                  <span>
+                    {Number(item.statistics.numSubscriptions).toLocaleString()}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
               <Button
-                onClick={() => onSubscribe(item.id)}
+                onClick={() => onSubscribe(item.publishedFileId)}
                 className="w-full bg-green-600 text-white hover:bg-green-700"
               >
                 <Download className="mr-2 h-4 w-4" />
@@ -141,20 +157,26 @@ export function WorkshopPreview({
               </Button>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="font-semibold text-gray-900">Tags</h4>
-              <div className="flex flex-wrap gap-1">
-                {item.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
+            {item.tags.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="font-semibold text-gray-900">Tags</h4>
+                <div className="flex flex-wrap gap-1">
+                  {item.tags.map((tag) => {
+                    if (tag === "") return;
+                    else
+                      return (
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        >
+                          {tag}
+                        </Badge>
+                      );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {item.description && (
               <div className="space-y-2">
@@ -167,17 +189,21 @@ export function WorkshopPreview({
 
             <div className="space-y-2 border-t border-gray-200 pt-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
+                {/* <div>
                   <span className="text-gray-500">File Size:</span>
                   <p className="text-gray-900">{item.fileSize}</p>
-                </div>
+                </div> */}
                 <div>
                   <span className="text-gray-500">Uploaded:</span>
-                  <p className="text-gray-900">{item.uploadDate}</p>
+                  <p className="text-gray-900">
+                    {new Date(item.timeCreated * 1000).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <span className="text-gray-500">Updated:</span>
-                  <p className="text-gray-900">{item.lastUpdate}</p>
+                  <p className="text-gray-900">
+                    {new Date(item.timeUpdated * 1000).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
             </div>

@@ -9,7 +9,7 @@ export const unsubscribeWorkshopItem = ({ item }: Props) => {
   return window.steam.subscribeWorkshopItem(item);
 };
 
-export const useWorkshopSubscribeItem = () => {
+export const useWorkshopUnsubscribeItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: unsubscribeWorkshopItem,

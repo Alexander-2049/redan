@@ -1,10 +1,5 @@
 import { Button } from "@/renderer/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface WorkshopPaginationProps {
   currentPage: number;
@@ -52,16 +47,6 @@ export function WorkshopPagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
-        className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-      >
-        <ChevronsLeft className="h-4 w-4" />
-      </Button>
-
-      <Button
-        variant="outline"
-        size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
@@ -94,16 +79,6 @@ export function WorkshopPagination({
         className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
       >
         <ChevronRight className="h-4 w-4" />
-      </Button>
-
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(totalPages)}
-        disabled={currentPage === totalPages}
-        className="border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-      >
-        <ChevronsRight className="h-4 w-4" />
       </Button>
     </div>
   );

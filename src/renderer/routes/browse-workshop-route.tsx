@@ -6,58 +6,23 @@ import { WorkshopGrid } from "@/renderer/components/workshop/workshop-grid";
 import { WorkshopPagination } from "@/renderer/components/workshop/workshop-pagination";
 import { WorkshopPreview } from "@/renderer/components/workshop/workshop-preview";
 import { useWorkshopItems } from "../api/steam/workshop-get-all-items";
-import { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
-
-// Mock data - replace with actual API calls
-// const mockItems = Array.from({ length: 120 }, (_, i) => ({
-//   id: `item-${i}`,
-//   title: [
-//     "Hollow Knight game wallpaper",
-//     "Swimming Kirby [4K]",
-//     "Cozy Winter by Alt Toads",
-//     "Legacy Gift: Animated Gear - Clock - Plus Language",
-//     "Minimalist Garage 1080 Colour Palettes",
-//     "Salamander Rides by Alt Toads",
-//     "Dancing Frogs by Alt Toads",
-//     "Stardew Valley Dynamic Day",
-//     "Windmills by VISUALDON",
-//     "Rebelling River Alt Toads",
-//   ][i % 10],
-//   author: [
-//     "Alt Toads",
-//     "VISUALDON",
-//     "ColdCast",
-//     "GameArt Studio",
-//     "PixelMaster",
-//   ][i % 5],
-//   image: `https://kzmklrq8vvrkua5n7z9d.lite.vusercontent.net/placeholder.svg?height=600&width=600&text=Item${i + 1}`,
-//   rating: Math.round((4.2 + Math.random() * 0.8) * 10) / 10,
-//   downloads: Math.floor(Math.random() * 50000) + 1000,
-//   views: Math.floor(Math.random() * 100000) + 5000,
-//   tags: [
-//     ["Game", "Wallpaper"],
-//     ["Anime", "Cute"],
-//     ["Nature", "Cozy"],
-//     ["Abstract", "Animated"],
-//     ["Minimalist", "Cars"],
-//   ][i % 5],
-//   isApproved: Math.random() > 0.7,
-//   description:
-//     i % 3 === 0
-//       ? "This is a beautiful and immersive wallpaper that will transform your desktop experience. Created with attention to detail and optimized for various screen resolutions."
-//       : undefined,
-//   fileSize: `${Math.floor(Math.random() * 50) + 5} MB`,
-//   uploadDate: "Dec 15, 2023",
-//   lastUpdate: "Jan 2, 2024",
-// }));
+import type { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
+import { useWorkshopSubscribeItem } from "../api/steam/workshop-subscribe-item";
+import { useWorkshopUnsubscribeItem } from "../api/steam/workshop-unsubscribe-item";
 
 const BrowseWorkshopRoute = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("popular-year");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState<WorkshopItem | null>(null);
-  const { mutate: getWorkshopItems, data: workshop } = useWorkshopItems();
+  const {
+    mutate: getWorkshopItems,
+    data: workshop,
+    isPending: isWorkshopItemsPending,
+  } = useWorkshopItems();
   const [items, setItems] = useState<WorkshopItem[]>([]);
+  const { mutate: subscribe } = useWorkshopSubscribeItem();
+  const { mutate: unsubscribe } = useWorkshopUnsubscribeItem();
 
   useEffect(() => {
     getWorkshopItems({ page: currentPage });
@@ -93,12 +58,14 @@ const BrowseWorkshopRoute = () => {
     setSelectedItem(null);
   };
 
-  const handleSubscribe = (itemId: string) => {
+  const handleSubscribe = (itemId: bigint) => {
     console.log("Subscribing to item:", itemId);
+    subscribe({ item: itemId });
   };
 
-  const handleRate = (itemId: string, rating: "like" | "dislike") => {
+  const handleRate = (itemId: bigint, rating: "like" | "dislike") => {
     console.log("Rating item:", itemId, "with", rating);
+    unsubscribe({ item: itemId });
   };
 
   return (
@@ -121,32 +88,41 @@ const BrowseWorkshopRoute = () => {
           />
         </div>
 
-        <div className="min-h-0 flex-1">
-          <ScrollArea className="h-full">
-            <div className="p-4">
-              <WorkshopGrid
-                items={items}
-                onItemClick={handleItemClick}
-                selectedItemId={selectedItem?.publishedFileId}
-              />
-              <WorkshopPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          </ScrollArea>
+        {/* Split layout: Grid takes remaining space, Pagination is fixed at bottom */}
+        <div className="flex min-h-0 flex-1 flex-col">
+          {/* Items Grid - Scrollable area that takes all available space */}
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="p-4">
+                <WorkshopGrid
+                  items={items}
+                  onItemClick={handleItemClick}
+                  selectedItemId={selectedItem?.publishedFileId}
+                  isPending={isWorkshopItemsPending}
+                />
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Pagination - Fixed at bottom */}
+          <div className="flex-shrink-0 border-t border-gray-200 bg-white">
+            <WorkshopPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
 
-      {/* {selectedItem && (
+      {selectedItem && (
         <WorkshopPreview
           item={selectedItem}
           onClose={handleClosePreview}
           onSubscribe={handleSubscribe}
           onRate={handleRate}
         />
-      )} */}
+      )}
     </div>
   );
 };
