@@ -10,6 +10,8 @@ import type { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
 import { useWorkshopSubscribeItem } from "../api/steam/workshop-subscribe-item";
 import { useWorkshopUnsubscribeItem } from "../api/steam/workshop-unsubscribe-item";
 import { useWorkshopSubscribedItems } from "../api/steam/workshop-get-subscribed-items";
+import { useWorkshopDownloadInfo } from "../api/steam/workshop-download-info";
+import { useWorkshopDownloadItem } from "../api/steam/workshop-download-item";
 
 const WorkshopRoute = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +29,22 @@ const WorkshopRoute = () => {
   const { mutate: subscribe } = useWorkshopSubscribeItem();
   const { mutate: unsubscribe } = useWorkshopUnsubscribeItem();
   const { data: subscribedItems } = useWorkshopSubscribedItems();
+  const { data: downloadInfo, refetch: refetchWorkshopDownloadInfo } =
+    useWorkshopDownloadInfo(selectedItem ? selectedItem.publishedFileId : null);
+  const { mutate: download } = useWorkshopDownloadItem();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchWorkshopDownloadInfo();
+    }, 100);
+    return () => {
+      clearInterval(interval);
+    };
+  });
+
+  useEffect(() => {
+    console.log(downloadInfo);
+  }, [downloadInfo]);
 
   // useEffect(() => {
   //   console.log(
@@ -39,6 +57,8 @@ const WorkshopRoute = () => {
 
   useEffect(() => {
     if (!subscribedItems || !selectedItem) return;
+    refetchWorkshopDownloadInfo();
+
     const a = selectedItem.publishedFileId.toString();
     const b = subscribedItems.map((c) => c.toString());
 
@@ -57,6 +77,11 @@ const WorkshopRoute = () => {
   }, [workshop]);
 
   const totalPages = 1000;
+
+  const handleDownload = (itemId: bigint) => {
+    console.log("Downloading item:", itemId);
+    download({ itemId });
+  };
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -82,6 +107,8 @@ const WorkshopRoute = () => {
   const handleSubscribe = (itemId: bigint) => {
     console.log("Subscribing to item:", itemId);
     subscribe({ item: itemId });
+    handleDownload(itemId);
+    refetchWorkshopDownloadInfo();
   };
   const handleUnsubscribe = (itemId: bigint) => {
     console.log("Unsubscribing item:", itemId);
@@ -147,6 +174,9 @@ const WorkshopRoute = () => {
           onUnsubscribe={handleUnsubscribe}
           onRate={handleRate}
           isSubscribed={isSubscribedOnSelectedItem}
+          downloadInfo={downloadInfo ? downloadInfo : null}
+          // const { data: downloadInfo } = useWorkshopDownloadInfo();
+          // const { mutate: download } = useWorkshopDownloadItem();
         />
       )}
     </div>

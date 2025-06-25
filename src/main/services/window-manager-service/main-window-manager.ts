@@ -20,7 +20,10 @@ import { IPC_CHANNELS } from "@/shared/ipc-channels";
 import { iRacingDataSchema } from "../game-data/games/iRacing/schema";
 import { zodSchemaToJSON } from "../game-data/utils/zod-schema-to-json";
 import { gameWebSocketServer } from "../game-websocket-server-service";
-import { WorkshopItemQueryConfig } from "@/shared/schemas/steamworks-schemas";
+import {
+  DownloadInfo,
+  WorkshopItemQueryConfig,
+} from "@/shared/schemas/steamworks-schemas";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -304,7 +307,7 @@ function registerHandlers(mainWindow: BrowserWindow) {
     IPC_CHANNELS.STEAM_GET_ALL_WORKSHOP_ITEMS,
     (e, page: number, queryConfig?: WorkshopItemQueryConfig) => {
       const client = getSteamClient();
-      if (!client) return;
+      if (!client) return null;
       return client.workshop.getAllItems(
         page,
         client.workshop.UGCQueryType.RankedByVote,
@@ -321,13 +324,31 @@ function registerHandlers(mainWindow: BrowserWindow) {
 
   ipcMain.handle(
     IPC_CHANNELS.STEAM_WORKSHOP_SUBSCRIBE,
-    async (e, itemId: bigint) => {
+    async (e, itemId: bigint): Promise<void> => {
       const client = getSteamClient();
       if (!client) return;
 
       logger.info(`Subscribing to workshop item: ${itemId}`);
       subscriptionSequence++;
       await client.workshop.subscribe(itemId);
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.STEAM_WORKSHOP_DOWNLOAD_ITEM,
+    (e, itemId: bigint): boolean => {
+      const client = getSteamClient();
+      if (!client) return false;
+      return client.workshop.download(itemId, true); // boolean
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.STEAM_WORKSHOP_DOWNLOAD_INFO,
+    (e, itemId: bigint): DownloadInfo | null => {
+      const client = getSteamClient();
+      if (!client) return null;
+      return client.workshop.downloadInfo(itemId); // workshop.DownloadInfo | null
     },
   );
 

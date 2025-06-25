@@ -134,3 +134,7 @@ export interface PlayerSteamId {
   steamId32: string;
   accountId: number;
 }
+export interface DownloadInfo {
+  current: bigint;
+  total: bigint;
+}

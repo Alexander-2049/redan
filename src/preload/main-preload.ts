@@ -76,4 +76,8 @@ contextBridge.exposeInMainWorld("steam", {
     ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_UNSUBSCRIBE, itemId),
   workshopGetSubscribedItems: () =>
     ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_SUBSCRIBED_ITEMS),
+  workshopDownloadItem: (itemId: bigint) =>
+    ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_DOWNLOAD_ITEM, itemId),
+  workshopDownloadInfo: (itemId: bigint) =>
+    ipcRenderer.invoke(IPC_CHANNELS.STEAM_WORKSHOP_DOWNLOAD_INFO, itemId),
 });

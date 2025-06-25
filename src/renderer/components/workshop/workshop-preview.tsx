@@ -3,17 +3,21 @@ import { Badge } from "@/renderer/components/ui/badge";
 import {
   Star,
   Download,
-  Heart,
-  Share,
-  Flag,
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
+  // Heart,
+  // Share,
+  // Flag,
+  // ThumbsUp,
+  // ThumbsDown,
+  // MessageCircle,
   X,
 } from "lucide-react";
 import { ScrollArea } from "@/renderer/components/ui/scroll-area";
-import { useState } from "react";
-import { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
+// import { useState } from "react";
+import {
+  DownloadInfo,
+  WorkshopItem,
+} from "@/shared/schemas/steamworks-schemas";
+import { Progress } from "../ui/progress";
 
 interface Item extends WorkshopItem {
   author?: string;
@@ -40,6 +44,7 @@ interface WorkshopPreviewProps {
   onSubscribe: (itemId: bigint) => void;
   onUnsubscribe: (itemId: bigint) => void;
   onRate: (itemId: bigint, rating: "like" | "dislike") => void;
+  downloadInfo: DownloadInfo | null;
 }
 
 export function WorkshopPreview({
@@ -48,9 +53,10 @@ export function WorkshopPreview({
   isSubscribed,
   onSubscribe,
   onUnsubscribe,
-  onRate,
+  // onRate,
+  downloadInfo,
 }: WorkshopPreviewProps) {
-  const [userRating, setUserRating] = useState<"like" | "dislike" | null>(null);
+  // const [userRating, setUserRating] = useState<"like" | "dislike" | null>(null);
   const totalVotes = item.numUpvotes + item.numDownvotes;
   const rating =
     totalVotes === 0
@@ -59,10 +65,10 @@ export function WorkshopPreview({
 
   if (!item) return null;
 
-  const handleRate = (rating: "like" | "dislike") => {
-    setUserRating(rating);
-    onRate(item.publishedFileId, rating);
-  };
+  // const handleRate = (rating: "like" | "dislike") => {
+  //   setUserRating(rating);
+  //   onRate(item.publishedFileId, rating);
+  // };
 
   return (
     <div className="flex w-80 flex-shrink-0 flex-col border-l border-gray-200 bg-white">
@@ -119,7 +125,41 @@ export function WorkshopPreview({
                 </Button>
               )}
 
-              <div className="flex space-x-2">
+              {downloadInfo &&
+                downloadInfo.total > BigInt(0) &&
+                downloadInfo.current < downloadInfo.total && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>Downloading...</span>
+                      <span>
+                        {Math.round(
+                          (Number(downloadInfo.current) /
+                            Number(downloadInfo.total)) *
+                            100,
+                        )}
+                        %
+                      </span>
+                    </div>
+                    <Progress
+                      value={
+                        (Number(downloadInfo.current) /
+                          Number(downloadInfo.total)) *
+                        100
+                      }
+                      className="w-full"
+                    />
+                    <div className="text-center text-xs text-gray-500">
+                      {(Number(downloadInfo.current) / (1024 * 1024)).toFixed(
+                        1,
+                      )}{" "}
+                      MB /{" "}
+                      {(Number(downloadInfo.total) / (1024 * 1024)).toFixed(1)}{" "}
+                      MB
+                    </div>
+                  </div>
+                )}
+
+              {/* <div className="flex space-x-2">
                 <Button variant="outline" size="sm" className="flex-1">
                   <Heart className="mr-1 h-4 w-4" />
                   Favorite
@@ -131,10 +171,10 @@ export function WorkshopPreview({
                 <Button variant="outline" size="sm">
                   <Flag className="h-4 w-4" />
                 </Button>
-              </div>
+              </div> */}
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <h4 className="font-semibold text-gray-900">Rate this item</h4>
               <div className="flex space-x-2">
                 <Button
@@ -164,16 +204,16 @@ export function WorkshopPreview({
                   Dislike
                 </Button>
               </div>
-            </div>
+            </div> */}
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Button variant="outline" className="w-full">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Comment
               </Button>
-            </div>
+            </div> */}
 
-            {item.tags.length > 0 && (
+            {item.tags.filter((e) => e !== "").length > 0 && (
               <div className="space-y-2">
                 <h4 className="font-semibold text-gray-900">Tags</h4>
                 <div className="flex flex-wrap gap-1">
