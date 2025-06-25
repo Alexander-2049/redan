@@ -90,7 +90,6 @@ const WorkshopRoute = () => {
 
   const handleRate = (itemId: bigint, rating: "like" | "dislike") => {
     console.log("Rating item:", itemId, "with", rating);
-    unsubscribe({ item: itemId });
   };
 
   return (
