@@ -10,6 +10,7 @@ import MyLayoutsRoute from "./routes/my-layouts-route";
 import { useEffect } from "react";
 import { useLayouts } from "./api/layouts/get-layouts";
 import WorkshopRoute from "./routes/workshop-route";
+import ConfiguratorRoute from "./routes/configurator-route";
 
 const Main = () => {
   // const { t } = useTranslation();
@@ -40,6 +41,7 @@ const Main = () => {
             <Route path="/debug" element={<DebugRoute />} />
             <Route path="/my-layouts" element={<MyLayoutsRoute />} />
             <Route path="/workshop" element={<WorkshopRoute />} />
+            <Route path="/configurator" element={<ConfiguratorRoute />} />
           </Route>
           <Route path="*" element={<PageLayout />}>
             <Route path="*" element={<NotFoundRoute />} />

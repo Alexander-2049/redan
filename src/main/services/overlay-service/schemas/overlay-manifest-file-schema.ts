@@ -16,4 +16,6 @@ export const overlayManifestFileSchema = z.object({
   maxHeight: z.number().optional().default(700),
   publishDate: z.number().optional(),
   settings: z.array(overlaySettingDescriptionSchema).optional(),
+  requiredFields: z.array(z.string()),
+  optionalFields: z.array(z.string()),
 });
