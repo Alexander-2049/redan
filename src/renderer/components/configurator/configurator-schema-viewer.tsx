@@ -100,7 +100,7 @@ const SchemaTree: React.FC<SchemaTreeProps> = ({
 
           return (
             <div key={fieldPath} className="flex items-center gap-2">
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 text-wrap">
                 <span
                   style={{
                     cursor: "pointer",

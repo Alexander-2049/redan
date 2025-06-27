@@ -235,7 +235,7 @@ class LayoutHandler extends EventEmitter {
 
       const newOverlay: z.infer<typeof overlaySchema> = {
         id: crypto.randomUUID(),
-        name: overlayManifest.name || overlayFolderName,
+        name: overlayManifest.title || overlayFolderName,
         folderName: overlayFolderName,
         settings: [],
         visible: true,

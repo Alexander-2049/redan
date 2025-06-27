@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type React from "react";
+import React from "react";
 import { Input } from "@/renderer/components/ui/input";
 import { Label } from "@/renderer/components/ui/label";
-import { Checkbox } from "@/renderer/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -10,63 +9,24 @@ import {
   CardTitle,
 } from "@/renderer/components/ui/card";
 import { OverlayManifest } from "@/main/services/overlay-service/types";
-
-interface OptionalField {
-  key: keyof OverlayManifest;
-  label: string;
-  type: "string" | "number" | "date";
-  defaultValue?: any;
-}
-
-const optionalFields: OptionalField[] = [
-  { key: "name", label: "Name", type: "string" },
-  { key: "description", label: "Description", type: "string" },
-  { key: "type", label: "Type", type: "string" },
-  { key: "author", label: "Author", type: "string" },
-  { key: "version", label: "Version", type: "string" },
-  {
-    key: "defaultWidth",
-    label: "Default Width",
-    type: "number",
-    defaultValue: 300,
-  },
-  {
-    key: "defaultHeight",
-    label: "Default Height",
-    type: "number",
-    defaultValue: 160,
-  },
-  { key: "minWidth", label: "Min Width", type: "number", defaultValue: 100 },
-  { key: "minHeight", label: "Min Height", type: "number", defaultValue: 50 },
-  { key: "maxWidth", label: "Max Width", type: "number", defaultValue: 1000 },
-  { key: "maxHeight", label: "Max Height", type: "number", defaultValue: 700 },
-  { key: "publishDate", label: "Publish Date", type: "date" },
-];
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
+import { X } from "lucide-react";
+import { ConfiguratorNestedBoxes } from "./configurator-nested-boxes";
+import { Badge } from "../ui/badge";
 
 interface ManifestConfigProps {
   manifestData: OverlayManifest;
   setManifestData: (
     data: OverlayManifest | ((prev: OverlayManifest) => OverlayManifest),
   ) => void;
-  enabledFields: Set<string>;
-  setEnabledFields: (fields: Set<string>) => void;
 }
 
 export const ConfiguratorManifestConfig: React.FC<ManifestConfigProps> = ({
   manifestData,
   setManifestData,
-  enabledFields,
-  setEnabledFields,
 }) => {
-  const handleFieldToggle = (fieldKey: string, enabled: boolean) => {
-    const newEnabledFields = new Set(enabledFields);
-    if (enabled) {
-      newEnabledFields.add(fieldKey);
-    } else {
-      newEnabledFields.delete(fieldKey);
-    }
-    setEnabledFields(newEnabledFields);
-  };
+  const [newTag, setNewTag] = React.useState("");
 
   const handleManifestFieldChange = (
     key: keyof OverlayManifest,
@@ -78,73 +38,123 @@ export const ConfiguratorManifestConfig: React.FC<ManifestConfigProps> = ({
     }));
   };
 
+  const addTag = () => {
+    if (newTag.trim() && !manifestData.tags.includes(newTag.trim())) {
+      handleManifestFieldChange("tags", [...manifestData.tags, newTag.trim()]);
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    handleManifestFieldChange(
+      "tags",
+      manifestData.tags.filter((tag) => tag !== tagToRemove),
+    );
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag();
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Manifest Configuration</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {optionalFields.map((field) => (
-          <div key={field.key} className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id={field.key}
-                checked={enabledFields.has(field.key)}
-                onCheckedChange={(checked) =>
-                  handleFieldToggle(field.key, checked as boolean)
-                }
-              />
-              <Label htmlFor={field.key}>{field.label}</Label>
-            </div>
-            {enabledFields.has(field.key) && (
-              <div className="ml-6">
-                {field.type === "string" ? (
-                  <Input
-                    value={(manifestData[field.key] as string) || ""}
-                    onChange={(e) =>
-                      handleManifestFieldChange(field.key, e.target.value)
-                    }
-                    placeholder={`Enter ${field.label.toLowerCase()}`}
-                  />
-                ) : field.type === "number" ? (
-                  <Input
-                    type="number"
-                    value={
-                      (manifestData[field.key] as number) ||
-                      field.defaultValue ||
-                      ""
-                    }
-                    onChange={(e) =>
-                      handleManifestFieldChange(
-                        field.key,
-                        Number.parseInt(e.target.value) || field.defaultValue,
-                      )
-                    }
-                    placeholder={`Enter ${field.label.toLowerCase()}`}
-                  />
-                ) : field.type === "date" ? (
-                  <Input
-                    type="date"
-                    value={
-                      manifestData[field.key]
-                        ? new Date(manifestData[field.key] as number)
-                            .toISOString()
-                            .split("T")[0]
-                        : ""
-                    }
-                    onChange={(e) =>
-                      handleManifestFieldChange(
-                        field.key,
-                        new Date(e.target.value).getTime(),
-                      )
-                    }
-                  />
-                ) : null}
-              </div>
-            )}
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Basic Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title *</Label>
+            <Input
+              id="title"
+              value={manifestData.title || ""}
+              onChange={(e) =>
+                handleManifestFieldChange("title", e.target.value)
+              }
+              placeholder="Enter overlay title"
+              required
+            />
           </div>
-        ))}
-      </CardContent>
-    </Card>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={manifestData.description || ""}
+              onChange={(e) =>
+                handleManifestFieldChange("description", e.target.value)
+              }
+              placeholder="Enter overlay description"
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="tags">Tags *</Label>
+            <div className="flex gap-2">
+              <Input
+                id="tags"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Add a tag"
+              />
+              <Button onClick={addTag} type="button">
+                Add
+              </Button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {manifestData.tags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                >
+                  {tag}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-4 w-4 p-0 hover:bg-transparent"
+                    onClick={() => removeTag(tag)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <ConfiguratorNestedBoxes
+        minWidth={manifestData.minWidth}
+        minHeight={manifestData.minHeight}
+        defaultWidth={manifestData.defaultWidth}
+        defaultHeight={manifestData.defaultHeight}
+        maxWidth={manifestData.maxWidth}
+        maxHeight={manifestData.maxHeight}
+        onMinWidthChange={(value) =>
+          handleManifestFieldChange("minWidth", value)
+        }
+        onMinHeightChange={(value) =>
+          handleManifestFieldChange("minHeight", value)
+        }
+        onDefaultWidthChange={(value) =>
+          handleManifestFieldChange("defaultWidth", value)
+        }
+        onDefaultHeightChange={(value) =>
+          handleManifestFieldChange("defaultHeight", value)
+        }
+        onMaxWidthChange={(value) =>
+          handleManifestFieldChange("maxWidth", value)
+        }
+        onMaxHeightChange={(value) =>
+          handleManifestFieldChange("maxHeight", value)
+        }
+      />
+    </div>
   );
 };

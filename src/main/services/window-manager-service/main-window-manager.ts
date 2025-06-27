@@ -25,6 +25,7 @@ import {
   InstallInfo,
   WorkshopItemQueryConfig,
 } from "@/shared/schemas/steamworks-schemas";
+import { MappedGameData } from "../game-data/types/game-data-schema";
 
 export interface OverlayWindow {
   overlayId: string;
@@ -262,12 +263,15 @@ function registerHandlers(mainWindow: BrowserWindow) {
     },
   );
 
-  ipcMain.handle(IPC_CHANNELS.GET_GAME_DATA_SHAPE, (_, game: GameName) => {
-    if (game === "iRacing") {
-      return JSON.stringify(zodSchemaToJSON(iRacingDataSchema, false));
-    }
-    return {};
-  });
+  ipcMain.handle(
+    IPC_CHANNELS.GET_GAME_DATA_SHAPE,
+    (_, game: GameName): MappedGameData | null => {
+      if (game === "iRacing") {
+        return zodSchemaToJSON(iRacingDataSchema);
+      }
+      return null;
+    },
+  );
 
   ipcMain.handle(
     IPC_CHANNELS.TITLE_BAR_MESSAGE,

@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type React from "react";
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/renderer/components/ui/button";
 import {
@@ -16,29 +14,58 @@ import { ConfiguratorSettings } from "@/renderer/components/configurator/configu
 import { ConfiguratorGameFields } from "@/renderer/components/configurator/configurator-game-fields";
 import { ConfiguratorGeneratedCode } from "@/renderer/components/configurator/configurator-generated-code";
 import { OverlayManifest } from "@/main/services/overlay-service/types";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { MappedGameData } from "@/main/services/game-data/types/game-data-schema";
+import { GameName } from "@/main/services/game-data/types/game-name-schema";
+import { ScrollArea } from "../components/ui/scroll-area";
 
 const MANIFEST_COOKIE_KEY = "overlay-manifest-data";
+const DEFAULT_MANIFEST_DATA = {
+  defaultWidth: 200,
+  defaultHeight: 200,
+  minWidth: 100,
+  minHeight: 100,
+  maxWidth: 300,
+  maxHeight: 300,
+  requiredFields: [],
+  optionalFields: [],
+  settings: [],
+  tags: [],
+  title: "",
+};
+const GAMES: GameName[] = ["iRacing"];
 
 const ConfiguratorRoute = () => {
   const [devServerUrl, setDevServerUrl] = useState("http://localhost:3000");
   const [overlayState, setOverlayState] = useState<"closed" | "open" | "edit">(
     "closed",
   );
-  const [manifestData, setManifestData] = useState<OverlayManifest>({
-    defaultWidth: 800,
-    defaultHeight: 600,
-    minWidth: 100,
-    minHeight: 100,
-    maxWidth: 1000,
-    maxHeight: 1000,
-    requiredFields: [],
-    optionalFields: [],
-    settings: [],
-  });
-  const [enabledFields, setEnabledFields] = useState<Set<string>>(new Set());
+  const [manifestData, setManifestData] = useState<OverlayManifest>(
+    DEFAULT_MANIFEST_DATA,
+  );
   const [settingsValues, setSettingsValues] = useState<Record<string, any>>({});
+
+  const [schemas, setSchemas] = useState<[GameName, MappedGameData][]>([]);
+  const [selectedGameSchema, setSelectedGameSchema] =
+    useState<MappedGameData | null>(null);
+  const [selectedGame, setSelectedGame] = useState<GameName>(GAMES[0]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    GAMES.forEach((game) => {
+      window.electron.getGameDataShape(game).then((e) => {
+        if (e === null) return;
+        setSchemas((prev) => {
+          return [...prev, [game, e]];
+        });
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    const rec = schemas.find((e) => e[0] === selectedGame);
+    if (rec) setSelectedGameSchema(rec[1]);
+  }, [selectedGame, schemas]);
 
   // Load manifest from cookies on component mount
   useEffect(() => {
@@ -47,29 +74,6 @@ const ConfiguratorRoute = () => {
       try {
         const parsed = JSON.parse(savedManifest);
         setManifestData(parsed);
-
-        // Update enabled fields
-        const newEnabledFields = new Set<string>();
-        const optionalFieldKeys = [
-          "name",
-          "description",
-          "type",
-          "author",
-          "version",
-          "defaultWidth",
-          "defaultHeight",
-          "minWidth",
-          "minHeight",
-          "maxWidth",
-          "maxHeight",
-          "publishDate",
-        ];
-        optionalFieldKeys.forEach((fieldKey) => {
-          if (parsed[fieldKey] !== undefined) {
-            newEnabledFields.add(fieldKey);
-          }
-        });
-        setEnabledFields(newEnabledFields);
 
         // Initialize settings values with defaults
         if (parsed.settings && Array.isArray(parsed.settings)) {
@@ -87,6 +91,7 @@ const ConfiguratorRoute = () => {
 
   // Save manifest to cookies whenever it changes
   useEffect(() => {
+    if (manifestData === DEFAULT_MANIFEST_DATA) return;
     setCookie(MANIFEST_COOKIE_KEY, JSON.stringify(manifestData), 30); // 30 days
   }, [manifestData]);
 
@@ -136,46 +141,7 @@ const ConfiguratorRoute = () => {
   };
 
   const downloadManifest = () => {
-    const manifest: any = {
-      requiredFields: manifestData.requiredFields,
-      optionalFields: manifestData.optionalFields,
-    };
-
-    // Add enabled optional fields
-    const optionalFieldKeys = [
-      "name",
-      "description",
-      "type",
-      "author",
-      "version",
-      "defaultWidth",
-      "defaultHeight",
-      "minWidth",
-      "minHeight",
-      "maxWidth",
-      "maxHeight",
-      "publishDate",
-    ];
-
-    optionalFieldKeys.forEach((fieldKey) => {
-      if (enabledFields.has(fieldKey)) {
-        const value = manifestData[fieldKey as keyof OverlayManifest];
-        if (value !== undefined && value !== "") {
-          manifest[fieldKey] = value;
-        }
-      }
-    });
-
-    // Add settings if they exist
-    if (
-      manifestData.settings &&
-      Array.isArray(manifestData.settings) &&
-      manifestData.settings.length > 0
-    ) {
-      manifest.settings = manifestData.settings;
-    }
-
-    const blob = new Blob([JSON.stringify(manifest, null, 2)], {
+    const blob = new Blob([JSON.stringify(manifestData, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -205,29 +171,6 @@ const ConfiguratorRoute = () => {
             optionalFields: imported.optionalFields || [],
             settings: Array.isArray(imported.settings) ? imported.settings : [], // Ensure array
           });
-
-          // Update enabled fields
-          const newEnabledFields = new Set<string>();
-          const optionalFieldKeys = [
-            "name",
-            "description",
-            "type",
-            "author",
-            "version",
-            "defaultWidth",
-            "defaultHeight",
-            "minWidth",
-            "minHeight",
-            "maxWidth",
-            "maxHeight",
-            "publishDate",
-          ];
-          optionalFieldKeys.forEach((fieldKey) => {
-            if (imported[fieldKey] !== undefined) {
-              newEnabledFields.add(fieldKey);
-            }
-          });
-          setEnabledFields(newEnabledFields);
         } catch (error) {
           alert("Invalid JSON file");
         }
@@ -243,18 +186,7 @@ const ConfiguratorRoute = () => {
       )
     ) {
       deleteCookie(MANIFEST_COOKIE_KEY);
-      setManifestData({
-        defaultWidth: 800,
-        defaultHeight: 600,
-        minWidth: 100,
-        minHeight: 100,
-        maxWidth: 1000,
-        maxHeight: 1000,
-        requiredFields: [],
-        optionalFields: [],
-        settings: [],
-      });
-      setEnabledFields(new Set());
+      setManifestData(DEFAULT_MANIFEST_DATA);
       setSettingsValues({});
       setOverlayState("closed");
     }
@@ -270,7 +202,7 @@ const ConfiguratorRoute = () => {
 
   return (
     <>
-      <ScrollArea className="h-full overflow-auto">
+      <ScrollArea className="h-full">
         <div className="container mx-auto max-w-6xl p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
@@ -332,8 +264,6 @@ const ConfiguratorRoute = () => {
               <ConfiguratorManifestConfig
                 manifestData={manifestData}
                 setManifestData={setManifestData}
-                enabledFields={enabledFields}
-                setEnabledFields={setEnabledFields}
               />
             </TabsContent>
 
@@ -351,14 +281,20 @@ const ConfiguratorRoute = () => {
               <ConfiguratorGameFields
                 manifestData={manifestData}
                 setManifestData={setManifestData}
+                selectedGame={selectedGame}
+                selectedGameSchema={selectedGameSchema}
+                setSelectedGame={setSelectedGame}
+                games={GAMES}
               />
             </TabsContent>
 
             <TabsContent value="output">
-              <ConfiguratorGeneratedCode
-                manifestData={manifestData}
-                enabledFields={enabledFields}
-              />
+              {schemas && (
+                <ConfiguratorGeneratedCode
+                  manifestData={manifestData}
+                  schemas={schemas}
+                />
+              )}
             </TabsContent>
           </Tabs>
         </div>

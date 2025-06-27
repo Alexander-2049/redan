@@ -17,7 +17,9 @@ const DebugRoute = () => {
   const [shape, setShape] = useState<string | null>(null);
 
   useEffect(() => {
-    window.electron.getGameDataShape("iRacing").then((e) => setShape(e));
+    window.electron
+      .getGameDataShape("iRacing")
+      .then((e) => setShape(JSON.stringify(e)));
   }, []);
 
   if (!shape) return;

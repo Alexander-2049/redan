@@ -3,10 +3,12 @@ import TitleBar from "../title-bar";
 
 function Layout() {
   return (
-    <div className="grid h-full grid-rows-[auto_1fr] overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       <TitleBar />
-      <div className="overflow-hidden">
-        <Outlet />
+      <div className="flex flex-1 overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

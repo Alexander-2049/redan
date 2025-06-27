@@ -12,6 +12,11 @@ let client: ReturnType<typeof steamworks.init> | null = null;
 export function initSteamClient() {
   try {
     client = steamworks.init(STEAM_APP_ID);
+    // client.workshop.createItem(STEAM_APP_ID).then(e => {
+    //   client?.workshop.updateItem(e.itemId, {
+
+    //   })
+    // })
   } catch (error) {
     logger.warn("Steam is failed to initialize");
   }

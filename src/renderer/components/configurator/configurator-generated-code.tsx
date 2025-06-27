@@ -10,98 +10,18 @@ import {
 } from "@/renderer/components/ui/card";
 import { Badge } from "@/renderer/components/ui/badge";
 import { Textarea } from "@/renderer/components/ui/textarea";
-
-interface ManifestData {
-  name?: string;
-  description?: string;
-  type?: string;
-  author?: string;
-  version?: string;
-  defaultWidth?: number;
-  defaultHeight?: number;
-  minWidth?: number;
-  minHeight?: number;
-  maxWidth?: number;
-  maxHeight?: number;
-  publishDate?: number;
-  settings?: any[];
-  requiredFields: string[];
-  optionalFields: string[];
-}
+import { OverlayManifest } from "@/main/services/overlay-service/types";
+import { GameName } from "@/main/services/game-data/types/game-name-schema";
+import { MappedGameData } from "@/main/services/game-data/types/game-data-schema";
 
 interface GeneratedCodeProps {
-  manifestData: ManifestData;
-  enabledFields: Set<string>;
+  manifestData: OverlayManifest;
+  schemas: [GameName, MappedGameData][];
 }
-
-// Game schemas for supported games calculation
-const gameSchemas = {
-  "assetto-corsa": {
-    car: {
-      name: "string",
-      model: "string",
-      speed: "number",
-      rpm: "number",
-      gear: "number",
-      fuel: "number",
-    },
-    track: {
-      name: "string",
-      length: "number",
-      temperature: "number",
-    },
-    session: {
-      type: "string",
-      timeLeft: "number",
-      position: "number",
-    },
-  },
-  iracing: {
-    telemetry: {
-      speed: "number",
-      rpm: "number",
-      throttle: "number",
-      brake: "number",
-      steering: "number",
-    },
-    session: {
-      sessionTime: "number",
-      sessionType: "string",
-      position: "number",
-      classPosition: "number",
-    },
-    car: {
-      fuelLevel: "number",
-      fuelCapacity: "number",
-      gear: "number",
-    },
-  },
-  "f1-2024": {
-    motion: {
-      worldPositionX: "number",
-      worldPositionY: "number",
-      worldPositionZ: "number",
-      speed: "number",
-    },
-    lapData: {
-      lastLapTime: "number",
-      currentLapTime: "number",
-      sector1Time: "number",
-      sector2Time: "number",
-    },
-    carTelemetry: {
-      speed: "number",
-      throttle: "number",
-      steer: "number",
-      brake: "number",
-      gear: "number",
-    },
-  },
-};
 
 export const ConfiguratorGeneratedCode: React.FC<GeneratedCodeProps> = ({
   manifestData,
-  // enabledFields,
+  schemas: gameSchemas,
 }) => {
   const [generatedHook, setGeneratedHook] = useState<string>("");
 
@@ -905,9 +825,9 @@ export default OverlayDataManager;`;
   >("typed-react");
 
   // Declare the getSupportedGames function
-  const getSupportedGames = () => {
+  const getSupportedGames = (gameSchemas: [GameName, MappedGameData][]) => {
     const supportedGames: string[] = [];
-    Object.entries(gameSchemas).forEach(([gameName, schema]) => {
+    gameSchemas.forEach(([gameName, schema]) => {
       const gameFields = getAllFieldsFromSchema(schema);
       const hasAllRequired = manifestData.requiredFields.every((field) =>
         gameFields.includes(field),
@@ -1056,7 +976,7 @@ export default OverlayDataManager;`;
           <div>
             <Label>Supported Games:</Label>
             <div className="mt-1 flex flex-wrap gap-1">
-              {getSupportedGames().map((game) => (
+              {getSupportedGames(gameSchemas).map((game) => (
                 <Badge key={game} variant="outline">
                   {game}
                 </Badge>

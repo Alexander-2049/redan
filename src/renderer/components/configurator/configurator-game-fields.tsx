@@ -19,85 +19,28 @@ import { Badge } from "@/renderer/components/ui/badge";
 import { Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { ConfiguratorSchemaViewer } from "./configurator-schema-viewer";
 import { OverlayManifest } from "@/main/services/overlay-service/types";
-
-// Game schemas - example data for different sim racing games
-const gameSchemas = {
-  "assetto-corsa": {
-    car: {
-      name: "string",
-      model: "string",
-      speed: "number",
-      rpm: "number",
-      gear: "number",
-      fuel: "number",
-    },
-    track: {
-      name: "string",
-      length: "number",
-      temperature: "number",
-    },
-    session: {
-      type: "string",
-      timeLeft: "number",
-      position: "number",
-    },
-  },
-  iracing: {
-    telemetry: {
-      speed: "number",
-      rpm: "number",
-      throttle: "number",
-      brake: "number",
-      steering: "number",
-    },
-    session: {
-      sessionTime: "number",
-      sessionType: "string",
-      position: "number",
-      classPosition: "number",
-    },
-    car: {
-      fuelLevel: "number",
-      fuelCapacity: "number",
-      gear: "number",
-    },
-  },
-  "f1-2024": {
-    motion: {
-      worldPositionX: "number",
-      worldPositionY: "number",
-      worldPositionZ: "number",
-      speed: "number",
-    },
-    lapData: {
-      lastLapTime: "number",
-      currentLapTime: "number",
-      sector1Time: "number",
-      sector2Time: "number",
-    },
-    carTelemetry: {
-      speed: "number",
-      throttle: "number",
-      steer: "number",
-      brake: "number",
-      gear: "number",
-    },
-  },
-};
+import { MappedGameData } from "@/main/services/game-data/types/game-data-schema";
+import { GameName } from "@/main/services/game-data/types/game-name-schema";
 
 interface GameFieldsProps {
   manifestData: OverlayManifest;
   setManifestData: (
     data: OverlayManifest | ((prev: OverlayManifest) => OverlayManifest),
   ) => void;
+  selectedGameSchema: MappedGameData | null;
+  selectedGame: GameName;
+  setSelectedGame: React.Dispatch<React.SetStateAction<GameName>>;
+  games: GameName[];
 }
 
 export const ConfiguratorGameFields: React.FC<GameFieldsProps> = ({
   manifestData,
   setManifestData,
+  selectedGameSchema,
+  selectedGame,
+  setSelectedGame,
+  games,
 }) => {
-  const [selectedGame, setSelectedGame] =
-    useState<keyof typeof gameSchemas>("assetto-corsa");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const addFieldToList = (field: string, listType: "required" | "optional") => {
@@ -174,17 +117,22 @@ export const ConfiguratorGameFields: React.FC<GameFieldsProps> = ({
             <Label htmlFor="game">Select Game for Field Reference</Label>
             <Select
               value={selectedGame}
-              onValueChange={(value: keyof typeof gameSchemas) =>
-                setSelectedGame(value)
-              }
+              onValueChange={(value: GameName) => setSelectedGame(value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a game" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="assetto-corsa">Assetto Corsa</SelectItem>
-                <SelectItem value="iracing">iRacing</SelectItem>
-                <SelectItem value="f1-2024">F1 2024</SelectItem>
+                {games.map((game) => {
+                  return (
+                    <SelectItem
+                      key={`game-fields-selected-${game}`}
+                      value={game}
+                    >
+                      {game}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -197,15 +145,17 @@ export const ConfiguratorGameFields: React.FC<GameFieldsProps> = ({
             <CardTitle>Available Fields - {selectedGame}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ConfiguratorSchemaViewer
-              schema={gameSchemas[selectedGame]}
-              onFieldClick={copyFieldToClipboard}
-              onAddRequired={(field) => addFieldToList(field, "required")}
-              onAddOptional={(field) => addFieldToList(field, "optional")}
-              onRemoveField={removeFieldFromAnyList}
-              copiedField={copiedField}
-              isFieldInAnyList={isFieldInAnyList}
-            />
+            {selectedGameSchema && (
+              <ConfiguratorSchemaViewer
+                schema={selectedGameSchema}
+                onFieldClick={copyFieldToClipboard}
+                onAddRequired={(field) => addFieldToList(field, "required")}
+                onAddOptional={(field) => addFieldToList(field, "optional")}
+                onRemoveField={removeFieldFromAnyList}
+                copiedField={copiedField}
+                isFieldInAnyList={isFieldInAnyList}
+              />
+            )}
           </CardContent>
         </Card>
 

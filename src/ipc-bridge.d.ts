@@ -16,6 +16,7 @@ import {
   WorkshopItemQueryConfig,
   WorkshopPaginatedResult,
 } from "./shared/schemas/steamworks-schemas";
+import { MappedGameData } from "./main/services/game-data/types/game-data-schema";
 interface MainWindowAPI {
   getOverlayList: () => Promise<OverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;
@@ -49,7 +50,7 @@ interface MainWindowAPI {
   getAllSteamWorkshopItems: (page: number) => Promise<any | null>;
   onLayoutModified: (callback: () => void) => void;
   removeLayoutModifiedListeners: () => void;
-  getGameDataShape: (game: GameName) => Promise<string>;
+  getGameDataShape: (game: GameName) => Promise<MappedGameData | null>;
   isPreview: () => Promise<boolean>;
   setIsPreview: (isPreview: boolean) => Promise<boolean>;
 }
