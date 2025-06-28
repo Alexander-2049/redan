@@ -157,5 +157,5 @@ export class GameSource extends GameDataEmitter {
   }
 }
 
-const gameDataHandler = new GameSource();
-export default gameDataHandler;
+const gameSource = new GameSource();
+export default gameSource;
