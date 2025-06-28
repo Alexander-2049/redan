@@ -5,7 +5,7 @@ import { LoggerService } from '../features/logger/LoggerService';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { HttpServer } from '../infrastructure/http-server';
 
-import { HTTP_SERVER_PORT } from '@/shared/constants';
+import { HTTP_SERVER_PORT } from '@/main/shared/constants';
 
 const logger = LoggerService.getLogger('main');
 
