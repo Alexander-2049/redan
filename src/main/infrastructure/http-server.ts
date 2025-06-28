@@ -24,7 +24,7 @@ export class HttpServer {
     // Mount all routes
     for (const route of routes) {
       this.app.use(route.path, route.router);
-      console.log(`Mounted router on path: ${route.path}`);
+      this.logger.info(`Mounted router on path: ${route.path}`);
     }
 
     // Optional: 404 handler for unmatched routes

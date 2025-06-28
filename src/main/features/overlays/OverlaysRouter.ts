@@ -3,6 +3,7 @@ import path from 'path';
 
 import express, { Request, Response, Router } from 'express';
 
+import { LoggerService } from '../logger/LoggerService';
 import { PathService } from '../paths/PathService';
 
 class OverlayService {
@@ -13,6 +14,7 @@ class OverlayService {
 
 export class OverlaysRouter {
   public readonly router: Router;
+  private readonly logger = LoggerService.getLogger('overlays-router');
 
   constructor() {
     this.router = express.Router();
@@ -21,13 +23,13 @@ export class OverlaysRouter {
 
   private setupRoutes(): void {
     this.router.get('/', this.getOverlayList);
-    this.router.get('/*', this.serveOverlayFile);
+    this.router.get('/*', this.serveOverlayFile.bind(this));
   }
 
-  private getOverlayList(req: Request, res: Response): Response {
+  private getOverlayList = (req: Request, res: Response): Response => {
     const overlays = OverlayService.loadAllOverlays();
     return res.json(overlays);
-  }
+  };
 
   private serveOverlayFile(req: Request, res: Response): void {
     try {
@@ -65,7 +67,7 @@ export class OverlaysRouter {
         return;
       }
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       res.status(500).send('Internal Server Error.');
       return;
     }

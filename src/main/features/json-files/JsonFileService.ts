@@ -15,14 +15,16 @@ export class JsonFileService {
 
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
-      const result = JSON.parse(content);
+      const result = JSON.parse(content) as T;
       this.logger.info(`Read and parsed file: ${filePath}`);
       return result;
     } catch (err) {
       this.logger.error(`Failed to read or parse JSON file: ${filePath}`, {
         error: err,
       });
-      throw new Error(`Failed to read or parse JSON file: ${err}`);
+      throw new Error(
+        `Failed to read or parse JSON file: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 
