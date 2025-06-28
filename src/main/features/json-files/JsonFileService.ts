@@ -7,7 +7,7 @@ import { LoggerService } from '../logger/LoggerService';
 export class JsonFileService {
   private static logger = LoggerService.getLogger('json-file-service');
 
-  public static read<T = any>(filePath: string): T {
+  public static read<T = any>(filePath: string): unknown {
     if (!fs.existsSync(filePath)) {
       this.logger.warn(`File not found: ${filePath}`);
       throw new Error(`File not found: ${filePath}`);
