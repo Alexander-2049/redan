@@ -85,6 +85,7 @@ export class WebSocketServer {
         if (!this.shouldReceiveMockData(listener)) return;
 
         const extractedFields = extractFieldsFromObject(listener.fields, updatedData);
+        if (extractedFields.length === 0) return;
 
         this.sendGameDataToListener(listener, extractedFields);
         listener.didReceiveDataThisSecond = true;

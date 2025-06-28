@@ -1,4 +1,5 @@
 import { AssetsRouter } from '../features/assets';
+import gameSource from '../features/game-source/GameSource';
 import { WebSocketServer } from '../features/game-source/web-socket-server';
 import { LoggerService } from '../features/logger/LoggerService';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
@@ -23,6 +24,7 @@ async function main() {
   webSocketServer.start({
     server: httpServer.server,
   });
+  gameSource.selectGame('iRacing');
 }
 
 main().catch(e => {
