@@ -12,7 +12,7 @@ import { GameName } from '@/main/shared/types/GameName';
 
 const GAME_DATA_UPDATE_INTERVAL = 1000 / 144;
 
-export class GameDataHandler extends GameDataEmitter {
+export class GameSource extends GameDataEmitter {
   private game: Game | null = null;
   private _gameName: GameName | null = null;
   private logger = LoggerService.getLogger('game-source');
@@ -50,7 +50,7 @@ export class GameDataHandler extends GameDataEmitter {
 
     this.disconnectCurrentGame();
 
-    const gameEntry = GameDataHandler.games.find(g => g.name === gameName);
+    const gameEntry = GameSource.games.find(g => g.name === gameName);
 
     if (gameEntry) {
       this.game = new gameEntry.class();
@@ -157,5 +157,5 @@ export class GameDataHandler extends GameDataEmitter {
   }
 }
 
-const gameDataHandler = new GameDataHandler();
+const gameDataHandler = new GameSource();
 export default gameDataHandler;
