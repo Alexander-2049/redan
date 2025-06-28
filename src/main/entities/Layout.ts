@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { GameName } from '../shared/types/GameName';
 import { Overlay } from './Overlay';
 import { layoutFileSchema } from '../shared/schemas/layout-file-schema';
-import { JsonFileService } from '../features/json-files/JsonFileService';
+import { JsonFileService } from '../features/json-files';
 import { LayoutOverlay } from '../shared/types/LayoutOverlay';
 import { PathService } from '../features/paths/PathService';
 

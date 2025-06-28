@@ -1,5 +1,2 @@
-export const WEBSOCKET_SERVER_PORT = 49791;
-export const OVERLAY_SERVER_PORT = 48792;
-export const ASSETS_SERVER_PORT = 48793;
-export const ASSETS_URL = `http://localhost:${ASSETS_SERVER_PORT}`;
+export const HTTP_SERVER_PORT = 42049;
 export const STEAM_APP_ID = 3825980;

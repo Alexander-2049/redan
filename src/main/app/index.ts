@@ -1,5 +1,5 @@
 import { HttpServer } from '../infrastructure/http-server';
-import { AssetsRouter } from '../features/assets/AssetsRouter';
+import { AssetsRouter } from '../features/assets';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { HTTP_SERVER_PORT } from '../shared/constants';
 
