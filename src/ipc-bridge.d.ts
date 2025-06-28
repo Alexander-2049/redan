@@ -3,20 +3,20 @@ import {
   CreateNewLayoutResponse,
   DefaultResponse,
   ModifyLayoutResponse,
-} from "./main/services/layout-service/layout-handler";
+} from "./main/_/layout-service/layout-handler";
 import {
   ILayout,
   ILayoutDataAndFilename,
-} from "./main/services/layout-service/schemas/layoutSchema";
+} from "./main/_/layout-service/schemas/layoutSchema";
 import { OverlayAndFolderName } from "./shared/types/overlay-and-folder-name";
-import { GameName } from "./main/services/game-data/types/game-name-schema";
+import { GameName } from "./main/_/game-data/types/game-name-schema";
 import {
   DownloadInfo,
   InstallInfo,
   WorkshopItemQueryConfig,
   WorkshopPaginatedResult,
 } from "./shared/schemas/steamworks-schemas";
-import { MappedGameData } from "./main/services/game-data/types/game-data-schema";
+import { MappedGameData } from "./main/_/game-data/types/game-data-schema";
 interface MainWindowAPI {
   getOverlayList: () => Promise<OverlayAndFolderName[]>;
   openOverlaysFolder: () => Promise<boolean>;

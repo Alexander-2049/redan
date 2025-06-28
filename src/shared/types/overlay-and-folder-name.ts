@@ -1,4 +1,4 @@
-import { overlayManifestFileSchema } from "@/main/services/overlay-service/schemas";
+import { overlayManifestFileSchema } from "@/main/_/overlay-service/schemas";
 import { z } from "zod";
 
 export interface OverlayAndFolderName {

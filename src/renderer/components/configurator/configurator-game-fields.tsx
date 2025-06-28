@@ -18,9 +18,9 @@ import {
 import { Badge } from "@/renderer/components/ui/badge";
 import { Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { ConfiguratorSchemaViewer } from "./configurator-schema-viewer";
-import { OverlayManifest } from "@/main/services/overlay-service/types";
-import { MappedGameData } from "@/main/services/game-data/types/game-data-schema";
-import { GameName } from "@/main/services/game-data/types/game-name-schema";
+import { OverlayManifest } from "@/main/_/overlay-service/types";
+import { MappedGameData } from "@/main/_/game-data/types/game-data-schema";
+import { GameName } from "@/main/_/game-data/types/game-name-schema";
 
 interface GameFieldsProps {
   manifestData: OverlayManifest;

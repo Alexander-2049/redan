@@ -13,9 +13,9 @@ import { ConfiguratorManifestConfig } from "@/renderer/components/configurator/c
 import { ConfiguratorSettings } from "@/renderer/components/configurator/configurator-settings";
 import { ConfiguratorGameFields } from "@/renderer/components/configurator/configurator-game-fields";
 import { ConfiguratorGeneratedCode } from "@/renderer/components/configurator/configurator-generated-code";
-import { OverlayManifest } from "@/main/services/overlay-service/types";
-import { MappedGameData } from "@/main/services/game-data/types/game-data-schema";
-import { GameName } from "@/main/services/game-data/types/game-name-schema";
+import { OverlayManifest } from "@/main/_/overlay-service/types";
+import { MappedGameData } from "@/main/_/game-data/types/game-data-schema";
+import { GameName } from "@/main/_/game-data/types/game-name-schema";
 import { ScrollArea } from "../components/ui/scroll-area";
 
 const MANIFEST_COOKIE_KEY = "overlay-manifest-data";

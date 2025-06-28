@@ -1,12 +1,12 @@
-import { useOverlays } from "@/renderer/api/overlays/get-overlays";
-import { ScrollArea } from "../ui/scroll-area";
-import { useAddOverlayToLayout } from "@/renderer/api/layouts/add-overlay-to-layout";
-import { useLayouts } from "@/renderer/api/layouts/get-layouts";
-import { Button } from "../ui/button";
-import { ASSETS_URL, OVERLAY_SERVER_PORT } from "@/shared/shared-constants";
-import OpenOverlaysFolderButton from "../open-overlays-folder-button";
-import { useState, useEffect } from "react";
-import { Plus, Layout } from "lucide-react";
+import { useOverlays } from '@/renderer/api/overlays/get-overlays';
+import { ScrollArea } from '../ui/scroll-area';
+import { useAddOverlayToLayout } from '@/renderer/api/layouts/add-overlay-to-layout';
+import { useLayouts } from '@/renderer/api/layouts/get-layouts';
+import { Button } from '../ui/button';
+import { ASSETS_URL, OVERLAY_SERVER_PORT } from '@/shared/constants';
+import OpenOverlaysFolderButton from '../open-overlays-folder-button';
+import { useState, useEffect } from 'react';
+import { Plus, Layout } from 'lucide-react';
 
 const useViewportWidth = () => {
   const [width, setWidth] = useState(0);
@@ -19,8 +19,8 @@ const useViewportWidth = () => {
     // Set initial width
     handleResize();
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return width;
@@ -38,14 +38,11 @@ const NoLayoutGuide = () => {
         </div>
 
         {/* Main Heading */}
-        <h1 className="mb-4 text-4xl font-bold text-gray-800">
-          Create Your First Layout
-        </h1>
+        <h1 className="mb-4 text-4xl font-bold text-gray-800">Create Your First Layout</h1>
 
         <p className="mb-8 text-lg text-gray-600">
-          Layouts help you organize and display your overlays exactly where you
-          want them. Start by creating a new layout to begin adding your
-          overlays.
+          Layouts help you organize and display your overlays exactly where you want them. Start by
+          creating a new layout to begin adding your overlays.
         </p>
 
         {/* Steps Guide */}
@@ -55,12 +52,9 @@ const NoLayoutGuide = () => {
               1
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">
-                Create a New Layout
-              </h3>
+              <h3 className="font-semibold text-gray-800">Create a New Layout</h3>
               <p className="text-gray-600">
-                Click the "New Layout" button in the bottom left corner to get
-                started.
+                Click the "New Layout" button in the bottom left corner to get started.
               </p>
             </div>
           </div>
@@ -72,8 +66,7 @@ const NoLayoutGuide = () => {
             <div>
               <h3 className="font-semibold text-gray-800">Add Your Overlays</h3>
               <p className="text-gray-600">
-                Once your layout is active, you'll be able to add overlays from
-                this panel.
+                Once your layout is active, you'll be able to add overlays from this panel.
               </p>
             </div>
           </div>
@@ -83,12 +76,9 @@ const NoLayoutGuide = () => {
               3
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">
-                Customize & Configure
-              </h3>
+              <h3 className="font-semibold text-gray-800">Customize & Configure</h3>
               <p className="text-gray-600">
-                Position and configure your overlays using the layout settings
-                panel.
+                Position and configure your overlays using the layout settings panel.
               </p>
             </div>
           </div>
@@ -101,7 +91,7 @@ const NoLayoutGuide = () => {
 const OverlaysList = () => {
   const overlays = useOverlays();
   const layouts = useLayouts();
-  const activeLayout = layouts.data?.find((layout) => layout.data.active);
+  const activeLayout = layouts.data?.find(layout => layout.data.active);
   const { mutate: addOverlayToLayout } = useAddOverlayToLayout();
   const viewportWidth = useViewportWidth();
 
@@ -127,13 +117,13 @@ const OverlaysList = () => {
   // Determine grid columns based on viewport width
   const getGridColumns = () => {
     if (viewportWidth === 0) {
-      return "hidden";
+      return 'hidden';
     } else if (viewportWidth >= 2900) {
-      return "grid-cols-3";
+      return 'grid-cols-3';
     } else if (viewportWidth >= 1900) {
-      return "grid-cols-2";
+      return 'grid-cols-2';
     } else {
-      return "grid-cols-1";
+      return 'grid-cols-1';
     }
   };
 
@@ -148,16 +138,13 @@ const OverlaysList = () => {
           <div className="p-4">
             <div className={`grid gap-4 ${getGridColumns()}`}>
               {overlays.data &&
-                overlays.data.map((overlay) => {
+                overlays.data.map(overlay => {
                   const iframeUrl = `http://localhost:${OVERLAY_SERVER_PORT}/${overlay.folderName}?preview=true`;
 
                   const paddingY = 60;
                   const iframeHeight = overlay.data.defaultHeight;
                   const parentHeight = 450;
-                  const scale = Math.min(
-                    (parentHeight - paddingY) / iframeHeight,
-                    1,
-                  );
+                  const scale = Math.min((parentHeight - paddingY) / iframeHeight, 1);
 
                   return (
                     <div
@@ -165,8 +152,8 @@ const OverlaysList = () => {
                       className="group relative overflow-hidden rounded-md border shadow-sm transition-all duration-300 hover:shadow-lg"
                       style={{
                         backgroundImage: `url(${ASSETS_URL}/images/27bf1719-f700-4529-86f7-70655aefb90c.png)`,
-                        backgroundPosition: "center",
-                        backgroundSize: "cover",
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
                         height: parentHeight,
                       }}
                     >
@@ -181,7 +168,7 @@ const OverlaysList = () => {
                             src={iframeUrl}
                             style={{
                               transform: `scale(${scale})`,
-                              transformOrigin: "center",
+                              transformOrigin: 'center',
                             }}
                             width={overlay.data.defaultWidth}
                             height={overlay.data.defaultHeight}
@@ -223,9 +210,7 @@ const OverlaysList = () => {
                   );
                 })}
               {overlays.data?.length === 0 && (
-                <div className="text-center text-gray-500">
-                  No overlays available.
-                </div>
+                <div className="text-center text-gray-500">No overlays available.</div>
               )}
             </div>
           </div>

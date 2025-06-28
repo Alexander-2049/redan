@@ -1,23 +1,18 @@
-import { ILayoutDataAndFilename } from "@/main/services/layout-service/schemas";
-import { ASSETS_URL, OVERLAY_SERVER_PORT } from "@/shared/shared-constants";
+import { ILayoutDataAndFilename } from '@/main/_/layout-service/schemas';
+import { ASSETS_URL, OVERLAY_SERVER_PORT } from '@/shared/constants';
 
 interface Props {
   layout: ILayoutDataAndFilename;
   parentWidth: number;
-  backgroundImage?: string | "none";
+  backgroundImage?: string | 'none';
 }
 
-export const LayoutPreview = ({
-  layout,
-  parentWidth,
-  backgroundImage,
-}: Props) => {
+export const LayoutPreview = ({ layout, parentWidth, backgroundImage }: Props) => {
   const layoutWidth = layout.data.screenWidth;
   const layoutHeight = layout.data.screenHeight;
   const scale = parentWidth / layoutWidth;
   const backgroundImageUrl =
-    backgroundImage ||
-    `${ASSETS_URL}/images/738c2f57-adad-4978-898c-0ac778680d9b.jpg`;
+    backgroundImage || `${ASSETS_URL}/images/738c2f57-adad-4978-898c-0ac778680d9b.jpg`;
 
   return (
     <div
@@ -33,22 +28,18 @@ export const LayoutPreview = ({
           width: `${layoutWidth}px`,
           height: `${layoutHeight}px`,
           scale: `${scale}`,
-          backgroundImage:
-            backgroundImageUrl === "none"
-              ? "none"
-              : `url(${backgroundImageUrl})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
+          backgroundImage: backgroundImageUrl === 'none' ? 'none' : `url(${backgroundImageUrl})`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
         }}
       >
-        {layout.data.overlays.map((overlay) => {
+        {layout.data.overlays.map(overlay => {
           const overlayQueryParameters = overlay.settings
             .map(
-              (setting) =>
-                `${encodeURIComponent(setting.id)}=${encodeURIComponent(setting.value)}`,
+              setting => `${encodeURIComponent(setting.id)}=${encodeURIComponent(setting.value)}`,
             )
-            .join("&");
-          const iframeUrl = `http://localhost:${OVERLAY_SERVER_PORT}/${overlay.folderName}?preview=true${overlayQueryParameters ? `&${overlayQueryParameters}` : ""}`;
+            .join('&');
+          const iframeUrl = `http://localhost:${OVERLAY_SERVER_PORT}/${overlay.folderName}?preview=true${overlayQueryParameters ? `&${overlayQueryParameters}` : ''}`;
 
           return (
             <iframe

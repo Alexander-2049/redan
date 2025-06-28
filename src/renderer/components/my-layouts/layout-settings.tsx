@@ -1,19 +1,19 @@
-import type React from "react";
+import type React from 'react';
 
-import { useState, useEffect } from "react";
-import { Eye, EyeOff, Trash2 } from "lucide-react";
-import { Input } from "@/renderer/components/ui/input";
-import { Textarea } from "@/renderer/components/ui/textarea";
-import { ScrollArea } from "@/renderer/components/ui/scroll-area";
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, Trash2 } from 'lucide-react';
+import { Input } from '@/renderer/components/ui/input';
+import { Textarea } from '@/renderer/components/ui/textarea';
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/renderer/components/ui/accordion";
-import { Card, CardContent } from "@/renderer/components/ui/card";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
+} from '@/renderer/components/ui/accordion';
+import { Card, CardContent } from '@/renderer/components/ui/card';
+import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,31 +23,28 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/renderer/components/ui/alert-dialog";
-import { useLayouts } from "@/renderer/api/layouts/get-layouts";
-import { useOverlays } from "@/renderer/api/overlays/get-overlays";
-import { useModifyLayout } from "@/renderer/api/layouts/modify-layout";
-import { Separator } from "@/renderer/components/ui/separator";
+} from '@/renderer/components/ui/alert-dialog';
+import { useLayouts } from '@/renderer/api/layouts/get-layouts';
+import { useOverlays } from '@/renderer/api/overlays/get-overlays';
+import { useModifyLayout } from '@/renderer/api/layouts/modify-layout';
+import { Separator } from '@/renderer/components/ui/separator';
 import type {
   ILayoutOverlay,
   ILayoutOverlaySetting,
   ILayoutOverlaySettingValue,
-} from "@/main/services/layout-service/schemas/overlaySchema";
-import type { OverlaySettingDescription } from "@/main/services/overlay-service/types";
-import type { OverlayAndFolderName } from "@/shared/types/overlay-and-folder-name";
+} from '@/main/_/layout-service/schemas/overlaySchema';
+import type { OverlaySettingDescription } from '@/main/_/overlay-service/types';
+import type { OverlayAndFolderName } from '@/shared/types/overlay-and-folder-name';
 
 const LayoutSettings = () => {
   const { data: layouts, isLoading: isLoadingLayouts } = useLayouts();
-  const { data: overlayManifests, isLoading: isLoadingOverlays } =
-    useOverlays();
+  const { data: overlayManifests, isLoading: isLoadingOverlays } = useOverlays();
   const { mutate: modifyLayout } = useModifyLayout();
 
-  const [layoutName, setLayoutName] = useState("");
-  const [layoutDescription, setLayoutDescription] = useState("");
-  const [activeLayoutOverlays, setActiveLayoutOverlays] = useState<
-    ILayoutOverlay[]
-  >([]);
-  const [activeLayoutFileName, setActiveLayoutFileName] = useState<string>("");
+  const [layoutName, setLayoutName] = useState('');
+  const [layoutDescription, setLayoutDescription] = useState('');
+  const [activeLayoutOverlays, setActiveLayoutOverlays] = useState<ILayoutOverlay[]>([]);
+  const [activeLayoutFileName, setActiveLayoutFileName] = useState<string>('');
   const [overlayToDelete, setOverlayToDelete] = useState<string | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,27 +52,25 @@ const LayoutSettings = () => {
 
   useEffect(() => {
     if (layouts && layouts.length > 0) {
-      const activeLayout = layouts.find((layout) => layout.data.active);
+      const activeLayout = layouts.find(layout => layout.data.active);
 
       if (activeLayout) {
-        setLayoutName(activeLayout.data.name || "");
-        setLayoutDescription(activeLayout.data.description || "");
+        setLayoutName(activeLayout.data.name || '');
+        setLayoutDescription(activeLayout.data.description || '');
         setActiveLayoutOverlays(activeLayout.data.overlays || []);
         setActiveLayoutFileName(activeLayout.filename);
       } else {
         setActiveLayoutOverlays([]);
-        setActiveLayoutFileName("");
+        setActiveLayoutFileName('');
       }
     } else {
       setActiveLayoutOverlays([]);
-      setActiveLayoutFileName("");
+      setActiveLayoutFileName('');
     }
   }, [layouts]);
 
   if (isLoadingLayouts || isLoadingOverlays) {
-    return (
-      <div className="flex h-full items-center justify-center">Loading...</div>
-    );
+    return <div className="flex h-full items-center justify-center">Loading...</div>;
   }
 
   if (!layouts || layouts.length === 0 || !activeLayoutFileName) {
@@ -86,8 +81,8 @@ const LayoutSettings = () => {
           <div className="rounded-md bg-amber-50 p-4 text-amber-800">
             <h3 className="text-md font-medium">No Active Layout</h3>
             <p className="mt-2 text-sm">
-              Please select a layout to configure its settings. You can create
-              or select a layout from the layouts panel.
+              Please select a layout to configure its settings. You can create or select a layout
+              from the layouts panel.
             </p>
           </div>
         </div>
@@ -95,30 +90,26 @@ const LayoutSettings = () => {
     );
   }
 
-  const getOverlayManifest = (
-    folderName: string,
-  ): OverlayAndFolderName | undefined => {
-    return overlayManifests?.find(
-      (manifest) => manifest.folderName === folderName,
-    );
+  const getOverlayManifest = (folderName: string): OverlayAndFolderName | undefined => {
+    return overlayManifests?.find(manifest => manifest.folderName === folderName);
   };
 
-  const updateLayoutField = (field: "name" | "description", value: string) => {
-    if (field === "name") {
+  const updateLayoutField = (field: 'name' | 'description', value: string) => {
+    if (field === 'name') {
       setLayoutName(value);
     } else {
       setLayoutDescription(value);
     }
 
     // Apply changes immediately
-    const activeLayout = layouts.find((layout) => layout.data.active);
+    const activeLayout = layouts.find(layout => layout.data.active);
     if (activeLayout) {
       modifyLayout({
         fileName: activeLayoutFileName,
         updatedData: {
           ...activeLayout.data,
-          name: field === "name" ? value : layoutName,
-          description: field === "description" ? value : layoutDescription,
+          name: field === 'name' ? value : layoutName,
+          description: field === 'description' ? value : layoutDescription,
           overlays: activeLayoutOverlays,
         },
       });
@@ -126,13 +117,13 @@ const LayoutSettings = () => {
   };
 
   const toggleVisibility = (id: string) => {
-    const updatedOverlays = activeLayoutOverlays.map((overlay) =>
+    const updatedOverlays = activeLayoutOverlays.map(overlay =>
       overlay.id === id ? { ...overlay, visible: !overlay.visible } : overlay,
     );
     setActiveLayoutOverlays(updatedOverlays);
 
     // Apply changes immediately
-    const activeLayout = layouts.find((layout) => layout.data.active);
+    const activeLayout = layouts.find(layout => layout.data.active);
     if (activeLayout) {
       modifyLayout({
         fileName: activeLayoutFileName,
@@ -151,12 +142,12 @@ const LayoutSettings = () => {
     settingId: string,
     value: ILayoutOverlaySettingValue,
   ) => {
-    const updatedOverlays = activeLayoutOverlays.map((overlay) => {
+    const updatedOverlays = activeLayoutOverlays.map(overlay => {
       if (overlay.id !== overlayId) return overlay;
 
       return {
         ...overlay,
-        settings: overlay.settings.map((setting) =>
+        settings: overlay.settings.map(setting =>
           setting.id === settingId ? { ...setting, value } : setting,
         ),
       };
@@ -165,7 +156,7 @@ const LayoutSettings = () => {
     setActiveLayoutOverlays(updatedOverlays);
 
     // Apply changes immediately
-    const activeLayout = layouts.find((layout) => layout.data.active);
+    const activeLayout = layouts.find(layout => layout.data.active);
     if (activeLayout) {
       modifyLayout({
         fileName: activeLayoutFileName,
@@ -181,13 +172,11 @@ const LayoutSettings = () => {
 
   const deleteOverlay = (id: string) => {
     // Filter out the overlay with the given id
-    const updatedOverlays = activeLayoutOverlays.filter(
-      (overlay) => overlay.id !== id,
-    );
+    const updatedOverlays = activeLayoutOverlays.filter(overlay => overlay.id !== id);
     setActiveLayoutOverlays(updatedOverlays);
 
     // Apply changes immediately
-    const activeLayout = layouts.find((layout) => layout.data.active);
+    const activeLayout = layouts.find(layout => layout.data.active);
     if (activeLayout) {
       modifyLayout({
         fileName: activeLayoutFileName,
@@ -231,7 +220,7 @@ const LayoutSettings = () => {
     const sliderKey = `${overlay.id}-${setting.id}`;
 
     switch (settingDescription.type) {
-      case "slider":
+      case 'slider':
         return (
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
@@ -240,7 +229,7 @@ const LayoutSettings = () => {
               </Label>
               <span className="text-muted-foreground text-xs">
                 {currentValue}
-                {settingDescription.unit === "percentage" ? "%" : ""}
+                {settingDescription.unit === 'percentage' ? '%' : ''}
               </span>
             </div>
             <Input
@@ -250,18 +239,16 @@ const LayoutSettings = () => {
               max={settingDescription.max}
               step={settingDescription.step}
               value={
-                typeof currentValue === "number"
-                  ? currentValue
-                  : settingDescription.defaultValue
+                typeof currentValue === 'number' ? currentValue : settingDescription.defaultValue
               }
-              onChange={(e) => {
+              onChange={e => {
                 const newValue = Number(e.target.value);
                 // Update local state immediately for responsive UI
-                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                const updatedOverlays = activeLayoutOverlays.map(o => {
                   if (o.id !== overlay.id) return o;
                   return {
                     ...o,
-                    settings: o.settings.map((s) =>
+                    settings: o.settings.map(s =>
                       s.id === setting.id ? { ...s, value: newValue } : s,
                     ),
                   };
@@ -269,7 +256,7 @@ const LayoutSettings = () => {
                 setActiveLayoutOverlays(updatedOverlays);
 
                 // Store pending update
-                setPendingUpdates((prev) => ({
+                setPendingUpdates(prev => ({
                   ...prev,
                   [sliderKey]: {
                     overlayId: overlay.id,
@@ -287,7 +274,7 @@ const LayoutSettings = () => {
                     pendingUpdate.settingId,
                     pendingUpdate.value,
                   );
-                  setPendingUpdates((prev) => {
+                  setPendingUpdates(prev => {
                     const newPending = { ...prev };
                     delete newPending[sliderKey];
                     return newPending;
@@ -299,20 +286,16 @@ const LayoutSettings = () => {
           </div>
         );
 
-      case "toggle":
-        if (typeof currentValue !== "boolean") return null;
+      case 'toggle':
+        if (typeof currentValue !== 'boolean') return null;
         return (
           <div className="flex items-center space-x-2">
             <Switch
               id={`overlay-${overlay.id}-setting-${setting.id}`}
               checked={
-                typeof currentValue === "boolean"
-                  ? currentValue
-                  : settingDescription.defaultValue
+                typeof currentValue === 'boolean' ? currentValue : settingDescription.defaultValue
               }
-              onCheckedChange={(checked) =>
-                updateOverlaySetting(overlay.id, setting.id, checked)
-              }
+              onCheckedChange={checked => updateOverlaySetting(overlay.id, setting.id, checked)}
             />
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
               {settingDescription.name}
@@ -320,7 +303,7 @@ const LayoutSettings = () => {
           </div>
         );
 
-      case "select":
+      case 'select':
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -329,16 +312,12 @@ const LayoutSettings = () => {
             <select
               id={`overlay-${overlay.id}-setting-${setting.id}`}
               value={
-                typeof currentValue === "string"
-                  ? currentValue
-                  : settingDescription.defaultValue
+                typeof currentValue === 'string' ? currentValue : settingDescription.defaultValue
               }
-              onChange={(e) =>
-                updateOverlaySetting(overlay.id, setting.id, e.target.value)
-              }
+              onChange={e => updateOverlaySetting(overlay.id, setting.id, e.target.value)}
               className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {settingDescription.selectList.map((option) => (
+              {settingDescription.selectList.map(option => (
                 <option key={option.id} value={option.id}>
                   {option.value}
                 </option>
@@ -347,7 +326,7 @@ const LayoutSettings = () => {
           </div>
         );
 
-      case "number":
+      case 'number':
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -359,37 +338,31 @@ const LayoutSettings = () => {
               min={settingDescription.min}
               max={settingDescription.max}
               value={
-                typeof currentValue === "number"
-                  ? currentValue
-                  : settingDescription.defaultValue
+                typeof currentValue === 'number' ? currentValue : settingDescription.defaultValue
               }
-              onChange={(e) => {
+              onChange={e => {
                 // Update local state immediately for responsive UI
                 const newValue = Number(e.target.value);
-                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                const updatedOverlays = activeLayoutOverlays.map(o => {
                   if (o.id !== overlay.id) return o;
                   return {
                     ...o,
-                    settings: o.settings.map((s) =>
+                    settings: o.settings.map(s =>
                       s.id === setting.id ? { ...s, value: newValue } : s,
                     ),
                   };
                 });
                 setActiveLayoutOverlays(updatedOverlays);
               }}
-              onBlur={(e) => {
+              onBlur={e => {
                 // Only call API on blur (when input becomes inactive)
-                updateOverlaySetting(
-                  overlay.id,
-                  setting.id,
-                  Number(e.target.value),
-                );
+                updateOverlaySetting(overlay.id, setting.id, Number(e.target.value));
               }}
             />
           </div>
         );
 
-      case "string":
+      case 'string':
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -399,24 +372,22 @@ const LayoutSettings = () => {
               id={`overlay-${overlay.id}-setting-${setting.id}`}
               type="text"
               value={
-                typeof currentValue === "string"
-                  ? currentValue
-                  : settingDescription.defaultValue
+                typeof currentValue === 'string' ? currentValue : settingDescription.defaultValue
               }
-              onChange={(e) => {
+              onChange={e => {
                 // Update local state immediately for responsive UI
-                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                const updatedOverlays = activeLayoutOverlays.map(o => {
                   if (o.id !== overlay.id) return o;
                   return {
                     ...o,
-                    settings: o.settings.map((s) =>
+                    settings: o.settings.map(s =>
                       s.id === setting.id ? { ...s, value: e.target.value } : s,
                     ),
                   };
                 });
                 setActiveLayoutOverlays(updatedOverlays);
               }}
-              onBlur={(e) => {
+              onBlur={e => {
                 // Only call API on blur (when input becomes inactive)
                 updateOverlaySetting(overlay.id, setting.id, e.target.value);
               }}
@@ -424,7 +395,7 @@ const LayoutSettings = () => {
           </div>
         );
 
-      case "color":
+      case 'color':
         return (
           <div className="grid gap-2">
             <Label htmlFor={`overlay-${overlay.id}-setting-${setting.id}`}>
@@ -434,24 +405,22 @@ const LayoutSettings = () => {
               id={`overlay-${overlay.id}-setting-${setting.id}`}
               type="color"
               value={
-                typeof currentValue === "string"
-                  ? currentValue
-                  : settingDescription.defaultValue
+                typeof currentValue === 'string' ? currentValue : settingDescription.defaultValue
               }
-              onChange={(e) => {
+              onChange={e => {
                 // Update local state immediately for responsive UI
-                const updatedOverlays = activeLayoutOverlays.map((o) => {
+                const updatedOverlays = activeLayoutOverlays.map(o => {
                   if (o.id !== overlay.id) return o;
                   return {
                     ...o,
-                    settings: o.settings.map((s) =>
+                    settings: o.settings.map(s =>
                       s.id === setting.id ? { ...s, value: e.target.value } : s,
                     ),
                   };
                 });
                 setActiveLayoutOverlays(updatedOverlays);
               }}
-              onBlur={(e) => {
+              onBlur={e => {
                 // Only call API on blur (when input becomes inactive)
                 updateOverlaySetting(overlay.id, setting.id, e.target.value);
               }}
@@ -466,9 +435,7 @@ const LayoutSettings = () => {
   };
 
   // Find the overlay name for the overlay being deleted
-  const overlayBeingDeleted = activeLayoutOverlays.find(
-    (overlay) => overlay.id === overlayToDelete,
-  );
+  const overlayBeingDeleted = activeLayoutOverlays.find(overlay => overlay.id === overlayToDelete);
 
   return (
     <ScrollArea className="bg-background/95 flex h-full w-80 flex-col overflow-auto border-l">
@@ -481,8 +448,8 @@ const LayoutSettings = () => {
             <Input
               id="layout-name"
               value={layoutName}
-              onChange={(e) => setLayoutName(e.target.value)}
-              onBlur={(e) => updateLayoutField("name", e.target.value)}
+              onChange={e => setLayoutName(e.target.value)}
+              onBlur={e => updateLayoutField('name', e.target.value)}
             />
           </div>
 
@@ -491,8 +458,8 @@ const LayoutSettings = () => {
             <Textarea
               id="layout-description"
               value={layoutDescription}
-              onChange={(e) => setLayoutDescription(e.target.value)}
-              onBlur={(e) => updateLayoutField("description", e.target.value)}
+              onChange={e => setLayoutDescription(e.target.value)}
+              onBlur={e => updateLayoutField('description', e.target.value)}
               rows={3}
             />
           </div>
@@ -508,15 +475,15 @@ const LayoutSettings = () => {
           <div className="rounded-md bg-slate-50 p-4 text-slate-700">
             <h3 className="text-md font-medium">No Overlays Added</h3>
             <p className="mt-2 text-sm">
-              You need to add overlays to this layout before you can configure
-              them. Add overlays from the overlays panel.
+              You need to add overlays to this layout before you can configure them. Add overlays
+              from the overlays panel.
             </p>
           </div>
         </div>
       ) : (
         <div className="p-4">
           <Accordion type="multiple" className="w-full">
-            {activeLayoutOverlays.map((overlay) => {
+            {activeLayoutOverlays.map(overlay => {
               const overlayManifest = getOverlayManifest(overlay.folderName);
 
               return (
@@ -529,7 +496,7 @@ const LayoutSettings = () => {
                           role="button"
                           tabIndex={0}
                           className="hover:bg-muted flex h-8 w-8 items-center justify-center rounded-full focus:outline-none"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation(); // Prevent triggering the AccordionTrigger
                             toggleVisibility(overlay.id);
                           }}
@@ -544,7 +511,7 @@ const LayoutSettings = () => {
                           role="button"
                           tabIndex={0}
                           className="flex h-8 w-8 items-center justify-center rounded-full text-red-500 hover:bg-red-100 focus:outline-none"
-                          onClick={(e) => {
+                          onClick={e => {
                             handleDeleteClick(e, overlay.id);
                           }}
                           title="Delete overlay (Shift+Click to bypass confirmation)"
@@ -563,23 +530,16 @@ const LayoutSettings = () => {
                             overlayManifest.data.settings.length > 0 && (
                               <>
                                 <Separator className="my-2" />
-                                <h4 className="mb-3 text-sm font-medium">
-                                  Settings
-                                </h4>
+                                <h4 className="mb-3 text-sm font-medium">Settings</h4>
                                 <div className="space-y-4">
-                                  {overlay.settings.map((setting) => {
-                                    const settingDescription =
-                                      overlayManifest.data.settings?.find(
-                                        (desc) => desc.id === setting.id,
-                                      );
+                                  {overlay.settings.map(setting => {
+                                    const settingDescription = overlayManifest.data.settings?.find(
+                                      desc => desc.id === setting.id,
+                                    );
 
                                     return (
                                       <div key={setting.id}>
-                                        {renderSettingControl(
-                                          overlay,
-                                          setting,
-                                          settingDescription,
-                                        )}
+                                        {renderSettingControl(overlay, setting, settingDescription)}
                                       </div>
                                     );
                                   })}
@@ -600,15 +560,14 @@ const LayoutSettings = () => {
       {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={!!overlayToDelete}
-        onOpenChange={(open) => !open && setOverlayToDelete(null)}
+        onOpenChange={open => !open && setOverlayToDelete(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Overlay</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove the overlay "
-              {overlayBeingDeleted?.name}" from this layout? This action cannot
-              be undone.
+              Are you sure you want to remove the overlay "{overlayBeingDeleted?.name}" from this
+              layout? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

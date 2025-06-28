@@ -10,9 +10,9 @@ import {
 } from "@/renderer/components/ui/card";
 import { Badge } from "@/renderer/components/ui/badge";
 import { Textarea } from "@/renderer/components/ui/textarea";
-import { OverlayManifest } from "@/main/services/overlay-service/types";
-import { GameName } from "@/main/services/game-data/types/game-name-schema";
-import { MappedGameData } from "@/main/services/game-data/types/game-data-schema";
+import { OverlayManifest } from "@/main/_/overlay-service/types";
+import { GameName } from "@/main/_/game-data/types/game-name-schema";
+import { MappedGameData } from "@/main/_/game-data/types/game-data-schema";
 
 interface GeneratedCodeProps {
   manifestData: OverlayManifest;

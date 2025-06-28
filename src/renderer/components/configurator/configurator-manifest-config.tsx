@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/renderer/components/ui/card";
-import { OverlayManifest } from "@/main/services/overlay-service/types";
+import { OverlayManifest } from "@/main/_/overlay-service/types";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { X } from "lucide-react";

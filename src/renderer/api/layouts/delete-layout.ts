@@ -1,4 +1,4 @@
-import { ILayoutDataAndFilename } from "@/main/services/layout-service/schemas/layoutSchema";
+import { ILayoutDataAndFilename } from "@/main/_/layout-service/schemas/layoutSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const deleteLayout = ({ fileName }: { fileName: string }) => {
