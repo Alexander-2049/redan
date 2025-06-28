@@ -1,5 +1,5 @@
-import { Card } from "@/renderer/components/ui/card";
-import { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
+import { Card } from '@/renderer/components/ui/card';
+import { WorkshopItem } from '@/shared/schemas/steamworks-schemas';
 
 interface WorkshopItemProps extends WorkshopItem {
   // id: string;
@@ -15,29 +15,18 @@ interface WorkshopItemProps extends WorkshopItem {
   isItemsSelected?: boolean;
 }
 
-export function WorkshopItem({
-  title,
-  previewUrl,
-  onClick,
-  isItemsSelected,
-}: WorkshopItemProps) {
+export function WorkshopItem({ title, previewUrl, onClick, isItemsSelected }: WorkshopItemProps) {
   return (
     <Card
       className={`group cursor-pointer overflow-hidden border-2 bg-white p-0 transition-all hover:bg-gray-50 ${
-        isItemsSelected
-          ? "border-sky-400 shadow-lg"
-          : "border-gray-200 hover:border-sky-300"
+        isItemsSelected ? 'border-sky-400 shadow-lg' : 'border-gray-200 hover:border-sky-300'
       }`}
       onClick={onClick}
     >
       <div className="relative aspect-square">
         {/* Image */}
         <img
-          src={
-            previewUrl ||
-            "/placeholder.svg?height=600&width=600" ||
-            "/placeholder.svg"
-          }
+          src={previewUrl || '/placeholder.svg?height=600&width=600' || '/placeholder.svg'}
           alt={title}
           className="h-full w-full object-cover transition-transform group-hover:scale-105"
         />
@@ -52,9 +41,7 @@ export function WorkshopItem({
         </div>
 
         {/* Optional: Inner glow effect for selected state */}
-        {isItemsSelected && (
-          <div className="pointer-events-none absolute inset-0 bg-sky-400/10" />
-        )}
+        {isItemsSelected && <div className="pointer-events-none absolute inset-0 bg-sky-400/10" />}
       </div>
     </Card>
   );

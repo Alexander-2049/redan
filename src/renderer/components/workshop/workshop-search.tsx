@@ -1,6 +1,8 @@
-import { Search } from "lucide-react";
-import { Input } from "@/renderer/components/ui/input";
-import { WorkshopHeader } from "./workshop-header";
+import { Search } from 'lucide-react';
+
+import { WorkshopHeader } from './workshop-header';
+
+import { Input } from '@/renderer/components/ui/input';
 
 interface WorkshopSearchProps {
   searchTerm: string;
@@ -27,16 +29,12 @@ export function WorkshopSearch({
           type="text"
           placeholder="Search"
           value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={e => onSearchChange(e.target.value)}
           className="border-gray-300 bg-white pl-10 text-gray-900 placeholder-gray-500"
-          onKeyPress={(e) => e.key === "Enter" && onSearch()}
+          onKeyPress={e => e.key === 'Enter' && onSearch()}
         />
       </div>
-      <WorkshopHeader
-        totalItems={totalItems}
-        sortBy={sortBy}
-        onSortChange={onSortChange}
-      />
+      <WorkshopHeader totalItems={totalItems} sortBy={sortBy} onSortChange={onSortChange} />
     </div>
   );
 }

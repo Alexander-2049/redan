@@ -1,15 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 type WebSocketData = Record<string, unknown>;
 
 const useWebSocket = (params: string[]) => {
-  const isPreview = /\bpreview(\b|=true)/.test(
-    new URL(window.location.href).search,
-  );
-  const url = isPreview ? "ws://localhost:49794" : "ws://localhost:49791";
+  const isPreview = /\bpreview(\b|=true)/.test(new URL(window.location.href).search);
+  const url = isPreview ? 'ws://localhost:49794' : 'ws://localhost:49791';
 
   const [data, setData] = useState<WebSocketData>(
-    Object.fromEntries(params.map((param) => [param, null])),
+    Object.fromEntries(params.map(param => [param, null])),
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +18,7 @@ const useWebSocket = (params: string[]) => {
     let isUnmounted = false;
 
     const connect = () => {
-      const queryParams = `?q=${params.join(",")}`;
+      const queryParams = `?q=${params.join(',')}`;
       const ws = new WebSocket(`${url}${queryParams}`);
       socketRef.current = ws;
 
@@ -28,31 +26,27 @@ const useWebSocket = (params: string[]) => {
         if (!isUnmounted) setError(null); // clear error on success
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = event => {
         try {
           const message = JSON.parse(event.data);
-          if (
-            message.success &&
-            typeof message.data === "object" &&
-            message.data !== null
-          ) {
+          if (message.success && typeof message.data === 'object' && message.data !== null) {
             const updatedData: WebSocketData = {};
             message.data.forEach(([key, value]: [string, unknown]) => {
               if (params.includes(key)) {
                 updatedData[key] = value;
               }
             });
-            setData((prevData) => ({ ...prevData, ...updatedData }));
+            setData(prevData => ({ ...prevData, ...updatedData }));
           } else if (message.errorMessage) {
             setError(message.errorMessage);
           }
         } catch (err) {
-          setError("Failed to parse WebSocket message");
+          setError('Failed to parse WebSocket message');
         }
       };
 
       ws.onerror = () => {
-        if (!isUnmounted) setError("WebSocket error occurred");
+        if (!isUnmounted) setError('WebSocket error occurred');
       };
 
       ws.onclose = () => {

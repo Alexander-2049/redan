@@ -1,5 +1,6 @@
-import { Button } from "@/renderer/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+import { Button } from '@/renderer/components/ui/button';
 
 interface WorkshopPaginationProps {
   currentPage: number;
@@ -26,7 +27,7 @@ export function WorkshopPagination({
     }
 
     if (currentPage - delta > 2) {
-      rangeWithDots.push(1, "...");
+      rangeWithDots.push(1, '...');
     } else {
       rangeWithDots.push(1);
     }
@@ -34,7 +35,7 @@ export function WorkshopPagination({
     rangeWithDots.push(...range);
 
     if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push("...", totalPages);
+      rangeWithDots.push('...', totalPages);
     } else if (totalPages > 1) {
       rangeWithDots.push(totalPages);
     }
@@ -57,14 +58,14 @@ export function WorkshopPagination({
       {getVisiblePages().map((page, index) => (
         <Button
           key={index}
-          variant={page === currentPage ? "default" : "outline"}
+          variant={page === currentPage ? 'default' : 'outline'}
           size="sm"
-          onClick={() => typeof page === "number" && onPageChange(page)}
-          disabled={page === "..."}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
+          disabled={page === '...'}
           className={
             page === currentPage
-              ? "bg-blue-600 text-white hover:bg-blue-700"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
           }
         >
           {page}

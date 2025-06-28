@@ -1,14 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export interface ICreateLayoutProps {
   layoutName: string;
   layoutDescription: string;
 }
 
-export const createLayout = ({
-  layoutName,
-  layoutDescription,
-}: ICreateLayoutProps) => {
+export const createLayout = ({ layoutName, layoutDescription }: ICreateLayoutProps) => {
   return window.electron.createEmptyLayout(layoutName, layoutDescription);
 };
 
@@ -19,7 +16,7 @@ export const useCreateLayout = () => {
     mutationFn: createLayout,
     onSuccess: () => {
       // Invalidate the "layouts" query to refetch the data
-      queryClient.invalidateQueries({ queryKey: ["layouts"] });
+      queryClient.invalidateQueries({ queryKey: ['layouts'] });
     },
   });
 };

@@ -1,13 +1,14 @@
-import { Button } from "@/renderer/components/ui/button";
-import { Checkbox } from "@/renderer/components/ui/checkbox";
+import { RotateCcw } from 'lucide-react';
+
+import { Button } from '@/renderer/components/ui/button';
+import { Checkbox } from '@/renderer/components/ui/checkbox';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/renderer/components/ui/select";
-import { RotateCcw } from "lucide-react";
+} from '@/renderer/components/ui/select';
 
 interface WorkshopFiltersProps {
   onResetFilters: () => void;
@@ -95,22 +96,13 @@ export function WorkshopFilters({ onResetFilters }: WorkshopFiltersProps) {
               <SelectValue placeholder="All" />
             </SelectTrigger>
             <SelectContent className="border-gray-300 bg-white">
-              <SelectItem
-                value="all"
-                className="text-gray-900 hover:bg-gray-100"
-              >
+              <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">
                 All
               </SelectItem>
-              <SelectItem
-                value="everyone"
-                className="text-gray-900 hover:bg-gray-100"
-              >
+              <SelectItem value="everyone" className="text-gray-900 hover:bg-gray-100">
                 Everyone
               </SelectItem>
-              <SelectItem
-                value="mature"
-                className="text-gray-900 hover:bg-gray-100"
-              >
+              <SelectItem value="mature" className="text-gray-900 hover:bg-gray-100">
                 Mature
               </SelectItem>
             </SelectContent>
@@ -121,29 +113,29 @@ export function WorkshopFilters({ onResetFilters }: WorkshopFiltersProps) {
           <h3 className="mb-3 font-medium text-gray-900">Tags</h3>
           <div className="max-h-80 space-y-1 overflow-y-auto">
             {[
-              "Anime",
-              "Abstract",
-              "Animal",
-              "Cartoon",
-              "CGI",
-              "Cyberpunk",
-              "Fantasy",
-              "Game",
-              "Girls",
-              "Landscape",
-              "Medieval",
-              "Memes",
-              "MMD",
-              "Music",
-              "Nature",
-              "Pixel art",
-              "Relaxing",
-              "Retro",
-              "Sci-Fi",
-              "Sports",
-              "Technology",
-              "Television",
-            ].map((tag) => (
+              'Anime',
+              'Abstract',
+              'Animal',
+              'Cartoon',
+              'CGI',
+              'Cyberpunk',
+              'Fantasy',
+              'Game',
+              'Girls',
+              'Landscape',
+              'Medieval',
+              'Memes',
+              'MMD',
+              'Music',
+              'Nature',
+              'Pixel art',
+              'Relaxing',
+              'Retro',
+              'Sci-Fi',
+              'Sports',
+              'Technology',
+              'Television',
+            ].map(tag => (
               <label
                 key={tag}
                 className="flex cursor-pointer items-center space-x-3 rounded p-2 transition-colors hover:bg-gray-100"

@@ -1,11 +1,6 @@
-import { Input } from "@/renderer/components/ui/input";
-import { Label } from "@/renderer/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/renderer/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
+import { Input } from '@/renderer/components/ui/input';
+import { Label } from '@/renderer/components/ui/label';
 
 interface NestedBoxesProps {
   minWidth: number;
@@ -46,92 +41,74 @@ export function ConfiguratorNestedBoxes({
         <CardContent>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <Label
-                htmlFor="minWidth"
-                className="text-sm font-medium text-blue-600"
-              >
+              <Label htmlFor="minWidth" className="text-sm font-medium text-blue-600">
                 Min Width (Inner)
               </Label>
               <Input
                 id="minWidth"
                 type="number"
                 value={minWidth}
-                onChange={(e) => onMinWidthChange(Number(e.target.value))}
+                onChange={e => onMinWidthChange(Number(e.target.value))}
                 className="border-blue-200"
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="minHeight"
-                className="text-sm font-medium text-blue-600"
-              >
+              <Label htmlFor="minHeight" className="text-sm font-medium text-blue-600">
                 Min Height (Inner)
               </Label>
               <Input
                 id="minHeight"
                 type="number"
                 value={minHeight}
-                onChange={(e) => onMinHeightChange(Number(e.target.value))}
+                onChange={e => onMinHeightChange(Number(e.target.value))}
                 className="border-blue-200"
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="defaultWidth"
-                className="text-sm font-medium text-green-600"
-              >
+              <Label htmlFor="defaultWidth" className="text-sm font-medium text-green-600">
                 Default Width (Middle)
               </Label>
               <Input
                 id="defaultWidth"
                 type="number"
                 value={defaultWidth}
-                onChange={(e) => onDefaultWidthChange(Number(e.target.value))}
+                onChange={e => onDefaultWidthChange(Number(e.target.value))}
                 className="border-green-200"
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="defaultHeight"
-                className="text-sm font-medium text-green-600"
-              >
+              <Label htmlFor="defaultHeight" className="text-sm font-medium text-green-600">
                 Default Height (Middle)
               </Label>
               <Input
                 id="defaultHeight"
                 type="number"
                 value={defaultHeight}
-                onChange={(e) => onDefaultHeightChange(Number(e.target.value))}
+                onChange={e => onDefaultHeightChange(Number(e.target.value))}
                 className="border-green-200"
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="maxWidth"
-                className="text-sm font-medium text-red-600"
-              >
+              <Label htmlFor="maxWidth" className="text-sm font-medium text-red-600">
                 Max Width (Outer)
               </Label>
               <Input
                 id="maxWidth"
                 type="number"
                 value={maxWidth}
-                onChange={(e) => onMaxWidthChange(Number(e.target.value))}
+                onChange={e => onMaxWidthChange(Number(e.target.value))}
                 className="border-red-200"
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="maxHeight"
-                className="text-sm font-medium text-red-600"
-              >
+              <Label htmlFor="maxHeight" className="text-sm font-medium text-red-600">
                 Max Height (Outer)
               </Label>
               <Input
                 id="maxHeight"
                 type="number"
                 value={maxHeight}
-                onChange={(e) => onMaxHeightChange(Number(e.target.value))}
+                onChange={e => onMaxHeightChange(Number(e.target.value))}
                 className="border-red-200"
               />
             </div>
@@ -152,8 +129,8 @@ export function ConfiguratorNestedBoxes({
               style={{
                 width: `${maxWidth}px`,
                 height: `${maxHeight}px`,
-                minWidth: "200px",
-                minHeight: "200px",
+                minWidth: '200px',
+                minHeight: '200px',
               }}
             >
               <div className="absolute top-2 left-2 rounded bg-white px-2 py-1 text-xs font-semibold text-red-700">
@@ -166,8 +143,8 @@ export function ConfiguratorNestedBoxes({
                 style={{
                   width: `${Math.min(defaultWidth, maxWidth - 20)}px`,
                   height: `${Math.min(defaultHeight, maxHeight - 20)}px`,
-                  minWidth: "120px",
-                  minHeight: "120px",
+                  minWidth: '120px',
+                  minHeight: '120px',
                 }}
               >
                 <div className="absolute top-2 left-2 rounded bg-white px-2 py-1 text-xs font-semibold text-green-700">
@@ -180,8 +157,8 @@ export function ConfiguratorNestedBoxes({
                   style={{
                     width: `${Math.min(minWidth, defaultWidth - 20, maxWidth - 40)}px`,
                     height: `${Math.min(minHeight, defaultHeight - 20, maxHeight - 40)}px`,
-                    minWidth: "60px",
-                    minHeight: "60px",
+                    minWidth: '60px',
+                    minHeight: '60px',
                   }}
                 >
                   <div className="absolute top-2 left-2 rounded bg-white px-2 py-1 text-xs font-semibold text-blue-700">

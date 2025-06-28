@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export interface IAddOverlayToLayoutProps {
   layoutFileName: string;
@@ -18,7 +18,7 @@ export const useAddOverlayToLayout = () => {
   return useMutation({
     mutationFn: addOverlayToLayout,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["layouts"] });
+      queryClient.invalidateQueries({ queryKey: ['layouts'] });
     },
   });
 };

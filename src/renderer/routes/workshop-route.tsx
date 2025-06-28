@@ -1,25 +1,26 @@
-import { useEffect, useState } from "react";
-import { ScrollArea } from "@/renderer/components/ui/scroll-area";
-import { WorkshopSearch } from "@/renderer/components/workshop/workshop-search";
-import { WorkshopFilters } from "@/renderer/components/workshop/workshop-filters";
-import { WorkshopGrid } from "@/renderer/components/workshop/workshop-grid";
-import { WorkshopPagination } from "@/renderer/components/workshop/workshop-pagination";
-import { WorkshopPreview } from "@/renderer/components/workshop/workshop-preview";
-import { useWorkshopItems } from "../api/steam/workshop-get-all-items";
-import type { WorkshopItem } from "@/shared/schemas/steamworks-schemas";
-import { useWorkshopSubscribeItem } from "../api/steam/workshop-subscribe-item";
-import { useWorkshopUnsubscribeItem } from "../api/steam/workshop-unsubscribe-item";
-import { useWorkshopSubscribedItems } from "../api/steam/workshop-get-subscribed-items";
-import { useWorkshopDownloadInfo } from "../api/steam/workshop-download-info";
-import { useWorkshopDownloadItem } from "../api/steam/workshop-download-item";
+import { useEffect, useState } from 'react';
+
+import { useWorkshopDownloadInfo } from '../api/steam/workshop-download-info';
+import { useWorkshopDownloadItem } from '../api/steam/workshop-download-item';
+import { useWorkshopItems } from '../api/steam/workshop-get-all-items';
+import { useWorkshopSubscribedItems } from '../api/steam/workshop-get-subscribed-items';
+import { useWorkshopSubscribeItem } from '../api/steam/workshop-subscribe-item';
+import { useWorkshopUnsubscribeItem } from '../api/steam/workshop-unsubscribe-item';
+
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
+import { WorkshopFilters } from '@/renderer/components/workshop/workshop-filters';
+import { WorkshopGrid } from '@/renderer/components/workshop/workshop-grid';
+import { WorkshopPagination } from '@/renderer/components/workshop/workshop-pagination';
+import { WorkshopPreview } from '@/renderer/components/workshop/workshop-preview';
+import { WorkshopSearch } from '@/renderer/components/workshop/workshop-search';
+import type { WorkshopItem } from '@/shared/schemas/steamworks-schemas';
 
 const WorkshopRoute = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("popular-year");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('popular-year');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState<WorkshopItem | null>(null);
-  const [isSubscribedOnSelectedItem, setIsSubscribedOnSelectedItem] =
-    useState(false);
+  const [isSubscribedOnSelectedItem, setIsSubscribedOnSelectedItem] = useState(false);
   const {
     mutate: getWorkshopItems,
     data: workshop,
@@ -29,8 +30,9 @@ const WorkshopRoute = () => {
   const { mutate: subscribe } = useWorkshopSubscribeItem();
   const { mutate: unsubscribe } = useWorkshopUnsubscribeItem();
   const { data: subscribedItems } = useWorkshopSubscribedItems();
-  const { data: downloadInfo, refetch: refetchWorkshopDownloadInfo } =
-    useWorkshopDownloadInfo(selectedItem ? selectedItem.publishedFileId : null);
+  const { data: downloadInfo, refetch: refetchWorkshopDownloadInfo } = useWorkshopDownloadInfo(
+    selectedItem ? selectedItem.publishedFileId : null,
+  );
   const { mutate: download } = useWorkshopDownloadItem();
 
   useEffect(() => {
@@ -60,7 +62,7 @@ const WorkshopRoute = () => {
     refetchWorkshopDownloadInfo();
 
     const a = selectedItem.publishedFileId.toString();
-    const b = subscribedItems.map((c) => c.toString());
+    const b = subscribedItems.map(c => c.toString());
 
     setIsSubscribedOnSelectedItem(b.includes(a));
   }, [subscribedItems, selectedItem]);
@@ -71,15 +73,13 @@ const WorkshopRoute = () => {
 
   useEffect(() => {
     if (!workshop) return;
-    setItems(
-      workshop.items.filter((item): item is WorkshopItem => item != null),
-    );
+    setItems(workshop.items.filter((item): item is WorkshopItem => item != null));
   }, [workshop]);
 
   const totalPages = 1000;
 
   const handleDownload = (itemId: bigint) => {
-    console.log("Downloading item:", itemId);
+    console.log('Downloading item:', itemId);
     download({ itemId });
   };
 
@@ -88,7 +88,7 @@ const WorkshopRoute = () => {
   };
 
   const handleResetFilters = () => {
-    setSearchTerm("");
+    setSearchTerm('');
     setCurrentPage(1);
   };
 
@@ -105,18 +105,18 @@ const WorkshopRoute = () => {
   };
 
   const handleSubscribe = (itemId: bigint) => {
-    console.log("Subscribing to item:", itemId);
+    console.log('Subscribing to item:', itemId);
     subscribe({ item: itemId });
     handleDownload(itemId);
     refetchWorkshopDownloadInfo();
   };
   const handleUnsubscribe = (itemId: bigint) => {
-    console.log("Unsubscribing item:", itemId);
+    console.log('Unsubscribing item:', itemId);
     unsubscribe({ item: itemId });
   };
 
-  const handleRate = (itemId: bigint, rating: "like" | "dislike") => {
-    console.log("Rating item:", itemId, "with", rating);
+  const handleRate = (itemId: bigint, rating: 'like' | 'dislike') => {
+    console.log('Rating item:', itemId, 'with', rating);
   };
 
   return (

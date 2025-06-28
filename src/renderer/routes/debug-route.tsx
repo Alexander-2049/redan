@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { Button } from "../components/ui/button";
-import { ScrollArea } from "../components/ui/scroll-area";
-import useWebSocket from "../hooks/useWebSocket";
-import { ClickableSchemaViewer } from "../components/clickable-schema-view";
+import { useEffect, useState } from 'react';
+
+import { ClickableSchemaViewer } from '../components/clickable-schema-view';
+import { Button } from '../components/ui/button';
+import { ScrollArea } from '../components/ui/scroll-area';
+import useWebSocket from '../hooks/useWebSocket';
 // import { useSelector, useDispatch } from "react-redux";
 // import { RootState } from "../store";
 // import { increment } from "../slices/exampleSlice";
@@ -11,15 +12,13 @@ const DebugRoute = () => {
   // const value = useSelector((state: RootState) => state.example.value);
   // const dispatch = useDispatch();
 
-  const { data } = useWebSocket(["game", "session", "drivers", "realtime"]);
+  const { data } = useWebSocket(['game', 'session', 'drivers', 'realtime']);
   const [isRecording, setIsRecording] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shape, setShape] = useState<string | null>(null);
 
   useEffect(() => {
-    window.electron
-      .getGameDataShape("iRacing")
-      .then((e) => setShape(JSON.stringify(e)));
+    window.electron.getGameDataShape('iRacing').then(e => setShape(JSON.stringify(e)));
   }, []);
 
   if (!shape) return;
@@ -49,12 +48,12 @@ const DebugRoute = () => {
           </Button>
         )}
         <pre>
-          <code>{JSON.stringify(data, null, "  ")}</code>
+          <code>{JSON.stringify(data, null, '  ')}</code>
         </pre>
         <input
           type="file"
           accept=".html"
-          onChange={(e) => {
+          onChange={e => {
             console.log(e.target.files && e.target.files[0]?.path);
           }}
         />

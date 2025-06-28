@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ILayout } from "@/main/_/layout-service/schemas/layoutSchema";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { ILayout } from '@/main/_/layout-service/schemas/layoutSchema';
 
 export interface IModifyLayoutProps {
   fileName: string;
@@ -16,7 +17,7 @@ export const useModifyLayout = () => {
   return useMutation({
     mutationFn: modifyLayout,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["layouts"] });
+      queryClient.invalidateQueries({ queryKey: ['layouts'] });
     },
   });
 };

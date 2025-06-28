@@ -1,26 +1,24 @@
-import { sessionInfoSchema } from "../schemas/sessionInfoSchema";
-import { z } from "zod";
-import { telemetrySchema } from "../schemas/telemetrySchema";
+import { z } from 'zod';
 
-export type iRacingMessage =
-  | TelemetryMessage
-  | SessionInfoMessage
-  | ConnectedMessage;
+import { sessionInfoSchema } from '../schemas/sessionInfoSchema';
+import { telemetrySchema } from '../schemas/telemetrySchema';
+
+export type iRacingMessage = TelemetryMessage | SessionInfoMessage | ConnectedMessage;
 
 export interface TelemetryMessage {
-  type: "Telemetry";
+  type: 'Telemetry';
   data: z.infer<typeof telemetrySchema> | null;
   timestamp: string;
 }
 
 export interface SessionInfoMessage {
-  type: "SessionInfo";
+  type: 'SessionInfo';
   data: z.infer<typeof sessionInfoSchema> | null;
   timestamp: string;
 }
 
 export interface ConnectedMessage {
-  type: "Connected";
+  type: 'Connected';
   data: boolean;
   timestamp: string;
 }

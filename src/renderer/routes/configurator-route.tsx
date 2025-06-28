@@ -1,5 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from "react";
+import { Upload, Download, RotateCcw } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+
+import { ScrollArea } from '../components/ui/scroll-area';
+
+import { MappedGameData } from '@/main/_/game-data/types/game-data-schema';
+import { GameName } from '@/main/_/game-data/types/game-name-schema';
+import { OverlayManifest } from '@/main/_/overlay-service/types';
+import { ConfiguratorBasicSetup } from '@/renderer/components/configurator/configurator-basic-setup';
+import { ConfiguratorGameFields } from '@/renderer/components/configurator/configurator-game-fields';
+import { ConfiguratorGeneratedCode } from '@/renderer/components/configurator/configurator-generated-code';
+import { ConfiguratorManifestConfig } from '@/renderer/components/configurator/configurator-manifest-config';
+import { ConfiguratorSettings } from '@/renderer/components/configurator/configurator-settings';
 import { Button } from "@/renderer/components/ui/button";
 import {
   Tabs,
@@ -7,18 +19,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/renderer/components/ui/tabs";
-import { Upload, Download, RotateCcw } from "lucide-react";
-import { ConfiguratorBasicSetup } from "@/renderer/components/configurator/configurator-basic-setup";
-import { ConfiguratorManifestConfig } from "@/renderer/components/configurator/configurator-manifest-config";
-import { ConfiguratorSettings } from "@/renderer/components/configurator/configurator-settings";
-import { ConfiguratorGameFields } from "@/renderer/components/configurator/configurator-game-fields";
-import { ConfiguratorGeneratedCode } from "@/renderer/components/configurator/configurator-generated-code";
-import { OverlayManifest } from "@/main/_/overlay-service/types";
-import { MappedGameData } from "@/main/_/game-data/types/game-data-schema";
-import { GameName } from "@/main/_/game-data/types/game-name-schema";
-import { ScrollArea } from "../components/ui/scroll-area";
 
-const MANIFEST_COOKIE_KEY = "overlay-manifest-data";
+const MANIFEST_COOKIE_KEY = 'overlay-manifest-data';
 const DEFAULT_MANIFEST_DATA = {
   defaultWidth: 200,
   defaultHeight: 200,
@@ -30,32 +32,27 @@ const DEFAULT_MANIFEST_DATA = {
   optionalFields: [],
   settings: [],
   tags: [],
-  title: "",
+  title: '',
 };
-const GAMES: GameName[] = ["iRacing"];
+const GAMES: GameName[] = ['iRacing'];
 
 const ConfiguratorRoute = () => {
-  const [devServerUrl, setDevServerUrl] = useState("http://localhost:3000");
-  const [overlayState, setOverlayState] = useState<"closed" | "open" | "edit">(
-    "closed",
-  );
-  const [manifestData, setManifestData] = useState<OverlayManifest>(
-    DEFAULT_MANIFEST_DATA,
-  );
+  const [devServerUrl, setDevServerUrl] = useState('http://localhost:3000');
+  const [overlayState, setOverlayState] = useState<'closed' | 'open' | 'edit'>('closed');
+  const [manifestData, setManifestData] = useState<OverlayManifest>(DEFAULT_MANIFEST_DATA);
   const [settingsValues, setSettingsValues] = useState<Record<string, any>>({});
 
   const [schemas, setSchemas] = useState<[GameName, MappedGameData][]>([]);
-  const [selectedGameSchema, setSelectedGameSchema] =
-    useState<MappedGameData | null>(null);
+  const [selectedGameSchema, setSelectedGameSchema] = useState<MappedGameData | null>(null);
   const [selectedGame, setSelectedGame] = useState<GameName>(GAMES[0]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    GAMES.forEach((game) => {
-      window.electron.getGameDataShape(game).then((e) => {
+    GAMES.forEach(game => {
+      window.electron.getGameDataShape(game).then(e => {
         if (e === null) return;
-        setSchemas((prev) => {
+        setSchemas(prev => {
           return [...prev, [game, e]];
         });
       });
@@ -63,7 +60,7 @@ const ConfiguratorRoute = () => {
   }, []);
 
   useEffect(() => {
-    const rec = schemas.find((e) => e[0] === selectedGame);
+    const rec = schemas.find(e => e[0] === selectedGame);
     if (rec) setSelectedGameSchema(rec[1]);
   }, [selectedGame, schemas]);
 
@@ -84,7 +81,7 @@ const ConfiguratorRoute = () => {
           setSettingsValues(defaultValues);
         }
       } catch (error) {
-        console.error("Failed to parse saved manifest:", error);
+        console.error('Failed to parse saved manifest:', error);
       }
     }
   }, []);
@@ -100,8 +97,7 @@ const ConfiguratorRoute = () => {
     if (manifestData.settings && Array.isArray(manifestData.settings)) {
       const defaultValues: Record<string, any> = {};
       manifestData.settings.forEach((setting: any) => {
-        defaultValues[setting.id] =
-          settingsValues[setting.id] ?? setting.defaultValue;
+        defaultValues[setting.id] = settingsValues[setting.id] ?? setting.defaultValue;
       });
       setSettingsValues(defaultValues);
     }
@@ -110,7 +106,7 @@ const ConfiguratorRoute = () => {
   const getCookie = (name: string): string | null => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
     return null;
   };
 
@@ -127,27 +123,27 @@ const ConfiguratorRoute = () => {
   // Handler functions for electron integration
   const handleOpenOverlay = () => {
     // This will be called by electron
-    setOverlayState("open");
+    setOverlayState('open');
   };
 
   const handleCloseOverlay = () => {
     // This will be called by electron
-    setOverlayState("closed");
+    setOverlayState('closed');
   };
 
   const handleToggleEditMode = () => {
     // This will be called by electron
-    setOverlayState((prev) => (prev === "edit" ? "open" : "edit"));
+    setOverlayState(prev => (prev === 'edit' ? 'open' : 'edit'));
   };
 
   const downloadManifest = () => {
     const blob = new Blob([JSON.stringify(manifestData, null, 2)], {
-      type: "application/json",
+      type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "manifest.json";
+    a.download = 'manifest.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -162,7 +158,7 @@ const ConfiguratorRoute = () => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         try {
           const imported = JSON.parse(e.target?.result as string);
           setManifestData({
@@ -172,7 +168,7 @@ const ConfiguratorRoute = () => {
             settings: Array.isArray(imported.settings) ? imported.settings : [], // Ensure array
           });
         } catch (error) {
-          alert("Invalid JSON file");
+          alert('Invalid JSON file');
         }
       };
       reader.readAsText(file);
@@ -181,14 +177,12 @@ const ConfiguratorRoute = () => {
 
   const resetAll = () => {
     if (
-      confirm(
-        "Are you sure you want to reset all data? This will clear all your configuration.",
-      )
+      confirm('Are you sure you want to reset all data? This will clear all your configuration.')
     ) {
       deleteCookie(MANIFEST_COOKIE_KEY);
       setManifestData(DEFAULT_MANIFEST_DATA);
       setSettingsValues({});
-      setOverlayState("closed");
+      setOverlayState('closed');
     }
   };
 
@@ -197,7 +191,7 @@ const ConfiguratorRoute = () => {
     Object.entries(settingsValues).forEach(([key, value]) => {
       params.append(key, String(value));
     });
-    return `${devServerUrl}${params.toString() ? "?" + params.toString() : ""}`;
+    return `${devServerUrl}${params.toString() ? '?' + params.toString() : ''}`;
   };
 
   return (
@@ -208,8 +202,7 @@ const ConfiguratorRoute = () => {
             <div>
               <h1 className="text-3xl font-bold">Overlay Configurator</h1>
               <p className="text-muted-foreground">
-                Configure overlays for sim-racing games loaded from Steam
-                Workshop
+                Configure overlays for sim-racing games loaded from Steam Workshop
               </p>
             </div>
             <div className="flex gap-2">
@@ -233,7 +226,7 @@ const ConfiguratorRoute = () => {
             type="file"
             accept=".json"
             onChange={handleFileImport}
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
           />
 
           <Tabs defaultValue="basic" className="space-y-6">
@@ -270,10 +263,8 @@ const ConfiguratorRoute = () => {
             <TabsContent value="settings">
               <ConfiguratorSettings
                 settings={manifestData.settings || []}
-                onSettingsChange={(settings) =>
-                  setManifestData((prev) => ({ ...prev, settings }))
-                }
-                disabled={overlayState !== "closed"}
+                onSettingsChange={settings => setManifestData(prev => ({ ...prev, settings }))}
+                disabled={overlayState !== 'closed'}
               />
             </TabsContent>
 
@@ -290,10 +281,7 @@ const ConfiguratorRoute = () => {
 
             <TabsContent value="output">
               {schemas && (
-                <ConfiguratorGeneratedCode
-                  manifestData={manifestData}
-                  schemas={schemas}
-                />
+                <ConfiguratorGeneratedCode manifestData={manifestData} schemas={schemas} />
               )}
             </TabsContent>
           </Tabs>

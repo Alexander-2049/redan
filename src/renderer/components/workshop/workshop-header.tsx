@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/renderer/components/ui/select";
+} from '@/renderer/components/ui/select';
 
 interface WorkshopHeaderProps {
   totalItems: number;

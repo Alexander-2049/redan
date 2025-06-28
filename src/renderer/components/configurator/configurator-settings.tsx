@@ -1,34 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/renderer/components/ui/button";
-import { Input } from "@/renderer/components/ui/input";
-import { Label } from "@/renderer/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/renderer/components/ui/card";
+import { Trash2, Plus, ChevronUp, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+
+import { Badge } from '@/renderer/components/ui/badge';
+import { Button } from '@/renderer/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
+import { Checkbox } from '@/renderer/components/ui/checkbox';
+import { Input } from '@/renderer/components/ui/input';
+import { Label } from '@/renderer/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/renderer/components/ui/select";
-import { Checkbox } from "@/renderer/components/ui/checkbox";
-import { Badge } from "@/renderer/components/ui/badge";
-import { Slider } from "@/renderer/components/ui/slider";
-import { Trash2, Plus, ChevronUp, ChevronDown } from "lucide-react";
+} from '@/renderer/components/ui/select';
+import { Slider } from '@/renderer/components/ui/slider';
 
 // Types based on the exact Zod schema provided
-type SettingType =
-  | "slider"
-  | "toggle"
-  | "select"
-  | "number"
-  | "string"
-  | "color";
+type SettingType = 'slider' | 'toggle' | 'select' | 'number' | 'string' | 'color';
 
 interface BaseSetting {
   id: string;
@@ -37,39 +27,39 @@ interface BaseSetting {
 }
 
 interface SliderSetting extends BaseSetting {
-  type: "slider";
+  type: 'slider';
   min: number;
   max: number;
   step: number;
-  unit?: "number" | "percentage";
+  unit?: 'number' | 'percentage';
   defaultValue: number;
 }
 
 interface ToggleSetting extends BaseSetting {
-  type: "toggle";
+  type: 'toggle';
   defaultValue: boolean;
 }
 
 interface SelectSetting extends BaseSetting {
-  type: "select";
+  type: 'select';
   selectList: Array<{ id: string; value: string }>;
   defaultValue: string; // id
 }
 
 interface NumberSetting extends BaseSetting {
-  type: "number";
+  type: 'number';
   min?: number;
   max?: number;
   defaultValue: number;
 }
 
 interface StringSetting extends BaseSetting {
-  type: "string";
+  type: 'string';
   defaultValue: string;
 }
 
 interface ColorSetting extends BaseSetting {
-  type: "color";
+  type: 'color';
   defaultValue: string; // hex color
 }
 
@@ -101,15 +91,13 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
     type: SettingType;
     group?: string;
   }>({
-    id: "",
-    name: "",
-    type: "string",
+    id: '',
+    name: '',
+    type: 'string',
   });
 
   // Local state for editing to prevent lag
-  const [localEditValues, setLocalEditValues] = useState<Record<string, any>>(
-    {},
-  );
+  const [localEditValues, setLocalEditValues] = useState<Record<string, any>>({});
   const debounceTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
 
   // Initialize local values when editing starts
@@ -118,18 +106,12 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
       const setting = safeSettings[editingIndex];
       setLocalEditValues({
         name: setting.name,
-        group: setting.group || "",
+        group: setting.group || '',
         defaultValue: setting.defaultValue,
-        min:
-          setting.type === "slider" || setting.type === "number"
-            ? setting.min
-            : "",
-        max:
-          setting.type === "slider" || setting.type === "number"
-            ? setting.max
-            : "",
-        step: setting.type === "slider" ? setting.step : "",
-        unit: setting.type === "slider" ? setting.unit || "number" : "",
+        min: setting.type === 'slider' || setting.type === 'number' ? setting.min : '',
+        max: setting.type === 'slider' || setting.type === 'number' ? setting.max : '',
+        step: setting.type === 'slider' ? setting.step : '',
+        unit: setting.type === 'slider' ? setting.unit || 'number' : '',
       });
     }
   }, [editingIndex, safeSettings]);
@@ -150,8 +132,8 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
   const addSetting = () => {
     if (newSetting.id && newSetting.name && newSetting.type) {
       // Check if ID already exists
-      if (safeSettings.some((s) => s.id === newSetting.id)) {
-        alert("Setting ID must be unique");
+      if (safeSettings.some(s => s.id === newSetting.id)) {
+        alert('Setting ID must be unique');
         return;
       }
 
@@ -164,50 +146,50 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
       let setting: SettingItem;
 
       switch (newSetting.type) {
-        case "slider":
+        case 'slider':
           setting = {
             ...baseSetting,
-            type: "slider",
+            type: 'slider',
             min: 0,
             max: 100,
             step: 1,
             defaultValue: 0, // Required
           } as SliderSetting;
           break;
-        case "toggle":
+        case 'toggle':
           setting = {
             ...baseSetting,
-            type: "toggle",
+            type: 'toggle',
             defaultValue: false, // Required
           } as ToggleSetting;
           break;
-        case "select":
+        case 'select':
           setting = {
             ...baseSetting,
-            type: "select",
-            selectList: [{ id: "option1", value: "Option 1" }], // At least one option required
-            defaultValue: "option1", // Required - must match an option ID
+            type: 'select',
+            selectList: [{ id: 'option1', value: 'Option 1' }], // At least one option required
+            defaultValue: 'option1', // Required - must match an option ID
           } as SelectSetting;
           break;
-        case "number":
+        case 'number':
           setting = {
             ...baseSetting,
-            type: "number",
+            type: 'number',
             defaultValue: 0, // Required
           } as NumberSetting;
           break;
-        case "string":
+        case 'string':
           setting = {
             ...baseSetting,
-            type: "string",
-            defaultValue: "", // Required
+            type: 'string',
+            defaultValue: '', // Required
           } as StringSetting;
           break;
-        case "color":
+        case 'color':
           setting = {
             ...baseSetting,
-            type: "color",
-            defaultValue: "#000000", // Required - must be valid hex
+            type: 'color',
+            defaultValue: '#000000', // Required - must be valid hex
           } as ColorSetting;
           break;
         default:
@@ -215,7 +197,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
       }
 
       onSettingsChange([...safeSettings, setting]);
-      setNewSetting({ id: "", name: "", type: "string" });
+      setNewSetting({ id: '', name: '', type: 'string' });
     }
   };
 
@@ -225,9 +207,9 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
     setEditingIndex(null);
   };
 
-  const moveSetting = (index: number, direction: "up" | "down") => {
+  const moveSetting = (index: number, direction: 'up' | 'down') => {
     const newSettings = [...safeSettings];
-    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
     if (targetIndex >= 0 && targetIndex < safeSettings.length) {
       [newSettings[index], newSettings[targetIndex]] = [
@@ -252,17 +234,17 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
     const newSettings = safeSettings.map((setting, i) => {
       if (i !== index) return setting;
       switch (setting.type) {
-        case "slider":
+        case 'slider':
           return { ...setting, ...(updates as Partial<SliderSetting>) };
-        case "toggle":
+        case 'toggle':
           return { ...setting, ...(updates as Partial<ToggleSetting>) };
-        case "select":
+        case 'select':
           return { ...setting, ...(updates as Partial<SelectSetting>) };
-        case "number":
+        case 'number':
           return { ...setting, ...(updates as Partial<NumberSetting>) };
-        case "string":
+        case 'string':
           return { ...setting, ...(updates as Partial<StringSetting>) };
-        case "color":
+        case 'color':
           return { ...setting, ...(updates as Partial<ColorSetting>) };
         default:
           return setting;
@@ -274,7 +256,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
   // Debounced update for text inputs
   const updateSettingDebounced = (index: number, field: string, value: any) => {
     // Update local state immediately
-    setLocalEditValues((prev) => ({ ...prev, [field]: value }));
+    setLocalEditValues(prev => ({ ...prev, [field]: value }));
 
     // Debounce the actual update
     debounceUpdate(`${index}-${field}`, value, () => {
@@ -288,15 +270,14 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
     updates: { id?: string; value?: string },
   ) => {
     const setting = safeSettings[settingIndex];
-    if (setting && setting.type === "select") {
+    if (setting && setting.type === 'select') {
       const newSelectList = setting.selectList.map((option, i) =>
         i === optionIndex ? { ...option, ...updates } : option,
       );
 
       // If we're updating the ID and it was the default value, update the default too
       const newDefaultValue =
-        updates.id &&
-        setting.defaultValue === setting.selectList[optionIndex].id
+        updates.id && setting.defaultValue === setting.selectList[optionIndex].id
           ? updates.id
           : setting.defaultValue;
 
@@ -306,31 +287,27 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
         defaultValue: newDefaultValue,
       };
 
-      const newSettings = safeSettings.map((s, i) =>
-        i === settingIndex ? updatedSetting : s,
-      );
+      const newSettings = safeSettings.map((s, i) => (i === settingIndex ? updatedSetting : s));
       onSettingsChange(newSettings);
     }
   };
 
   const removeSelectOption = (settingIndex: number, optionIndex: number) => {
     const setting = safeSettings[settingIndex];
-    if (setting && setting.type === "select") {
+    if (setting && setting.type === 'select') {
       // Don't allow removing the last option
       if (setting.selectList.length <= 1) {
-        alert("Select settings must have at least one option");
+        alert('Select settings must have at least one option');
         return;
       }
 
       const optionToRemove = setting.selectList[optionIndex];
-      const newSelectList = setting.selectList.filter(
-        (_, i) => i !== optionIndex,
-      );
+      const newSelectList = setting.selectList.filter((_, i) => i !== optionIndex);
 
       // If we're removing the default option, set default to first remaining option
       const newDefaultValue =
         setting.defaultValue === optionToRemove.id
-          ? newSelectList[0]?.id || ""
+          ? newSelectList[0]?.id || ''
           : setting.defaultValue;
 
       const updatedSetting = {
@@ -339,9 +316,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
         defaultValue: newDefaultValue,
       };
 
-      const newSettings = safeSettings.map((s, i) =>
-        i === settingIndex ? updatedSetting : s,
-      );
+      const newSettings = safeSettings.map((s, i) => (i === settingIndex ? updatedSetting : s));
       onSettingsChange(newSettings);
     }
   };
@@ -353,12 +328,10 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
 
   const renderSettingPreview = (setting: SettingItem) => {
     switch (setting.type) {
-      case "slider":
+      case 'slider':
         return (
           <div className="flex items-center gap-4 opacity-50">
-            <Label className="min-w-0 flex-shrink-0 text-sm">
-              {setting.name}
-            </Label>
+            <Label className="min-w-0 flex-shrink-0 text-sm">{setting.name}</Label>
             <div className="min-w-0 flex-1">
               <Slider
                 value={[setting.defaultValue]}
@@ -371,12 +344,12 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
             </div>
             <span className="text-muted-foreground flex-shrink-0 text-xs">
               {setting.defaultValue}
-              {setting.unit === "percentage" ? "%" : ""}
+              {setting.unit === 'percentage' ? '%' : ''}
             </span>
           </div>
         );
 
-      case "toggle":
+      case 'toggle':
         return (
           <div className="flex items-center space-x-2 opacity-50">
             <Checkbox checked={setting.defaultValue} disabled />
@@ -384,30 +357,25 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
           </div>
         );
 
-      case "select":
+      case 'select':
         return (
           <div className="flex items-center gap-4 opacity-50">
-            <Label className="min-w-0 flex-shrink-0 text-sm">
-              {setting.name}
-            </Label>
+            <Label className="min-w-0 flex-shrink-0 text-sm">{setting.name}</Label>
             <Select value={setting.defaultValue} disabled>
               <SelectTrigger className="flex-1 cursor-not-allowed">
                 <span className="text-sm">
-                  {setting.selectList.find(
-                    (opt) => opt.id === setting.defaultValue,
-                  )?.value || "Select..."}
+                  {setting.selectList.find(opt => opt.id === setting.defaultValue)?.value ||
+                    'Select...'}
                 </span>
               </SelectTrigger>
             </Select>
           </div>
         );
 
-      case "number":
+      case 'number':
         return (
           <div className="flex items-center gap-4 opacity-50">
-            <Label className="min-w-0 flex-shrink-0 text-sm">
-              {setting.name}
-            </Label>
+            <Label className="min-w-0 flex-shrink-0 text-sm">{setting.name}</Label>
             <Input
               type="number"
               value={setting.defaultValue}
@@ -417,26 +385,18 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
           </div>
         );
 
-      case "string":
+      case 'string':
         return (
           <div className="flex items-center gap-4 opacity-50">
-            <Label className="min-w-0 flex-shrink-0 text-sm">
-              {setting.name}
-            </Label>
-            <Input
-              value={setting.defaultValue}
-              disabled
-              className="flex-1 cursor-not-allowed"
-            />
+            <Label className="min-w-0 flex-shrink-0 text-sm">{setting.name}</Label>
+            <Input value={setting.defaultValue} disabled className="flex-1 cursor-not-allowed" />
           </div>
         );
 
-      case "color":
+      case 'color':
         return (
           <div className="flex items-center gap-4 opacity-50">
-            <Label className="min-w-0 flex-shrink-0 text-sm">
-              {setting.name}
-            </Label>
+            <Label className="min-w-0 flex-shrink-0 text-sm">{setting.name}</Label>
             <div className="flex flex-1 gap-2">
               <Input
                 type="color"
@@ -444,11 +404,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                 disabled
                 className="h-10 w-16 cursor-not-allowed"
               />
-              <Input
-                value={setting.defaultValue}
-                disabled
-                className="flex-1 cursor-not-allowed"
-              />
+              <Input value={setting.defaultValue} disabled className="flex-1 cursor-not-allowed" />
             </div>
           </div>
         );
@@ -460,29 +416,26 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
 
   const isSettingValid = (setting: SettingItem): boolean => {
     switch (setting.type) {
-      case "slider":
-        return (
-          setting.defaultValue >= setting.min &&
-          setting.defaultValue <= setting.max
-        );
-      case "toggle":
-        return typeof setting.defaultValue === "boolean";
-      case "select":
+      case 'slider':
+        return setting.defaultValue >= setting.min && setting.defaultValue <= setting.max;
+      case 'toggle':
+        return typeof setting.defaultValue === 'boolean';
+      case 'select':
         return (
           setting.selectList.length > 0 &&
-          setting.selectList.some((opt) => opt.id === setting.defaultValue)
+          setting.selectList.some(opt => opt.id === setting.defaultValue)
         );
-      case "number": {
+      case 'number': {
         const numValue = setting.defaultValue;
         return (
-          typeof numValue === "number" &&
+          typeof numValue === 'number' &&
           (setting.min === undefined || numValue >= setting.min) &&
           (setting.max === undefined || numValue <= setting.max)
         );
       }
-      case "string":
-        return typeof setting.defaultValue === "string";
-      case "color":
+      case 'string':
+        return typeof setting.defaultValue === 'string';
+      case 'color':
         return validateColorValue(setting.defaultValue);
       default:
         return false;
@@ -491,7 +444,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
 
   const addSelectOption = (settingIndex: number) => {
     const setting = safeSettings[settingIndex];
-    if (setting && setting.type === "select") {
+    if (setting && setting.type === 'select') {
       const newSelectList = [
         ...setting.selectList,
         {
@@ -505,9 +458,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
         selectList: newSelectList,
       };
 
-      const newSettings = safeSettings.map((s, i) =>
-        i === settingIndex ? updatedSetting : s,
-      );
+      const newSettings = safeSettings.map((s, i) => (i === settingIndex ? updatedSetting : s));
       onSettingsChange(newSettings);
     }
   };
@@ -517,8 +468,8 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
       {disabled && (
         <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
           <p className="text-sm text-yellow-800">
-            Settings configuration is disabled while the overlay is running.
-            Close the overlay to make changes.
+            Settings configuration is disabled while the overlay is running. Close the overlay to
+            make changes.
           </p>
         </div>
       )}
@@ -534,9 +485,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
               <Input
                 id="setting-id"
                 value={newSetting.id}
-                onChange={(e) =>
-                  setNewSetting({ ...newSetting, id: e.target.value })
-                }
+                onChange={e => setNewSetting({ ...newSetting, id: e.target.value })}
                 placeholder="unique_id"
                 disabled={disabled}
               />
@@ -546,9 +495,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
               <Input
                 id="setting-name"
                 value={newSetting.name}
-                onChange={(e) =>
-                  setNewSetting({ ...newSetting, name: e.target.value })
-                }
+                onChange={e => setNewSetting({ ...newSetting, name: e.target.value })}
                 placeholder="Display Name"
                 disabled={disabled}
               />
@@ -580,18 +527,13 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
             <Label htmlFor="setting-group">Group (Optional)</Label>
             <Input
               id="setting-group"
-              value={newSetting.group || ""}
-              onChange={(e) =>
-                setNewSetting({ ...newSetting, group: e.target.value })
-              }
+              value={newSetting.group || ''}
+              onChange={e => setNewSetting({ ...newSetting, group: e.target.value })}
               placeholder="Group name"
               disabled={disabled}
             />
           </div>
-          <Button
-            onClick={addSetting}
-            disabled={!newSetting.id || !newSetting.name || disabled}
-          >
+          <Button onClick={addSetting} disabled={!newSetting.id || !newSetting.name || disabled}>
             <Plus className="mr-2 h-4 w-4" />
             Add Setting
           </Button>
@@ -612,12 +554,8 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   <Badge variant="secondary">{setting.type}</Badge>
                   <span className="truncate font-medium">{setting.name}</span>
-                  <span className="text-muted-foreground text-sm">
-                    ({setting.id})
-                  </span>
-                  {setting.group && (
-                    <Badge variant="outline">{setting.group}</Badge>
-                  )}
+                  <span className="text-muted-foreground text-sm">({setting.id})</span>
+                  {setting.group && <Badge variant="outline">{setting.group}</Badge>}
                   {!isSettingValid(setting) && (
                     <Badge variant="destructive" className="text-xs">
                       Invalid
@@ -628,7 +566,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => moveSetting(index, "up")}
+                    onClick={() => moveSetting(index, 'up')}
                     disabled={index === 0 || disabled}
                   >
                     <ChevronUp className="h-4 w-4" />
@@ -636,7 +574,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => moveSetting(index, "down")}
+                    onClick={() => moveSetting(index, 'down')}
                     disabled={index === safeSettings.length - 1 || disabled}
                   >
                     <ChevronDown className="h-4 w-4" />
@@ -644,12 +582,10 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() =>
-                      setEditingIndex(editingIndex === index ? null : index)
-                    }
+                    onClick={() => setEditingIndex(editingIndex === index ? null : index)}
                     disabled={disabled}
                   >
-                    {editingIndex === index ? "Done" : "Edit"}
+                    {editingIndex === index ? 'Done' : 'Edit'}
                   </Button>
                   <Button
                     size="sm"
@@ -677,9 +613,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                       <Label>Name</Label>
                       <Input
                         value={localEditValues.name || setting.name}
-                        onChange={(e) =>
-                          updateSettingDebounced(index, "name", e.target.value)
-                        }
+                        onChange={e => updateSettingDebounced(index, 'name', e.target.value)}
                         onBlur={() =>
                           updateSetting(index, {
                             name: localEditValues.name || setting.name,
@@ -693,14 +627,12 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                         value={
                           localEditValues.group !== undefined
                             ? localEditValues.group
-                            : setting.group || ""
+                            : setting.group || ''
                         }
-                        onChange={(e) =>
-                          updateSettingDebounced(index, "group", e.target.value)
-                        }
+                        onChange={e => updateSettingDebounced(index, 'group', e.target.value)}
                         onBlur={() =>
                           updateSetting(index, {
-                            group: localEditValues.group || "",
+                            group: localEditValues.group || '',
                           })
                         }
                       />
@@ -708,23 +640,17 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                   </div>
 
                   {/* Type-specific fields */}
-                  {setting.type === "slider" && (
+                  {setting.type === 'slider' && (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                       <div>
                         <Label>Min</Label>
                         <Input
                           type="number"
                           value={
-                            localEditValues.min !== undefined
-                              ? localEditValues.min
-                              : setting.min
+                            localEditValues.min !== undefined ? localEditValues.min : setting.min
                           }
-                          onChange={(e) =>
-                            updateSettingDebounced(
-                              index,
-                              "min",
-                              Number(e.target.value),
-                            )
+                          onChange={e =>
+                            updateSettingDebounced(index, 'min', Number(e.target.value))
                           }
                           onBlur={() =>
                             updateSetting(index, {
@@ -738,16 +664,10 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                         <Input
                           type="number"
                           value={
-                            localEditValues.max !== undefined
-                              ? localEditValues.max
-                              : setting.max
+                            localEditValues.max !== undefined ? localEditValues.max : setting.max
                           }
-                          onChange={(e) =>
-                            updateSettingDebounced(
-                              index,
-                              "max",
-                              Number(e.target.value),
-                            )
+                          onChange={e =>
+                            updateSettingDebounced(index, 'max', Number(e.target.value))
                           }
                           onBlur={() =>
                             updateSetting(index, {
@@ -762,21 +682,14 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                           type="number"
                           step="0.1"
                           value={
-                            localEditValues.step !== undefined
-                              ? localEditValues.step
-                              : setting.step
+                            localEditValues.step !== undefined ? localEditValues.step : setting.step
                           }
-                          onChange={(e) =>
-                            updateSettingDebounced(
-                              index,
-                              "step",
-                              Number(e.target.value),
-                            )
+                          onChange={e =>
+                            updateSettingDebounced(index, 'step', Number(e.target.value))
                           }
                           onBlur={() =>
                             updateSetting(index, {
-                              step:
-                                Number(localEditValues.step) || setting.step,
+                              step: Number(localEditValues.step) || setting.step,
                             })
                           }
                         />
@@ -784,10 +697,8 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                       <div>
                         <Label>Unit</Label>
                         <Select
-                          value={
-                            localEditValues.unit || setting.unit || "number"
-                          }
-                          onValueChange={(value: "number" | "percentage") =>
+                          value={localEditValues.unit || setting.unit || 'number'}
+                          onValueChange={(value: 'number' | 'percentage') =>
                             updateSetting(index, { unit: value })
                           }
                         >
@@ -796,16 +707,14 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="number">Number</SelectItem>
-                            <SelectItem value="percentage">
-                              Percentage
-                            </SelectItem>
+                            <SelectItem value="percentage">Percentage</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                   )}
 
-                  {setting.type === "number" && (
+                  {setting.type === 'number' && (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <Label>Min (Optional)</Label>
@@ -814,22 +723,18 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                           value={
                             localEditValues.min !== undefined
                               ? localEditValues.min
-                              : setting.min || ""
+                              : setting.min || ''
                           }
-                          onChange={(e) =>
+                          onChange={e =>
                             updateSettingDebounced(
                               index,
-                              "min",
-                              e.target.value
-                                ? Number(e.target.value)
-                                : undefined,
+                              'min',
+                              e.target.value ? Number(e.target.value) : undefined,
                             )
                           }
                           onBlur={() =>
                             updateSetting(index, {
-                              min: localEditValues.min
-                                ? Number(localEditValues.min)
-                                : undefined,
+                              min: localEditValues.min ? Number(localEditValues.min) : undefined,
                             })
                           }
                         />
@@ -841,22 +746,18 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                           value={
                             localEditValues.max !== undefined
                               ? localEditValues.max
-                              : setting.max || ""
+                              : setting.max || ''
                           }
-                          onChange={(e) =>
+                          onChange={e =>
                             updateSettingDebounced(
                               index,
-                              "max",
-                              e.target.value
-                                ? Number(e.target.value)
-                                : undefined,
+                              'max',
+                              e.target.value ? Number(e.target.value) : undefined,
                             )
                           }
                           onBlur={() =>
                             updateSetting(index, {
-                              max: localEditValues.max
-                                ? Number(localEditValues.max)
-                                : undefined,
+                              max: localEditValues.max ? Number(localEditValues.max) : undefined,
                             })
                           }
                         />
@@ -864,28 +765,22 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                     </div>
                   )}
 
-                  {setting.type === "select" && (
+                  {setting.type === 'select' && (
                     <div>
                       <div className="mb-2 flex items-center justify-between">
                         <Label>Select Options</Label>
-                        <Button
-                          size="sm"
-                          onClick={() => addSelectOption(index)}
-                        >
+                        <Button size="sm" onClick={() => addSelectOption(index)}>
                           <Plus className="mr-2 h-4 w-4" />
                           Add Option
                         </Button>
                       </div>
                       <div className="space-y-2">
                         {setting.selectList.map((option, optionIndex) => (
-                          <div
-                            key={`${setting.id}-${optionIndex}`}
-                            className="flex gap-2"
-                          >
+                          <div key={`${setting.id}-${optionIndex}`} className="flex gap-2">
                             <Input
                               placeholder="Option ID"
                               value={option.id}
-                              onChange={(e) =>
+                              onChange={e =>
                                 updateSelectOption(index, optionIndex, {
                                   id: e.target.value,
                                 })
@@ -894,7 +789,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                             <Input
                               placeholder="Option Value"
                               value={option.value}
-                              onChange={(e) =>
+                              onChange={e =>
                                 updateSelectOption(index, optionIndex, {
                                   value: e.target.value,
                                 })
@@ -903,9 +798,7 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() =>
-                                removeSelectOption(index, optionIndex)
-                              }
+                              onClick={() => removeSelectOption(index, optionIndex)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -917,31 +810,27 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
 
                   <div>
                     <Label>Default Value</Label>
-                    {setting.type === "toggle" ? (
+                    {setting.type === 'toggle' ? (
                       <div className="mt-2 flex items-center space-x-2">
                         <Checkbox
                           checked={setting.defaultValue}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={checked =>
                             updateSetting(index, { defaultValue: checked })
                           }
                         />
-                        <span>{setting.defaultValue ? "True" : "False"}</span>
+                        <span>{setting.defaultValue ? 'True' : 'False'}</span>
                       </div>
-                    ) : setting.type === "color" ? (
+                    ) : setting.type === 'color' ? (
                       <div className="space-y-2">
                         <Input
                           type="color"
                           value={setting.defaultValue}
-                          onChange={(e) => {
-                            debounceUpdate(
-                              `color-${index}`,
-                              e.target.value,
-                              () => {
-                                updateSetting(index, {
-                                  defaultValue: e.target.value,
-                                });
-                              },
-                            );
+                          onChange={e => {
+                            debounceUpdate(`color-${index}`, e.target.value, () => {
+                              updateSetting(index, {
+                                defaultValue: e.target.value,
+                              });
+                            });
                           }}
                         />
                         <Input
@@ -950,44 +839,35 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                               ? localEditValues.defaultValue
                               : setting.defaultValue
                           }
-                          onChange={(e) => {
+                          onChange={e => {
                             const value = e.target.value;
-                            setLocalEditValues((prev) => ({
+                            setLocalEditValues(prev => ({
                               ...prev,
                               defaultValue: value,
                             }));
-                            if (value === "" || validateColorValue(value)) {
-                              debounceUpdate(
-                                `color-text-${index}`,
-                                value,
-                                () => {
-                                  updateSetting(index, { defaultValue: value });
-                                },
-                              );
+                            if (value === '' || validateColorValue(value)) {
+                              debounceUpdate(`color-text-${index}`, value, () => {
+                                updateSetting(index, { defaultValue: value });
+                              });
                             }
                           }}
                           placeholder="#000000"
                           pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
                         />
-                        {setting.defaultValue &&
-                          !validateColorValue(setting.defaultValue) && (
-                            <p className="text-sm text-red-600">
-                              Invalid hex color format
-                            </p>
-                          )}
+                        {setting.defaultValue && !validateColorValue(setting.defaultValue) && (
+                          <p className="text-sm text-red-600">Invalid hex color format</p>
+                        )}
                       </div>
-                    ) : setting.type === "select" ? (
+                    ) : setting.type === 'select' ? (
                       <Select
                         value={setting.defaultValue}
-                        onValueChange={(value) =>
-                          updateSetting(index, { defaultValue: value })
-                        }
+                        onValueChange={value => updateSetting(index, { defaultValue: value })}
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {setting.selectList.map((option) => (
+                          {setting.selectList.map(option => (
                             <SelectItem key={option.id} value={option.id}>
                               {option.value}
                             </SelectItem>
@@ -997,22 +877,19 @@ export const ConfiguratorSettings: React.FC<SettingsConfiguratorProps> = ({
                     ) : (
                       <Input
                         type={
-                          setting.type === "number" || setting.type === "slider"
-                            ? "number"
-                            : "text"
+                          setting.type === 'number' || setting.type === 'slider' ? 'number' : 'text'
                         }
                         value={
                           localEditValues.defaultValue !== undefined
                             ? localEditValues.defaultValue
                             : setting.defaultValue
                         }
-                        onChange={(e) => {
+                        onChange={e => {
                           const value =
-                            setting.type === "number" ||
-                            setting.type === "slider"
+                            setting.type === 'number' || setting.type === 'slider'
                               ? Number(e.target.value)
                               : e.target.value;
-                          updateSettingDebounced(index, "defaultValue", value);
+                          updateSettingDebounced(index, 'defaultValue', value);
                         }}
                         onBlur={() =>
                           updateSetting(index, {

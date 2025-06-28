@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export const fetchWorkshopDownloadInfo = async (itemId: bigint) => {
   return window.steam.workshopDownloadInfo(itemId);
@@ -6,7 +6,7 @@ export const fetchWorkshopDownloadInfo = async (itemId: bigint) => {
 
 export const useWorkshopDownloadInfo = (itemId: bigint | null) => {
   return useQuery({
-    queryKey: ["steam-workshop-download-info", itemId?.toString()],
+    queryKey: ['steam-workshop-download-info', itemId?.toString()],
     queryFn: () => {
       if (itemId) return fetchWorkshopDownloadInfo(itemId);
       else return null;

@@ -1,11 +1,11 @@
-import { Minus, X, Square, Home } from "@mynaui/icons-react";
-import { Link } from "react-router-dom";
+import { Minus, X, Square, Home } from '@mynaui/icons-react';
+import { Link } from 'react-router-dom';
 
 const TitleBar = () => {
   const buttonClassName =
-    "flex h-full w-12 items-center justify-center hover:cursor-default transition-colors duration-200";
-  const buttonHoverEffect = "hover:bg-slate-300";
-  const closeButtonHoverEffect = "hover:bg-red-500";
+    'flex h-full w-12 items-center justify-center hover:cursor-default transition-colors duration-200';
+  const buttonHoverEffect = 'hover:bg-slate-300';
+  const closeButtonHoverEffect = 'hover:bg-red-500';
   const iconSize = 16;
 
   return (
@@ -13,16 +13,14 @@ const TitleBar = () => {
       <div className="grow">
         <Link
           to="/"
-          className={[buttonClassName, buttonHoverEffect]
-            .join(" ")
-            .replace("w-12", "w-9")}
+          className={[buttonClassName, buttonHoverEffect].join(' ').replace('w-12', 'w-9')}
         >
           <Home width={iconSize} />
         </Link>
       </div>
       <div className="flex h-full flex-row">
         <button
-          className={[buttonClassName, buttonHoverEffect].join(" ")}
+          className={[buttonClassName, buttonHoverEffect].join(' ')}
           onClick={() => {
             window.actions.minimize();
           }}
@@ -30,7 +28,7 @@ const TitleBar = () => {
           <Minus width={iconSize} />
         </button>
         <button
-          className={[buttonClassName, buttonHoverEffect].join(" ")}
+          className={[buttonClassName, buttonHoverEffect].join(' ')}
           onClick={() => {
             window.actions.restore();
           }}
@@ -38,7 +36,7 @@ const TitleBar = () => {
           <Square width={iconSize / 1.3} />
         </button>
         <button
-          className={[buttonClassName, closeButtonHoverEffect].join(" ")}
+          className={[buttonClassName, closeButtonHoverEffect].join(' ')}
           onClick={() => {
             window.actions.close();
           }}

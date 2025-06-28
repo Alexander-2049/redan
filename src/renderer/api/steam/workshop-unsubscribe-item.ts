@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   item: bigint;
@@ -16,16 +16,15 @@ export const useWorkshopUnsubscribeItem = () => {
 
     onMutate: async ({ item }) => {
       await queryClient.cancelQueries({
-        queryKey: ["steam-workshop-subscribed-item-list"],
+        queryKey: ['steam-workshop-subscribed-item-list'],
       });
 
       const previousItems = queryClient.getQueryData<bigint[]>([
-        "steam-workshop-subscribed-item-list",
+        'steam-workshop-subscribed-item-list',
       ]);
 
-      queryClient.setQueryData<bigint[]>(
-        ["steam-workshop-subscribed-item-list"],
-        (old = []) => old.filter((i) => i !== item),
+      queryClient.setQueryData<bigint[]>(['steam-workshop-subscribed-item-list'], (old = []) =>
+        old.filter(i => i !== item),
       );
 
       return { previousItems };
@@ -33,16 +32,13 @@ export const useWorkshopUnsubscribeItem = () => {
 
     onError: (_err, _variables, context) => {
       if (context?.previousItems) {
-        queryClient.setQueryData(
-          ["steam-workshop-subscribed-item-list"],
-          context.previousItems,
-        );
+        queryClient.setQueryData(['steam-workshop-subscribed-item-list'], context.previousItems);
       }
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["steam-workshop-subscribed-item-list"],
+        queryKey: ['steam-workshop-subscribed-item-list'],
       });
     },
   });

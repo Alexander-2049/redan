@@ -1,10 +1,19 @@
-import type React from 'react';
-
-import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Trash2 } from 'lucide-react';
-import { Input } from '@/renderer/components/ui/input';
-import { Textarea } from '@/renderer/components/ui/textarea';
-import { ScrollArea } from '@/renderer/components/ui/scroll-area';
+import type React from 'react';
+import { useState, useEffect } from 'react';
+
+import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
+
+import type {
+  ILayoutOverlay,
+  ILayoutOverlaySetting,
+  ILayoutOverlaySettingValue,
+} from '@/main/_/layout-service/schemas/overlaySchema';
+import type { OverlaySettingDescription } from '@/main/_/overlay-service/types';
+import { useLayouts } from '@/renderer/api/layouts/get-layouts';
+import { useModifyLayout } from '@/renderer/api/layouts/modify-layout';
+import { useOverlays } from '@/renderer/api/overlays/get-overlays';
 import {
   Accordion,
   AccordionContent,
@@ -12,8 +21,11 @@ import {
   AccordionTrigger,
 } from '@/renderer/components/ui/accordion';
 import { Card, CardContent } from '@/renderer/components/ui/card';
-import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
+import { Input } from '@/renderer/components/ui/input';
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
+import { Textarea } from '@/renderer/components/ui/textarea';
+
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,16 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/renderer/components/ui/alert-dialog';
-import { useLayouts } from '@/renderer/api/layouts/get-layouts';
-import { useOverlays } from '@/renderer/api/overlays/get-overlays';
-import { useModifyLayout } from '@/renderer/api/layouts/modify-layout';
 import { Separator } from '@/renderer/components/ui/separator';
-import type {
-  ILayoutOverlay,
-  ILayoutOverlaySetting,
-  ILayoutOverlaySettingValue,
-} from '@/main/_/layout-service/schemas/overlaySchema';
-import type { OverlaySettingDescription } from '@/main/_/overlay-service/types';
 import type { OverlayAndFolderName } from '@/shared/types/overlay-and-folder-name';
 
 const LayoutSettings = () => {

@@ -26,30 +26,31 @@
  * ```
  */
 
-import "./index.css";
-import "./styles/globals.css";
-import Main from "./routes";
-import React from "react";
-import DashboardRoute from "./routes/dashboard-route";
-import { createRoot } from "react-dom/client";
-import { createHashRouter } from "react-router-dom";
-import { Toaster } from "./components/ui/sonner";
-import { Provider } from "react-redux";
-import { store } from "./store"; // путь к твоему store.ts
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "./styles/fonts.css";
+import './index.css';
+import './styles/globals.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { createHashRouter } from 'react-router-dom';
+
+import { Toaster } from './components/ui/sonner';
+import Main from './routes';
+import DashboardRoute from './routes/dashboard-route';
+import { store } from './store'; // путь к твоему store.ts
+import './styles/fonts.css';
 
 export const router = createHashRouter([
   {
-    path: "/",
+    path: '/',
     element: <DashboardRoute />,
   },
 ]);
 
 const queryClient = new QueryClient();
 
-const app = document.getElementById("app");
-if (!app) throw new Error("root element with app id was not found");
+const app = document.getElementById('app');
+if (!app) throw new Error('root element with app id was not found');
 
 const root = createRoot(app);
 

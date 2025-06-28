@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export const getLayouts = () => {
   return window.electron.getLayouts();
@@ -6,7 +6,7 @@ export const getLayouts = () => {
 
 export const useLayouts = () => {
   return useQuery({
-    queryKey: ["layouts"],
+    queryKey: ['layouts'],
     queryFn: getLayouts,
   });
 };

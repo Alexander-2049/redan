@@ -1,5 +1,3 @@
-import { Button } from "@/renderer/components/ui/button";
-import { Badge } from "@/renderer/components/ui/badge";
 import {
   Star,
   Download,
@@ -10,14 +8,15 @@ import {
   // ThumbsDown,
   // MessageCircle,
   X,
-} from "lucide-react";
-import { ScrollArea } from "@/renderer/components/ui/scroll-area";
+} from 'lucide-react';
+
+import { Progress } from '../ui/progress';
+
+import { Badge } from '@/renderer/components/ui/badge';
+import { Button } from '@/renderer/components/ui/button';
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 // import { useState } from "react";
-import {
-  DownloadInfo,
-  WorkshopItem,
-} from "@/shared/schemas/steamworks-schemas";
-import { Progress } from "../ui/progress";
+import { DownloadInfo, WorkshopItem } from '@/shared/schemas/steamworks-schemas';
 
 interface Item extends WorkshopItem {
   author?: string;
@@ -43,7 +42,7 @@ interface WorkshopPreviewProps {
   onClose: () => void;
   onSubscribe: (itemId: bigint) => void;
   onUnsubscribe: (itemId: bigint) => void;
-  onRate: (itemId: bigint, rating: "like" | "dislike") => void;
+  onRate: (itemId: bigint, rating: 'like' | 'dislike') => void;
   downloadInfo: DownloadInfo | null;
 }
 
@@ -58,10 +57,7 @@ export function WorkshopPreview({
 }: WorkshopPreviewProps) {
   // const [userRating, setUserRating] = useState<"like" | "dislike" | null>(null);
   const totalVotes = item.numUpvotes + item.numDownvotes;
-  const rating =
-    totalVotes === 0
-      ? 0
-      : Math.round((item.numUpvotes / totalVotes) * 5 * 10) / 10;
+  const rating = totalVotes === 0 ? 0 : Math.round((item.numUpvotes / totalVotes) * 5 * 10) / 10;
 
   if (!item) return null;
 
@@ -77,7 +73,7 @@ export function WorkshopPreview({
           <div className="space-y-4 p-4">
             <div className="relative aspect-square">
               <img
-                src={item.previewUrl || "/placeholder.svg?height=300&width=300"}
+                src={item.previewUrl || '/placeholder.svg?height=300&width=300'}
                 alt={item.title}
                 className="h-full w-full rounded-lg object-cover"
               />
@@ -91,16 +87,12 @@ export function WorkshopPreview({
             <div className="flex items-center space-x-4 text-sm text-gray-600">
               <div className="flex items-center">
                 <Star className="mr-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span>
-                  {totalVotes < 5 ? "Not enough votes" : rating.toFixed(1)}
-                </span>
+                <span>{totalVotes < 5 ? 'Not enough votes' : rating.toFixed(1)}</span>
               </div>
               {item.statistics.numSubscriptions !== undefined && (
                 <div className="flex items-center">
                   <Download className="mr-1 h-4 w-4" />
-                  <span>
-                    {Number(item.statistics.numSubscriptions).toLocaleString()}
-                  </span>
+                  <span>{Number(item.statistics.numSubscriptions).toLocaleString()}</span>
                 </div>
               )}
             </div>
@@ -133,28 +125,18 @@ export function WorkshopPreview({
                       <span>Downloading...</span>
                       <span>
                         {Math.round(
-                          (Number(downloadInfo.current) /
-                            Number(downloadInfo.total)) *
-                            100,
+                          (Number(downloadInfo.current) / Number(downloadInfo.total)) * 100,
                         )}
                         %
                       </span>
                     </div>
                     <Progress
-                      value={
-                        (Number(downloadInfo.current) /
-                          Number(downloadInfo.total)) *
-                        100
-                      }
+                      value={(Number(downloadInfo.current) / Number(downloadInfo.total)) * 100}
                       className="w-full"
                     />
                     <div className="text-center text-xs text-gray-500">
-                      {(Number(downloadInfo.current) / (1024 * 1024)).toFixed(
-                        1,
-                      )}{" "}
-                      MB /{" "}
-                      {(Number(downloadInfo.total) / (1024 * 1024)).toFixed(1)}{" "}
-                      MB
+                      {(Number(downloadInfo.current) / (1024 * 1024)).toFixed(1)} MB /{' '}
+                      {(Number(downloadInfo.total) / (1024 * 1024)).toFixed(1)} MB
                     </div>
                   </div>
                 )}
@@ -213,12 +195,12 @@ export function WorkshopPreview({
               </Button>
             </div> */}
 
-            {item.tags.filter((e) => e !== "").length > 0 && (
+            {item.tags.filter(e => e !== '').length > 0 && (
               <div className="space-y-2">
                 <h4 className="font-semibold text-gray-900">Tags</h4>
                 <div className="flex flex-wrap gap-1">
-                  {item.tags.map((tag) => {
-                    if (tag === "") return;
+                  {item.tags.map(tag => {
+                    if (tag === '') return;
                     else
                       return (
                         <Badge
@@ -237,9 +219,7 @@ export function WorkshopPreview({
             {item.description && (
               <div className="space-y-2">
                 <h4 className="font-semibold text-gray-900">Description</h4>
-                <p className="text-sm leading-relaxed text-gray-600">
-                  {item.description}
-                </p>
+                <p className="text-sm leading-relaxed text-gray-600">{item.description}</p>
               </div>
             )}
 

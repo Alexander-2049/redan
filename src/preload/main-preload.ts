@@ -1,8 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { IPC_CHANNELS } from '@/shared/ipc-channels';
-import { WorkshopItemQueryConfig } from '@/shared/schemas/steamworks-schemas';
+
 import { GameName } from '@/main/shared/types/GameName';
 import { LayoutFile } from '@/main/shared/types/LayoutFile';
+import { IPC_CHANNELS } from '@/shared/ipc-channels';
+import { WorkshopItemQueryConfig } from '@/shared/schemas/steamworks-schemas';
 
 contextBridge.exposeInMainWorld('electron', {
   getLayouts: () => ipcRenderer.invoke(IPC_CHANNELS.GET_LAYOUTS),

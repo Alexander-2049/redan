@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
-import { Button } from "@/renderer/components/ui/button";
-import { Label } from "@/renderer/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/renderer/components/ui/card";
-import { Badge } from "@/renderer/components/ui/badge";
-import { Textarea } from "@/renderer/components/ui/textarea";
-import { OverlayManifest } from "@/main/_/overlay-service/types";
-import { GameName } from "@/main/_/game-data/types/game-name-schema";
-import { MappedGameData } from "@/main/_/game-data/types/game-data-schema";
+import { useState } from 'react';
+
+import { MappedGameData } from '@/main/_/game-data/types/game-data-schema';
+import { GameName } from '@/main/_/game-data/types/game-name-schema';
+import { OverlayManifest } from '@/main/_/overlay-service/types';
+import { Badge } from '@/renderer/components/ui/badge';
+import { Button } from '@/renderer/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
+import { Label } from '@/renderer/components/ui/label';
+import { Textarea } from '@/renderer/components/ui/textarea';
 
 interface GeneratedCodeProps {
   manifestData: OverlayManifest;
@@ -23,20 +19,20 @@ export const ConfiguratorGeneratedCode: React.FC<GeneratedCodeProps> = ({
   manifestData,
   schemas: gameSchemas,
 }) => {
-  const [generatedHook, setGeneratedHook] = useState<string>("");
+  const [generatedHook, setGeneratedHook] = useState<string>('');
 
   const generateTypedHookCode = () => {
     const requiredFields = manifestData.requiredFields;
     const optionalFields = manifestData.optionalFields;
     const allFields = [...requiredFields, ...optionalFields];
-    const fieldsString = allFields.map((field) => `"${field}"`).join(", ");
+    const fieldsString = allFields.map(field => `"${field}"`).join(', ');
 
     // Parse field paths to create nested interfaces
     const parseFieldPaths = (fields: string[]) => {
       const structure: any = {};
 
-      fields.forEach((field) => {
-        const parts = field.split(".");
+      fields.forEach(field => {
+        const parts = field.split('.');
         let current = structure;
 
         for (let i = 0; i < parts.length - 1; i++) {
@@ -60,78 +56,71 @@ export const ConfiguratorGeneratedCode: React.FC<GeneratedCodeProps> = ({
     };
 
     // Generate TypeScript interfaces from structure
-    const generateInterfaces = (
-      structure: any,
-      interfaceName = "OverlayData",
-    ): string => {
-      let interfaces = "";
+    const generateInterfaces = (structure: any, interfaceName = 'OverlayData'): string => {
+      let interfaces = '';
       const properties: string[] = [];
 
       Object.entries(structure).forEach(([key, value]: [string, any]) => {
         if (value.type) {
           // Leaf property
-          const optional = value.optional ? "?" : "";
+          const optional = value.optional ? '?' : '';
           properties.push(`  ${key}${optional}: ${value.type};`);
         } else {
           // Nested object - always create a proper interface
-          const nestedInterfaceName =
-            key.charAt(0).toUpperCase() + key.slice(1);
-          const nestedInterface = generateInterfaces(
-            value,
-            nestedInterfaceName,
-          );
-          interfaces += nestedInterface + "\n";
+          const nestedInterfaceName = key.charAt(0).toUpperCase() + key.slice(1);
+          const nestedInterface = generateInterfaces(value, nestedInterfaceName);
+          interfaces += nestedInterface + '\n';
           properties.push(`  ${key}: ${nestedInterfaceName};`);
         }
       });
 
-      return `interface ${interfaceName} {\n${properties.join("\n")}\n}${interfaces ? "\n" + interfaces : ""}`;
+      return `interface ${interfaceName} {\n${properties.join('\n')}\n}${interfaces ? '\n' + interfaces : ''}`;
     };
 
     // Generate field type inference
     const generateFieldType = (field: string): string => {
       const fieldLower = field.toLowerCase();
       if (
-        fieldLower.includes("time") ||
-        fieldLower.includes("temp") ||
-        fieldLower.includes("speed") ||
-        fieldLower.includes("rpm") ||
-        fieldLower.includes("gear") ||
-        fieldLower.includes("fuel") ||
-        fieldLower.includes("throttle") ||
-        fieldLower.includes("brake") ||
-        fieldLower.includes("position") ||
-        fieldLower.includes("rating") ||
-        fieldLower.includes("pct") ||
-        fieldLower.includes("dist") ||
-        fieldLower.includes("lap") ||
-        fieldLower.includes("delta")
+        fieldLower.includes('time') ||
+        fieldLower.includes('temp') ||
+        fieldLower.includes('speed') ||
+        fieldLower.includes('rpm') ||
+        fieldLower.includes('gear') ||
+        fieldLower.includes('fuel') ||
+        fieldLower.includes('throttle') ||
+        fieldLower.includes('brake') ||
+        fieldLower.includes('position') ||
+        fieldLower.includes('rating') ||
+        fieldLower.includes('pct') ||
+        fieldLower.includes('dist') ||
+        fieldLower.includes('lap') ||
+        fieldLower.includes('delta')
       )
-        return "number";
+        return 'number';
       if (
-        fieldLower.includes("name") ||
-        fieldLower.includes("string") ||
-        fieldLower.includes("class") ||
-        fieldLower.includes("lic") ||
-        fieldLower.includes("units")
+        fieldLower.includes('name') ||
+        fieldLower.includes('string') ||
+        fieldLower.includes('class') ||
+        fieldLower.includes('lic') ||
+        fieldLower.includes('units')
       )
-        return "string";
+        return 'string';
       if (
-        fieldLower.includes("active") ||
-        fieldLower.includes("track") ||
-        fieldLower.includes("replay") ||
-        fieldLower.includes("ok")
+        fieldLower.includes('active') ||
+        fieldLower.includes('track') ||
+        fieldLower.includes('replay') ||
+        fieldLower.includes('ok')
       )
-        return "boolean";
-      return "unknown";
+        return 'boolean';
+      return 'unknown';
     };
 
     // Build nested object from flat field paths
     const buildNestedObject = (fields: string[]) => {
       const result: any = {};
 
-      fields.forEach((field) => {
-        const parts = field.split(".");
+      fields.forEach(field => {
+        const parts = field.split('.');
         let current = result;
 
         for (let i = 0; i < parts.length - 1; i++) {
@@ -148,20 +137,13 @@ export const ConfiguratorGeneratedCode: React.FC<GeneratedCodeProps> = ({
     };
 
     // Generate object construction code
-    const generateObjectConstruction = (obj: any, indent = "    "): string => {
+    const generateObjectConstruction = (obj: any, indent = '    '): string => {
       const entries = Object.entries(obj).map(([key, value]) => {
-        if (
-          typeof value === "object" &&
-          value !== null &&
-          !value.toString().startsWith("data[")
-        ) {
-          return `${indent}${key}: {\n${generateObjectConstruction(value, indent + "  ")}\n${indent}}`;
+        if (typeof value === 'object' && value !== null && !value.toString().startsWith('data[')) {
+          return `${indent}${key}: {\n${generateObjectConstruction(value, indent + '  ')}\n${indent}}`;
         } else {
           // Add type assertion for the field
-          const fieldPath = (value as string)
-            .toString()
-            .replace('data["', "")
-            .replace('"]', "");
+          const fieldPath = (value as string).toString().replace('data["', '').replace('"]', '');
           const fieldType = generateFieldType(fieldPath);
           const isOptional = optionalFields.includes(fieldPath);
 
@@ -173,7 +155,7 @@ export const ConfiguratorGeneratedCode: React.FC<GeneratedCodeProps> = ({
         }
       });
 
-      return entries.join(",\n");
+      return entries.join(',\n');
     };
 
     const structure = parseFieldPaths(allFields);
@@ -188,7 +170,7 @@ ${interfaces}
 const useOverlayData = () => {
   const url = "ws://localhost:49791";
   const params = [${fieldsString}];
-  const requiredFields = [${requiredFields.map((f) => `"${f}"`).join(", ")}];
+  const requiredFields = [${requiredFields.map(f => `"${f}"`).join(', ')}];
 
   const [data, setData] = useState<Record<string, unknown>>({});
   const [error, setError] = useState<string | null>(null);
@@ -277,7 +259,7 @@ export default useOverlayData;
 // 
 // data will be null until all required fields are received
 // Once available, data will have the structure:
-${allFields.map((field) => `// data.${field} // ${generateFieldType(field)}${optionalFields.includes(field) ? " | null" : ""}`).join("\n")}`;
+${allFields.map(field => `// data.${field} // ${generateFieldType(field)}${optionalFields.includes(field) ? ' | null' : ''}`).join('\n')}`;
 
     setGeneratedHook(hookCode);
   };
@@ -287,14 +269,14 @@ ${allFields.map((field) => `// data.${field} // ${generateFieldType(field)}${opt
     const requiredFields = manifestData.requiredFields;
     const optionalFields = manifestData.optionalFields;
     const allFields = [...requiredFields, ...optionalFields];
-    const fieldsString = allFields.map((field) => `"${field}"`).join(", ");
+    const fieldsString = allFields.map(field => `"${field}"`).join(', ');
 
     // Reuse the same interface generation logic
     const parseFieldPaths = (fields: string[]) => {
       const structure: any = {};
 
-      fields.forEach((field) => {
-        const parts = field.split(".");
+      fields.forEach(field => {
+        const parts = field.split('.');
         let current = structure;
 
         for (let i = 0; i < parts.length - 1; i++) {
@@ -317,75 +299,68 @@ ${allFields.map((field) => `// data.${field} // ${generateFieldType(field)}${opt
       return structure;
     };
 
-    const generateInterfaces = (
-      structure: any,
-      interfaceName = "OverlayData",
-    ): string => {
-      let interfaces = "";
+    const generateInterfaces = (structure: any, interfaceName = 'OverlayData'): string => {
+      let interfaces = '';
       const properties: string[] = [];
 
       Object.entries(structure).forEach(([key, value]: [string, any]) => {
         if (value.type) {
-          const optional = value.optional ? "?" : "";
+          const optional = value.optional ? '?' : '';
           properties.push(`  ${key}${optional}: ${value.type};`);
         } else {
           // Nested object - always create a proper interface
-          const nestedInterfaceName =
-            key.charAt(0).toUpperCase() + key.slice(1);
-          const nestedInterface = generateInterfaces(
-            value,
-            nestedInterfaceName,
-          );
-          interfaces += nestedInterface + "\n";
+          const nestedInterfaceName = key.charAt(0).toUpperCase() + key.slice(1);
+          const nestedInterface = generateInterfaces(value, nestedInterfaceName);
+          interfaces += nestedInterface + '\n';
           properties.push(`  ${key}: ${nestedInterfaceName};`);
         }
       });
 
-      return `interface ${interfaceName} {\n${properties.join("\n")}\n}${interfaces ? "\n" + interfaces : ""}`;
+      return `interface ${interfaceName} {\n${properties.join('\n')}\n}${interfaces ? '\n' + interfaces : ''}`;
     };
 
     const generateFieldType = (field: string): string => {
       const fieldLower = field.toLowerCase();
       if (
-        fieldLower.includes("time") ||
-        fieldLower.includes("temp") ||
-        fieldLower.includes("speed") ||
-        fieldLower.includes("rpm") ||
-        fieldLower.includes("gear") ||
-        fieldLower.includes("fuel") ||
-        fieldLower.includes("throttle") ||
-        fieldLower.includes("brake") ||
-        fieldLower.includes("position") ||
-        fieldLower.includes("rating") ||
-        fieldLower.includes("pct") ||
-        fieldLower.includes("dist") ||
-        fieldLower.includes("lap") ||
-        fieldLower.includes("delta")
+        fieldLower.includes('time') ||
+        fieldLower.includes('temp') ||
+        fieldLower.includes('speed') ||
+        fieldLower.includes('rpm') ||
+        fieldLower.includes('gear') ||
+        fieldLower.includes('fuel') ||
+        fieldLower.includes('throttle') ||
+        fieldLower.includes('brake') ||
+        fieldLower.includes('position') ||
+        fieldLower.includes('rating') ||
+        fieldLower.includes('pct') ||
+        fieldLower.includes('dist') ||
+        fieldLower.includes('lap') ||
+        fieldLower.includes('delta')
       )
-        return "number";
+        return 'number';
       if (
-        fieldLower.includes("name") ||
-        fieldLower.includes("string") ||
-        fieldLower.includes("class") ||
-        fieldLower.includes("lic") ||
-        fieldLower.includes("units")
+        fieldLower.includes('name') ||
+        fieldLower.includes('string') ||
+        fieldLower.includes('class') ||
+        fieldLower.includes('lic') ||
+        fieldLower.includes('units')
       )
-        return "string";
+        return 'string';
       if (
-        fieldLower.includes("active") ||
-        fieldLower.includes("track") ||
-        fieldLower.includes("replay") ||
-        fieldLower.includes("ok")
+        fieldLower.includes('active') ||
+        fieldLower.includes('track') ||
+        fieldLower.includes('replay') ||
+        fieldLower.includes('ok')
       )
-        return "boolean";
-      return "unknown";
+        return 'boolean';
+      return 'unknown';
     };
 
     const buildNestedObject = (fields: string[]) => {
       const result: any = {};
 
-      fields.forEach((field) => {
-        const parts = field.split(".");
+      fields.forEach(field => {
+        const parts = field.split('.');
         let current = result;
 
         for (let i = 0; i < parts.length - 1; i++) {
@@ -401,23 +376,20 @@ ${allFields.map((field) => `// data.${field} // ${generateFieldType(field)}${opt
       return result;
     };
 
-    const generateObjectConstruction = (
-      obj: any,
-      indent = "      ",
-    ): string => {
+    const generateObjectConstruction = (obj: any, indent = '      '): string => {
       const entries = Object.entries(obj).map(([key, value]) => {
         if (
-          typeof value === "object" &&
+          typeof value === 'object' &&
           value !== null &&
-          !value.toString().startsWith("this.data[")
+          !value.toString().startsWith('this.data[')
         ) {
-          return `${indent}${key}: {\n${generateObjectConstruction(value, indent + "  ")}\n${indent}}`;
+          return `${indent}${key}: {\n${generateObjectConstruction(value, indent + '  ')}\n${indent}}`;
         } else {
           // Add type assertion for the field
           const fieldPath = (value as string)
             .toString()
-            .replace('this.data["', "")
-            .replace('"]', "");
+            .replace('this.data["', '')
+            .replace('"]', '');
           const fieldType = generateFieldType(fieldPath);
           const isOptional = optionalFields.includes(fieldPath);
 
@@ -429,7 +401,7 @@ ${allFields.map((field) => `// data.${field} // ${generateFieldType(field)}${opt
         }
       });
 
-      return entries.join(",\n");
+      return entries.join(',\n');
     };
 
     const structure = parseFieldPaths(allFields);
@@ -442,7 +414,7 @@ ${allFields.map((field) => `// data.${field} // ${generateFieldType(field)}${opt
 class OverlayDataManager {
     private url = "ws://localhost:49791";
     private params = [${fieldsString}];
-    private requiredFields = [${requiredFields.map((f) => `"${f}"`).join(", ")}];
+    private requiredFields = [${requiredFields.map(f => `"${f}"`).join(', ')}];
     private data: Record<string, unknown> = {};
     private socket: WebSocket | null = null;
     private reconnectTimeout: NodeJS.Timeout | null = null;
@@ -541,7 +513,7 @@ export default OverlayDataManager;
 //   
 //   if (data) {
 //     // All required fields are available
-${allFields.map((field) => `//     console.log(data.${field}); // ${generateFieldType(field)}${optionalFields.includes(field) ? " | null" : ""}`).join("\n")}
+${allFields.map(field => `//     console.log(data.${field}); // ${generateFieldType(field)}${optionalFields.includes(field) ? ' | null' : ''}`).join('\n')}
 //   } else {
 //     // Waiting for required fields
 //     console.log('Waiting for required fields...');
@@ -559,14 +531,14 @@ ${allFields.map((field) => `//     console.log(data.${field}); // ${generateFiel
     const requiredFields = manifestData.requiredFields;
     const optionalFields = manifestData.optionalFields;
     const allFields = [...requiredFields, ...optionalFields];
-    const fieldsString = allFields.map((field) => `"${field}"`).join(", ");
+    const fieldsString = allFields.map(field => `"${field}"`).join(', ');
 
     const hookCode = `import { useEffect, useRef, useState } from "react";
 
 const useOverlayData = () => {
     const url = "ws://localhost:49791";
     const params = [${fieldsString}];
-    const requiredFields = [${requiredFields.map((f) => `"${f}"`).join(", ")}];
+    const requiredFields = [${requiredFields.map(f => `"${f}"`).join(', ')}];
 
     const [data, setData] = useState({});
     const [error, setError] = useState(null);
@@ -672,7 +644,7 @@ export default useOverlayData;
 // 
 // data will be null until all required fields are received
 // Once available, data will have nested structure:
-${allFields.map((field) => `// data.${field} // Available field`).join("\n")}`;
+${allFields.map(field => `// data.${field} // Available field`).join('\n')}`;
 
     return hookCode;
   };
@@ -681,13 +653,13 @@ ${allFields.map((field) => `// data.${field} // Available field`).join("\n")}`;
     const requiredFields = manifestData.requiredFields;
     const optionalFields = manifestData.optionalFields;
     const allFields = [...requiredFields, ...optionalFields];
-    const fieldsString = allFields.map((field) => `"${field}"`).join(", ");
+    const fieldsString = allFields.map(field => `"${field}"`).join(', ');
 
     const jsCode = `class OverlayDataManager {
     constructor() {
         this.url = "ws://localhost:49791";
         this.params = [${fieldsString}];
-        this.requiredFields = [${requiredFields.map((f) => `"${f}"`).join(", ")}];
+        this.requiredFields = [${requiredFields.map(f => `"${f}"`).join(', ')}];
         this.data = {};
         this.socket = null;
         this.reconnectTimeout = null;
@@ -800,7 +772,7 @@ ${allFields.map((field) => `// data.${field} // Available field`).join("\n")}`;
 //   
 //   if (data) {
 //     // All required fields are available
-${allFields.map((field) => `//     console.log(data.${field}); // Available field`).join("\n")}
+${allFields.map(field => `//     console.log(data.${field}); // Available field`).join('\n')}
 //   } else {
 //     // Waiting for required fields
 //     console.log('Waiting for required fields...');
@@ -817,21 +789,19 @@ export default OverlayDataManager;`;
   };
 
   // Add state for different code types
-  const [plainTypeScript, setPlainTypeScript] = useState<string>("");
-  const [nonTypedReactHook, setNonTypedReactHook] = useState<string>("");
-  const [plainJavaScript, setPlainJavaScript] = useState<string>("");
+  const [plainTypeScript, setPlainTypeScript] = useState<string>('');
+  const [nonTypedReactHook, setNonTypedReactHook] = useState<string>('');
+  const [plainJavaScript, setPlainJavaScript] = useState<string>('');
   const [activeCodeType, setActiveCodeType] = useState<
-    "typed-react" | "plain-ts" | "non-typed-react" | "plain-js"
-  >("typed-react");
+    'typed-react' | 'plain-ts' | 'non-typed-react' | 'plain-js'
+  >('typed-react');
 
   // Declare the getSupportedGames function
   const getSupportedGames = (gameSchemas: [GameName, MappedGameData][]) => {
     const supportedGames: string[] = [];
     gameSchemas.forEach(([gameName, schema]) => {
       const gameFields = getAllFieldsFromSchema(schema);
-      const hasAllRequired = manifestData.requiredFields.every((field) =>
-        gameFields.includes(field),
-      );
+      const hasAllRequired = manifestData.requiredFields.every(field => gameFields.includes(field));
       if (hasAllRequired) {
         supportedGames.push(gameName);
       }
@@ -839,15 +809,11 @@ export default OverlayDataManager;`;
     return supportedGames;
   };
 
-  const getAllFieldsFromSchema = (schema: any, prefix = ""): string[] => {
+  const getAllFieldsFromSchema = (schema: any, prefix = ''): string[] => {
     const fields: string[] = [];
     Object.entries(schema).forEach(([key, value]) => {
       const fieldPath = prefix ? `${prefix}.${key}` : key;
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
         fields.push(...getAllFieldsFromSchema(value, fieldPath));
       } else {
         fields.push(fieldPath);
@@ -867,55 +833,50 @@ export default OverlayDataManager;`;
             <Button
               onClick={() => {
                 generateTypedHookCode();
-                setActiveCodeType("typed-react");
+                setActiveCodeType('typed-react');
               }}
-              variant={activeCodeType === "typed-react" ? "default" : "outline"}
+              variant={activeCodeType === 'typed-react' ? 'default' : 'outline'}
             >
               Generate Typed React Hook
             </Button>
             <Button
               onClick={() => {
                 setPlainTypeScript(generatePlainTypeScript());
-                setActiveCodeType("plain-ts");
+                setActiveCodeType('plain-ts');
               }}
-              variant={activeCodeType === "plain-ts" ? "default" : "outline"}
+              variant={activeCodeType === 'plain-ts' ? 'default' : 'outline'}
             >
               Generate Plain TypeScript
             </Button>
             <Button
               onClick={() => {
                 setNonTypedReactHook(generateNonTypedReactHook());
-                setActiveCodeType("non-typed-react");
+                setActiveCodeType('non-typed-react');
               }}
-              variant={
-                activeCodeType === "non-typed-react" ? "default" : "outline"
-              }
+              variant={activeCodeType === 'non-typed-react' ? 'default' : 'outline'}
             >
               Generate Non-Typed React Hook
             </Button>
             <Button
               onClick={() => {
                 setPlainJavaScript(generatePlainJavaScript());
-                setActiveCodeType("plain-js");
+                setActiveCodeType('plain-js');
               }}
-              variant={activeCodeType === "plain-js" ? "default" : "outline"}
+              variant={activeCodeType === 'plain-js' ? 'default' : 'outline'}
             >
               Generate Plain JavaScript
             </Button>
           </div>
 
-          {(generatedHook ||
-            plainTypeScript ||
-            nonTypedReactHook ||
-            plainJavaScript) && (
+          {(generatedHook || plainTypeScript || nonTypedReactHook || plainJavaScript) && (
             <div className="relative">
               <Textarea
                 value={
-                  activeCodeType === "typed-react"
+                  activeCodeType === 'typed-react'
                     ? generatedHook
-                    : activeCodeType === "plain-ts"
+                    : activeCodeType === 'plain-ts'
                       ? plainTypeScript
-                      : activeCodeType === "non-typed-react"
+                      : activeCodeType === 'non-typed-react'
                         ? nonTypedReactHook
                         : plainJavaScript
                 }
@@ -927,11 +888,11 @@ export default OverlayDataManager;`;
                 className="absolute top-2 right-2"
                 onClick={() => {
                   const code =
-                    activeCodeType === "typed-react"
+                    activeCodeType === 'typed-react'
                       ? generatedHook
-                      : activeCodeType === "plain-ts"
+                      : activeCodeType === 'plain-ts'
                         ? plainTypeScript
-                        : activeCodeType === "non-typed-react"
+                        : activeCodeType === 'non-typed-react'
                           ? nonTypedReactHook
                           : plainJavaScript;
                   navigator.clipboard.writeText(code);
@@ -950,11 +911,9 @@ export default OverlayDataManager;`;
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>
-              Required Fields ({manifestData.requiredFields.length}):
-            </Label>
+            <Label>Required Fields ({manifestData.requiredFields.length}):</Label>
             <div className="mt-1 flex flex-wrap gap-1">
-              {manifestData.requiredFields.map((field) => (
+              {manifestData.requiredFields.map(field => (
                 <Badge key={field} variant="destructive">
                   {field}
                 </Badge>
@@ -962,11 +921,9 @@ export default OverlayDataManager;`;
             </div>
           </div>
           <div>
-            <Label>
-              Optional Fields ({manifestData.optionalFields.length}):
-            </Label>
+            <Label>Optional Fields ({manifestData.optionalFields.length}):</Label>
             <div className="mt-1 flex flex-wrap gap-1">
-              {manifestData.optionalFields.map((field) => (
+              {manifestData.optionalFields.map(field => (
                 <Badge key={field} variant="secondary">
                   {field}
                 </Badge>
@@ -976,7 +933,7 @@ export default OverlayDataManager;`;
           <div>
             <Label>Supported Games:</Label>
             <div className="mt-1 flex flex-wrap gap-1">
-              {getSupportedGames(gameSchemas).map((game) => (
+              {getSupportedGames(gameSchemas).map(game => (
                 <Badge key={game} variant="outline">
                   {game}
                 </Badge>
@@ -985,9 +942,7 @@ export default OverlayDataManager;`;
           </div>
           <div>
             <Label>Settings Configured:</Label>
-            <Badge variant="outline">
-              {manifestData.settings?.length || 0}
-            </Badge>
+            <Badge variant="outline">{manifestData.settings?.length || 0}</Badge>
           </div>
         </CardContent>
       </Card>

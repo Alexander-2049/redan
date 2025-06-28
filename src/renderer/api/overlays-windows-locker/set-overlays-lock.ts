@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export interface ISetOverlaysLockedProps {
   isLocked: boolean;
@@ -15,7 +15,7 @@ export const useSetOverlaysLocked = () => {
   return useMutation({
     mutationFn: setOverlaysLocked,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["overlays-lock"] });
+      queryClient.invalidateQueries({ queryKey: ['overlays-lock'] });
     },
   });
 };

@@ -1,7 +1,8 @@
 // client.workshop.getAllItems()
 // function workshop.getAllItems(page: number, queryType: workshop.UGCQueryType, itemType: workshop.UGCType, creatorAppId: number, consumerAppId: number, queryConfig?: workshop.WorkshopItemQueryConfig | undefined | null): Promise<workshop.WorkshopPaginatedResult>
-import { WorkshopItemQueryConfig } from "@/shared/schemas/steamworks-schemas";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { WorkshopItemQueryConfig } from '@/shared/schemas/steamworks-schemas';
 
 export const fetchWorkshopItems = ({
   page,
@@ -21,7 +22,7 @@ export const useWorkshopItems = () => {
     mutationFn: fetchWorkshopItems,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["steam-workshop-fetch"],
+        queryKey: ['steam-workshop-fetch'],
       });
     },
   });

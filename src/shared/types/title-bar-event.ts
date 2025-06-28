@@ -1,1 +1,1 @@
-export type TitleBarEvent = "close" | "minimize" | "restore";
+export type TitleBarEvent = 'close' | 'minimize' | 'restore';

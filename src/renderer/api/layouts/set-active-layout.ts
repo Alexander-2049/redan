@@ -1,5 +1,6 @@
-import { ILayoutDataAndFilename } from "@/main/_/layout-service/schemas/layoutSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { ILayoutDataAndFilename } from '@/main/_/layout-service/schemas/layoutSchema';
 
 export const setActiveLayout = ({ fileName }: { fileName: string }) => {
   return window.electron.setActiveLayout(fileName);
@@ -11,11 +12,11 @@ export const useSetActiveLayout = () => {
   return useMutation({
     mutationFn: setActiveLayout,
     onMutate: async ({ fileName }) => {
-      await queryClient.cancelQueries({ queryKey: ["layouts"] });
+      await queryClient.cancelQueries({ queryKey: ['layouts'] });
 
-      const previousLayouts = queryClient.getQueryData(["layouts"]);
+      const previousLayouts = queryClient.getQueryData(['layouts']);
 
-      queryClient.setQueryData(["layouts"], (old: ILayoutDataAndFilename[]) =>
+      queryClient.setQueryData(['layouts'], (old: ILayoutDataAndFilename[]) =>
         old?.map((layout: ILayoutDataAndFilename) => {
           if (layout.filename === fileName) {
             return {
@@ -40,10 +41,10 @@ export const useSetActiveLayout = () => {
       return { previousLayouts };
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(["layouts"], context?.previousLayouts);
+      queryClient.setQueryData(['layouts'], context?.previousLayouts);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["layouts"] });
+      queryClient.invalidateQueries({ queryKey: ['layouts'] });
     },
   });
 };

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export const getOverlaysLocked = () => {
   return window.electron.getOverlaysLocked();
@@ -6,7 +6,7 @@ export const getOverlaysLocked = () => {
 
 export const useOverlaysLocked = () => {
   return useQuery({
-    queryKey: ["overlays-lock"],
+    queryKey: ['overlays-lock'],
     queryFn: getOverlaysLocked,
   });
 };

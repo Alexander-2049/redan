@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export const getSelectedGame = () => {
   return window.electron.getSelectedGame();
@@ -6,7 +6,7 @@ export const getSelectedGame = () => {
 
 export const useSelectedGame = () => {
   return useQuery({
-    queryKey: ["selected-game"],
+    queryKey: ['selected-game'],
     queryFn: getSelectedGame,
   });
 };

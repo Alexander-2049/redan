@@ -1,6 +1,8 @@
-import express from 'express';
 import http from 'http';
+
 import cors from 'cors';
+import express from 'express';
+
 import { LoggerService } from '../features/logger/LoggerService';
 
 type RouteWithPath = {

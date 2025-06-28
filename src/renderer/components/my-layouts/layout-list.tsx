@@ -1,14 +1,14 @@
-import type React from "react";
+import { Search, Trash2, Layout } from 'lucide-react';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-import { useState, useRef, useEffect } from "react";
-import { Search, Trash2, Layout } from "lucide-react";
-import { cn } from "@/renderer/lib/utils";
-import { Input } from "@/renderer/components/ui/input";
-import { Button } from "@/renderer/components/ui/button";
-import { useLayouts } from "@/renderer/api/layouts/get-layouts";
-import type { ILayoutDataAndFilename } from "@/main/_/layout-service/schemas/layoutSchema";
-import { useDeleteLayout } from "@/renderer/api/layouts/delete-layout";
-import { ScrollArea } from "@/renderer/components/ui/scroll-area";
+import { LayoutPreview } from './layout-preview';
+import { NewLayoutButton } from './new-layout-button';
+
+import type { ILayoutDataAndFilename } from '@/main/_/layout-service/schemas/layoutSchema';
+import { useDeleteLayout } from '@/renderer/api/layouts/delete-layout';
+import { useLayouts } from '@/renderer/api/layouts/get-layouts';
+import { useSetActiveLayout } from '@/renderer/api/layouts/set-active-layout';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,16 +18,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/renderer/components/ui/alert-dialog";
-import { useSetActiveLayout } from "@/renderer/api/layouts/set-active-layout";
-import { NewLayoutButton } from "./new-layout-button";
-import { LayoutPreview } from "./layout-preview";
+} from '@/renderer/components/ui/alert-dialog';
+import { Button } from '@/renderer/components/ui/button';
+import { Input } from '@/renderer/components/ui/input';
+import { cn } from '@/renderer/lib/utils';
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 
 function LayoutSelector() {
   const layouts = useLayouts();
   const { mutate: deleteLayout } = useDeleteLayout();
   const { mutate: setActiveLayout } = useSetActiveLayout();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [layoutToDelete, setLayoutToDelete] = useState<string | null>(null);
   const [newLayoutIds, setNewLayoutIds] = useState<Set<string>>(new Set());
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
@@ -48,10 +49,8 @@ function LayoutSelector() {
       }
 
       // Compare with previous layouts to find new ones
-      const previousIds = new Set(
-        previousLayoutsRef.current.map((l) => l.filename),
-      );
-      const currentIds = new Set(layouts.data.map((l) => l.filename));
+      const previousIds = new Set(previousLayoutsRef.current.map(l => l.filename));
+      const currentIds = new Set(layouts.data.map(l => l.filename));
 
       // Find newly added layouts
       const newIds = new Set<string>();
@@ -75,7 +74,7 @@ function LayoutSelector() {
 
   if (!layouts.data) return null;
 
-  const filteredItems = layouts.data.filter((item) =>
+  const filteredItems = layouts.data.filter(item =>
     item.data.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
@@ -115,7 +114,7 @@ function LayoutSelector() {
             placeholder="Search layouts..."
             className="bg-muted/50 h-9 pl-8"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -124,7 +123,7 @@ function LayoutSelector() {
       <ScrollArea className="overflow-y-auto">
         {filteredItems.length > 0 ? (
           <div className="py-1">
-            {filteredItems.map((item) => {
+            {filteredItems.map(item => {
               const isNew = newLayoutIds.has(item.filename);
 
               return (
@@ -133,18 +132,16 @@ function LayoutSelector() {
                   role="button"
                   tabIndex={0}
                   className={cn(
-                    "border-border/50 group relative flex w-full cursor-default flex-col border-b bg-white text-left transition-all duration-300",
+                    'border-border/50 group relative flex w-full cursor-default flex-col border-b bg-white text-left transition-all duration-300',
                     item.data.active
-                      ? "border-blue-200 bg-blue-50 text-blue-600"
-                      : "hover:bg-gray-50",
-                    isNew && "animate-new-layout",
+                      ? 'border-blue-200 bg-blue-50 text-blue-600'
+                      : 'hover:bg-gray-50',
+                    isNew && 'animate-new-layout',
                   )}
                   onClick={() => handleSelectLayout(item)}
                   aria-pressed={item.data.active}
                   style={{
-                    animation: isNew
-                      ? "smoothSlideInAndShine 3s ease-out"
-                      : undefined,
+                    animation: isNew ? 'smoothSlideInAndShine 3s ease-out' : undefined,
                   }}
                 >
                   {/* Text content with padding */}
@@ -152,21 +149,19 @@ function LayoutSelector() {
                     <Layout
                       size={16}
                       className={cn(
-                        "text-muted-foreground flex-shrink-0",
-                        item.data.active ? "text-blue-500" : "",
+                        'text-muted-foreground flex-shrink-0',
+                        item.data.active ? 'text-blue-500' : '',
                       )}
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium">
-                        {item.data.name}
-                      </div>
+                      <div className="truncate text-sm font-medium">{item.data.name}</div>
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
-                      onClick={(e) => handleDeleteClick(e, item.filename)}
+                      onClick={e => handleDeleteClick(e, item.filename)}
                       aria-label={`Delete ${item.data.name} layout`}
                     >
                       <Trash2 size={14} />
@@ -182,9 +177,7 @@ function LayoutSelector() {
             })}
           </div>
         ) : (
-          <div className="text-muted-foreground p-4 text-center text-sm">
-            No layouts found
-          </div>
+          <div className="text-muted-foreground p-4 text-center text-sm">No layouts found</div>
         )}
       </ScrollArea>
 
@@ -194,16 +187,12 @@ function LayoutSelector() {
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={!!layoutToDelete}
-        onOpenChange={(open) => !open && setLayoutToDelete(null)}
-      >
+      <AlertDialog open={!!layoutToDelete} onOpenChange={open => !open && setLayoutToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Layout</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this layout? This action cannot be
-              undone.
+              Are you sure you want to delete this layout? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

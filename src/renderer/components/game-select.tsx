@@ -1,11 +1,13 @@
-import { useState } from 'react';
 import { Lock, Unlock, ChevronUp } from 'lucide-react';
-import { ASSETS_SERVER_PORT } from '@/shared/constants';
+import { useState } from 'react';
+
 import { useSelectedGame } from '../api/game-select/get-selected-game';
 import { useSetSelectedGame } from '../api/game-select/set-selected-game';
-import { GameName } from '@/main/_/game-data/types/game-name-schema';
 import { useOverlaysLocked } from '../api/overlays-windows-locker/get-overlays-lock';
 import { useSetOverlaysLocked } from '../api/overlays-windows-locker/set-overlays-lock';
+
+import { GameName } from '@/main/_/game-data/types/game-name-schema';
+import { ASSETS_SERVER_PORT } from '@/shared/constants';
 
 interface Game {
   name: GameName;

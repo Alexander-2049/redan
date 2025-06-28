@@ -1,5 +1,6 @@
-import Sidebar from "../side-bar";
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
+
+import Sidebar from '../side-bar';
 
 const PageLayout = () => {
   return (

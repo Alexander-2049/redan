@@ -1,5 +1,5 @@
 // slices/exampleSlice.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ExampleState {
   value: number;
@@ -10,10 +10,10 @@ const initialState: ExampleState = {
 };
 
 const exampleSlice = createSlice({
-  name: "example",
+  name: 'example',
   initialState,
   reducers: {
-    increment: (state) => {
+    increment: state => {
       state.value += 1;
     },
     setValue: (state, action: PayloadAction<number>) => {

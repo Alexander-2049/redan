@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
-import { Button } from "./ui/button";
-import { LoaderCircle, SquareArrowOutUpRight } from "lucide-react";
+import { LoaderCircle, SquareArrowOutUpRight } from 'lucide-react';
+import { useCallback, useState } from 'react';
+
+import { Button } from './ui/button';
 
 const OpenOverlaysFolderButton = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,12 +22,7 @@ const OpenOverlaysFolderButton = () => {
   }, []);
 
   return (
-    <Button
-      disabled={isLoading}
-      variant="outline"
-      size="sm"
-      onClick={openOverlaysFolder}
-    >
+    <Button disabled={isLoading} variant="outline" size="sm" onClick={openOverlaysFolder}>
       {isLoading ? (
         <LoaderCircle className="animate-spin" />
       ) : (

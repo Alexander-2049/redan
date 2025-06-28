@@ -1,10 +1,12 @@
 import { z } from 'zod';
-import { GameName } from '../shared/types/GameName';
-import { Overlay } from './Overlay';
-import { layoutFileSchema } from '../shared/schemas/layout-file-schema';
-import { JsonFileService } from '../features/json-files';
-import { LayoutOverlay } from '../shared/types/LayoutOverlay';
-import { PathService } from '../features/paths/PathService';
+
+import { Overlay } from '../overlay';
+
+import { JsonFileService } from '@/main/features/json-files';
+import { PathService } from '@/main/features/paths/PathService';
+import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
+import { GameName } from '@/main/shared/types/GameName';
+import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
 
 export interface LayoutProperties {
   filename: string;
@@ -20,8 +22,8 @@ export class Layout {
   private _title: string | null = null;
   private _filename: string | null = null;
   private _overlays: Overlay[] = [];
-  private _screenWidth: number = 0;
-  private _screenHeight: number = 0;
+  private _screenWidth = 0;
+  private _screenHeight = 0;
 
   constructor(props: LayoutProperties) {
     this._game = props.game;

@@ -1,5 +1,6 @@
-import { Button } from "@/renderer/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from 'lucide-react';
+
+import { Button } from '@/renderer/components/ui/button';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SchemaNode = string | Record<string, any> | [string, any]; // basic type, object, or array
@@ -24,7 +25,7 @@ export const ConfiguratorSchemaViewer: React.FC<ClickableSchemaViewerProps> = ({
   isFieldInAnyList,
 }) => {
   return (
-    <div style={{ fontFamily: "monospace", whiteSpace: "pre" }}>
+    <div style={{ fontFamily: 'monospace', whiteSpace: 'pre' }}>
       <SchemaTree
         node={schema}
         path={[]}
@@ -73,7 +74,7 @@ const SchemaTree: React.FC<SchemaTreeProps> = ({
         <span>["array", </span>
         <SchemaTree
           node={inner}
-          path={[...path, "[]"]}
+          path={[...path, '[]']}
           onFieldClick={onFieldClick}
           onAddRequired={onAddRequired}
           onAddOptional={onAddOptional}
@@ -86,34 +87,31 @@ const SchemaTree: React.FC<SchemaTreeProps> = ({
     );
   }
 
-  if (typeof node === "object" && node !== null) {
+  if (typeof node === 'object' && node !== null) {
     return (
       <div style={{ paddingLeft: 12 }}>
-        {"{"}
+        {'{'}
         {Object.entries(node).map(([key, value]) => {
           const currentPath = [...path, key];
-          const fieldPath = currentPath.join(".");
-          const isLeaf = typeof value === "string";
-          const isAlreadyAdded = isFieldInAnyList
-            ? isFieldInAnyList(fieldPath)
-            : false;
+          const fieldPath = currentPath.join('.');
+          const isLeaf = typeof value === 'string';
+          const isAlreadyAdded = isFieldInAnyList ? isFieldInAnyList(fieldPath) : false;
 
           return (
             <div key={fieldPath} className="flex items-center gap-2">
               <div className="min-w-0 flex-1 text-wrap">
                 <span
                   style={{
-                    cursor: "pointer",
-                    color: copiedField === fieldPath ? "green" : "blue",
-                    textDecoration:
-                      copiedField === fieldPath ? "underline" : "none",
+                    cursor: 'pointer',
+                    color: copiedField === fieldPath ? 'green' : 'blue',
+                    textDecoration: copiedField === fieldPath ? 'underline' : 'none',
                   }}
                   onClick={() => handleClick(fieldPath)}
                   title="Click to copy field path"
                 >
                   {key}
                 </span>
-                {": "}
+                {': '}
                 <SchemaTree
                   node={value}
                   path={currentPath}
@@ -167,7 +165,7 @@ const SchemaTree: React.FC<SchemaTreeProps> = ({
             </div>
           );
         })}
-        {"}"}
+        {'}'}
       </div>
     );
   }

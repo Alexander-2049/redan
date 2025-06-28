@@ -1,5 +1,6 @@
-import { GameName } from "@/main/_/game-data/types/game-name-schema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { GameName } from '@/main/_/game-data/types/game-name-schema';
 
 export interface ISetSelectedGameProps {
   gameName: GameName | null;
@@ -15,7 +16,7 @@ export const useSetSelectedGame = () => {
   return useMutation({
     mutationFn: setSelectedGame,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["selected-game"] });
+      queryClient.invalidateQueries({ queryKey: ['selected-game'] });
     },
   });
 };

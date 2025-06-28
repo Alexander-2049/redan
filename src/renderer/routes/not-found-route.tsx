@@ -1,6 +1,7 @@
-import { Button } from "@/renderer/components/ui/button";
-import { Flag, Home, Search, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Flag, Home, Search, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+import { Button } from '@/renderer/components/ui/button';
 
 export default function NotFoundRoute() {
   return (
@@ -11,8 +12,8 @@ export default function NotFoundRoute() {
         </div>
         <h1 className="text-3xl font-bold">Not Found</h1>
         <p className="mx-auto max-w-md text-gray-500">
-          The page you're looking for has crossed the finish line and is no
-          longer available. It might have been moved, deleted, or never existed.
+          The page you're looking for has crossed the finish line and is no longer available. It
+          might have been moved, deleted, or never existed.
         </p>
 
         <div className="flex flex-col justify-center gap-4 pt-6 sm:flex-row">
@@ -33,9 +34,7 @@ export default function NotFoundRoute() {
         </div>
 
         <div className="mt-8 border-t pt-8">
-          <p className="mb-4 text-sm text-gray-500">
-            Looking for something specific?
-          </p>
+          <p className="mb-4 text-sm text-gray-500">Looking for something specific?</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               to="/"

@@ -1,25 +1,25 @@
 // %steam%/Workshop/Content/${WORKSHOP_ID}/manifest.json
-import { z } from "zod";
+import { z } from 'zod';
 
 const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
-export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
+export const overlaySettingDescriptionSchema = z.discriminatedUnion('type', [
   // requiredFields is used to tell the user, that this setting will not work in a specific game (because some field is not available)
   z.object({
     id: z.string(),
-    type: z.literal("slider"),
+    type: z.literal('slider'),
     name: z.string(),
     min: z.number(),
     max: z.number(),
     step: z.number(),
-    unit: z.enum(["number", "percentage"]).nullable(),
+    unit: z.enum(['number', 'percentage']).nullable(),
     group: z.string().nullable(),
     defaultValue: z.number(),
     requiredFields: z.array(z.string()),
   }),
   z.object({
     id: z.string(),
-    type: z.literal("toggle"),
+    type: z.literal('toggle'),
     name: z.string(),
     group: z.string().nullable(),
     defaultValue: z.boolean(),
@@ -27,7 +27,7 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     id: z.string(),
-    type: z.literal("select"),
+    type: z.literal('select'),
     name: z.string(),
     selectList: z.array(
       z.object({
@@ -41,7 +41,7 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     id: z.string(),
-    type: z.literal("number"),
+    type: z.literal('number'),
     name: z.string(),
     group: z.string().nullable(),
     min: z.number().optional(),
@@ -51,7 +51,7 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     id: z.string(),
-    type: z.literal("string"),
+    type: z.literal('string'),
     name: z.string(),
     group: z.string().nullable(),
     defaultValue: z.string(),
@@ -59,12 +59,10 @@ export const overlaySettingDescriptionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     id: z.string(),
-    type: z.literal("color"),
+    type: z.literal('color'),
     name: z.string(),
     group: z.string().nullable(),
-    defaultValue: z
-      .string()
-      .regex(hexColorRegex, { message: "Invalid hex color" }),
+    defaultValue: z.string().regex(hexColorRegex, { message: 'Invalid hex color' }),
     requiredFields: z.array(z.string()),
   }),
 ]);

@@ -1,7 +1,8 @@
 // store.ts
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
+
 // Импортируй редюсеры здесь
-import exampleReducer from "./slices/exampleSlice";
+import exampleReducer from './slices/exampleSlice';
 
 export const store = configureStore({
   reducer: {

@@ -1,9 +1,9 @@
-import { useLayouts } from "../api/layouts/get-layouts";
-import { useOverlays } from "../api/overlays/get-overlays";
-import GameSelect from "../components/game-select";
-import LayoutList from "../components/my-layouts/layout-list";
-import LayoutSettings from "../components/my-layouts/layout-settings";
-import OverlaysList from "../components/my-layouts/overlays-list";
+import { useLayouts } from '../api/layouts/get-layouts';
+import { useOverlays } from '../api/overlays/get-overlays';
+import GameSelect from '../components/game-select';
+import LayoutList from '../components/my-layouts/layout-list';
+import LayoutSettings from '../components/my-layouts/layout-settings';
+import OverlaysList from '../components/my-layouts/overlays-list';
 
 const MyLayoutsRoute = () => {
   const layouts = useLayouts();

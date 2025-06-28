@@ -1,24 +1,24 @@
-import winston from "winston";
-import path from "path";
-import { IS_DEV } from "@/main/shared/constants";
-import { PathService } from "../paths/PathService";
+import path from 'path';
+
+import winston from 'winston';
+
+import { PathService } from '../paths/PathService';
+
+import { IS_DEV } from '@/main/shared/constants';
 
 export class LoggerService {
   private static fileTransports: winston.transport[] = [
     new winston.transports.File({
-      filename: path.join(PathService.getPath("LOGS"), "error.log"),
-      level: "error",
+      filename: path.join(PathService.getPath('LOGS'), 'error.log'),
+      level: 'error',
     }),
     new winston.transports.File({
-      filename: path.join(PathService.getPath("LOGS"), "combined.log"),
+      filename: path.join(PathService.getPath('LOGS'), 'combined.log'),
     }),
   ];
 
   private static consoleTransport = new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.simple(),
-    ),
+    format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
   });
 
   // Cache for created loggers
@@ -36,11 +36,8 @@ export class LoggerService {
     }
 
     const logger = winston.createLogger({
-      level: IS_DEV ? "debug" : "info",
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
+      level: IS_DEV ? 'debug' : 'info',
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       defaultMeta: { service: serviceName },
       transports,
     });

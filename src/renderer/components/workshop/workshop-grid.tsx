@@ -1,5 +1,6 @@
-import type { WorkshopItem as WorkshopItemType } from "@/shared/schemas/steamworks-schemas";
-import { WorkshopItem } from "./workshop-item";
+import { WorkshopItem } from './workshop-item';
+
+import type { WorkshopItem as WorkshopItemType } from '@/shared/schemas/steamworks-schemas';
 
 interface WorkshopGridProps {
   items: WorkshopItemType[];
@@ -9,29 +10,24 @@ interface WorkshopGridProps {
   isPending: boolean;
 }
 
-export function WorkshopGrid({
-  items,
-  selectedItemId,
-  onItemClick,
-  isPending,
-}: WorkshopGridProps) {
+export function WorkshopGrid({ items, selectedItemId, onItemClick, isPending }: WorkshopGridProps) {
   if (isPending) return <WorkshopGridSkeleton />;
 
   return (
     <div
       className="grid gap-[7px]"
       style={{
-        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        maxWidth: "100%",
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        maxWidth: '100%',
       }}
     >
-      {items.map((item) => (
+      {items.map(item => (
         <div
           key={item.publishedFileId}
           className="w-full"
           style={{
-            minWidth: "200px",
-            maxWidth: "400px",
+            minWidth: '200px',
+            maxWidth: '400px',
           }}
         >
           <WorkshopItem
@@ -50,8 +46,8 @@ function WorkshopGridSkeleton() {
     <div
       className="grid gap-[7px]"
       style={{
-        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        maxWidth: "100%",
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        maxWidth: '100%',
       }}
     >
       {Array.from({ length: 20 }).map((_, i) => (
@@ -59,8 +55,8 @@ function WorkshopGridSkeleton() {
           key={i}
           className="w-full"
           style={{
-            minWidth: "200px",
-            maxWidth: "400px",
+            minWidth: '200px',
+            maxWidth: '400px',
           }}
         >
           <WorkshopItemSkeleton />

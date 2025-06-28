@@ -1,5 +1,7 @@
 import { BrowserWindow } from 'electron';
-import { LayoutOverlay } from '../shared/types/LayoutOverlay';
+
+import { LoggerService } from '@/main/features/logger/LoggerService';
+import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
 declare const OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 interface OverlayWindowOptions {
@@ -30,8 +32,9 @@ interface OverlaySize {
 export class Overlay {
   protected _window: BrowserWindow;
   private _isEditMode = false;
-  private _baseUrl: string = '';
-  private _queryParameters: string = '';
+  private _baseUrl = '';
+  private _queryParameters = '';
+  private logger = LoggerService.getLogger('overlay');
 
   constructor(_baseUrl: string, options: OverlayWindowOptions) {
     this._baseUrl = _baseUrl;
@@ -78,9 +81,14 @@ export class Overlay {
   }
 
   public load() {
-    this._window.loadURL(this._baseUrl).then(() => {
-      this._window.showInactive();
-    });
+    this._window
+      .loadURL(this._baseUrl)
+      .then(() => {
+        this._window.showInactive();
+      })
+      .catch(e => {
+        this.logger.error(e);
+      });
   }
 
   public show() {
