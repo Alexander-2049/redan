@@ -3,14 +3,16 @@ import path from 'path';
 
 import express, { Request, Response, Router } from 'express';
 
+import { JsonFileService } from '../json-files';
 import { LoggerService } from '../logger/LoggerService';
 import { PathService } from '../paths/PathService';
 
-class OverlayService {
-  static loadAllOverlays(): unknown[] {
-    return [{ name: 'example', path: '/example' }];
-  }
-}
+import { overlayManifestFileSchema } from '@/main/shared/schemas/overlay-manifest-file-schema';
+
+type OverlayManifest = {
+  folderName: string;
+  manifest: ReturnType<typeof overlayManifestFileSchema.parse> | null;
+};
 
 export class OverlaysRouter {
   public readonly router: Router;
@@ -27,7 +29,54 @@ export class OverlaysRouter {
   }
 
   private getOverlayList = (req: Request, res: Response): Response => {
-    const overlays = OverlayService.loadAllOverlays();
+    this.logger.info('Loading all overlays...');
+
+    const overlaysRoot = PathService.getPath('OVERLAYS');
+
+    if (!fs.existsSync(overlaysRoot)) {
+      this.logger.info(`Overlays folder does not exist at: ${overlaysRoot}`);
+      fs.mkdirSync(overlaysRoot, { recursive: true });
+      this.logger.info(`Created overlays folder at: ${overlaysRoot}`);
+    }
+
+    const dir = fs.readdirSync(overlaysRoot);
+    const folders = dir.filter(item => fs.statSync(path.join(overlaysRoot, item)).isDirectory());
+
+    this.logger.debug(`Found overlay folders: ${folders.join(', ')}`);
+
+    const overlays: OverlayManifest[] = folders.map(folderName => {
+      const folderPath = path.join(overlaysRoot, folderName);
+      const manifestPath = path.join(folderPath, 'manifest.json');
+
+      try {
+        this.logger.debug(`Reading manifest: ${manifestPath}`);
+        const rawManifest: unknown = JsonFileService.read(manifestPath);
+        const parsed = overlayManifestFileSchema.safeParse(rawManifest);
+
+        if (parsed.success) {
+          this.logger.info(`Successfully parsed manifest in folder: ${folderName}`);
+          return {
+            folderName,
+            manifest: parsed.data,
+          };
+        } else {
+          this.logger.warn(`Invalid manifest schema in folder: ${folderName}`);
+          return {
+            folderName,
+            manifest: null,
+          };
+        }
+      } catch (error) {
+        this.logger.error(`Error reading or parsing manifest.json in folder ${folderName}:`, error);
+        return {
+          folderName,
+          manifest: null,
+        };
+      }
+    });
+
+    this.logger.info(`Loaded ${overlays.length} overlays.`);
+
     return res.json(overlays);
   };
 

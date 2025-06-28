@@ -1,19 +1,18 @@
 import path from 'path';
 
+import { app } from 'electron';
 import winston from 'winston';
-
-import { PathService } from '../paths/PathService';
 
 import { IS_DEV } from '@/main/shared/constants';
 
 export class LoggerService {
   private static fileTransports: winston.transport[] = [
     new winston.transports.File({
-      filename: path.join(PathService.getPath('LOGS'), 'error.log'),
+      filename: path.join(path.join(app.getPath('userData'), 'Logs'), 'error.log'),
       level: 'error',
     }),
     new winston.transports.File({
-      filename: path.join(PathService.getPath('LOGS'), 'combined.log'),
+      filename: path.join(path.join(app.getPath('userData'), 'Logs'), 'combined.log'),
     }),
   ];
 
