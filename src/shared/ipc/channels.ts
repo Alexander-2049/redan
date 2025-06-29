@@ -4,4 +4,7 @@ export const IPC_CHANNELS = {
     RESTORE: 'actions:restore',
     CLOSE: 'actions:close',
   },
+  WORKSHOP: {
+    GET_ALL_ITEMS: 'workshop:getAllItems',
+  },
 } as const;
