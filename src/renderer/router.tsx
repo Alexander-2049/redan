@@ -6,11 +6,11 @@ import { Bug, Globe, Layout, Paintbrush } from 'lucide-react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import { API } from './api';
-import { AppLayout } from './components/main-layouts/AppLayout';
-import { PageLayout } from './components/main-layouts/PageLayout';
-import { NotFoundRoute } from './routes/404';
-import SplashRoute from './routes/SplashRoute';
-import { WorkshopRoute } from './routes/WorkshopRoute';
+import { AppLayout } from './components/main-layouts/app-layout';
+import { PageLayout } from './components/main-layouts/page-layout';
+import { NotFoundRoute } from './routes/404-route';
+import SplashRoute from './routes/splash-route';
+import { WorkshopRoute } from './routes/workshop-route';
 
 // import { useLayouts } from './api/layouts/get-layouts';
 // import AppLayout from './components/layout/app-layout';

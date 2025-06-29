@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
-import Sidebar from '../SideBar';
+import Sidebar from '../side-bar';
 
 interface SidebarLink {
   text: string;

@@ -1,9 +1,9 @@
 import { WorkshopItemQueryConfig, WorkshopPaginatedResult } from './shared/types/steam';
 
 interface WindowAction {
-  minimize: () => Promise<void>;
-  restore: () => Promise<void>;
-  close: () => Promise<void>;
+  minimize: () => void;
+  restore: () => void;
+  close: () => void;
 }
 
 interface SteamAPI {

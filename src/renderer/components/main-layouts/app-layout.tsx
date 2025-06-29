@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-import { TitleBar } from './title-bar/TitleBar';
+import { TitleBar } from './title-bar/title-bar';
 
 export function AppLayout() {
   return (
