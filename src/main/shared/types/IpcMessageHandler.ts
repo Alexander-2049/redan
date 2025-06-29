@@ -2,5 +2,6 @@ import { BrowserWindow } from 'electron';
 
 export type IpcMessageHandler = {
   channel: string;
-  handler: (window: BrowserWindow) => void | Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (window: BrowserWindow, props?: Record<string, any>) => void | Promise<void>;
 };
