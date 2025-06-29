@@ -4,6 +4,7 @@ import { MainWindow } from '../entities/main-window';
 import { AssetsRouter } from '../features/assets';
 import gameSource from '../features/game-source/GameSource';
 import { WebSocketServer } from '../features/game-source/web-socket-server';
+import { registerIpcMessageHandlers } from '../features/ipc-bridge';
 import { LoggerService } from '../features/logger/LoggerService';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { HttpServer } from '../infrastructure/http-server';
@@ -46,6 +47,7 @@ async function main() {
 
   app.on('ready', () => {
     const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
+    registerIpcMessageHandlers();
     mainWindow.load();
   });
 }

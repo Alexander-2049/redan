@@ -1,4 +1,7 @@
 export const IPC_CHANNELS = {
-  GET_OVERLAYS: 'overlays:get-all',
-  SAVE_OVERLAY: 'overlays:save',
+  ACTIONS: {
+    MINIMIZE: 'actions:minimize',
+    RESTORE: 'actions:restore',
+    CLOSE: 'actions:close',
+  },
 } as const;

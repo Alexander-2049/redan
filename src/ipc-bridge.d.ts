@@ -1,12 +1,12 @@
 interface WindowAction {
-  minimize: () => void;
-  restore: () => void;
-  close: () => void;
+  minimize: () => Promise<void>;
+  restore: () => Promise<void>;
+  close: () => Promise<void>;
 }
 
 declare global {
   interface Window {
-    action: WindowAction;
+    actions: WindowAction;
   }
 }
 
