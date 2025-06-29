@@ -1,0 +1,251 @@
+import {
+  Star,
+  Download,
+  // Heart,
+  // Share,
+  // Flag,
+  // ThumbsUp,
+  // ThumbsDown,
+  // MessageCircle,
+  X,
+} from 'lucide-react';
+
+import { Progress } from '../ui/progress';
+
+import { Badge } from '@/renderer/components/ui/badge';
+import { Button } from '@/renderer/components/ui/button';
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
+// import { useState } from "react";
+import { DownloadInfo, WorkshopItem } from '@/shared/types/steam';
+
+interface Item extends WorkshopItem {
+  author?: string;
+}
+
+interface WorkshopPreviewProps {
+  item: Item;
+  isSubscribed?: boolean;
+  //   id: string;
+  //   title: string;
+  //   author: string;
+  //   image: string;
+  //   rating: number;
+  //   downloads: number;
+  //   views: number;
+  //   tags: string[];
+  //   isApproved?: boolean;
+  //   description?: string;
+  //   fileSize: string;
+  //   uploadDate: string;
+  //   lastUpdate: string;
+  // } | null;
+  onClose: () => void;
+  onSubscribe: (itemId: bigint) => void;
+  onUnsubscribe: (itemId: bigint) => void;
+  onRate: (itemId: bigint, rating: 'like' | 'dislike') => void;
+  downloadInfo: DownloadInfo | null;
+}
+
+export function WorkshopPreview({
+  item,
+  // onClose,
+  isSubscribed,
+  onSubscribe,
+  onUnsubscribe,
+  // onRate,
+  downloadInfo,
+}: WorkshopPreviewProps) {
+  // const [userRating, setUserRating] = useState<"like" | "dislike" | null>(null);
+  const totalVotes = item.numUpvotes + item.numDownvotes;
+  const rating = totalVotes === 0 ? 0 : Math.round((item.numUpvotes / totalVotes) * 5 * 10) / 10;
+
+  if (!item) return null;
+
+  // const handleRate = (rating: "like" | "dislike") => {
+  //   setUserRating(rating);
+  //   onRate(item.publishedFileId, rating);
+  // };
+
+  return (
+    <div className="flex w-80 flex-shrink-0 flex-col border-l border-gray-200 bg-white">
+      <div className="min-h-0 flex-1">
+        <ScrollArea className="h-full">
+          <div className="space-y-4 p-4">
+            <div className="relative aspect-square">
+              <img
+                src={item.previewUrl || '/placeholder.svg?height=300&width=300'}
+                alt={item.title}
+                className="h-full w-full rounded-lg object-cover"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-gray-900">{item.title}</h3>
+              {item.author && <p className="text-gray-600">by {item.author}</p>}
+            </div>
+
+            <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <div className="flex items-center">
+                <Star className="mr-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span>{totalVotes < 5 ? 'Not enough votes' : rating.toFixed(1)}</span>
+              </div>
+              {item.statistics.numSubscriptions !== undefined && (
+                <div className="flex items-center">
+                  <Download className="mr-1 h-4 w-4" />
+                  <span>{Number(item.statistics.numSubscriptions).toLocaleString()}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              {!isSubscribed && (
+                <Button
+                  onClick={() => onSubscribe(item.publishedFileId)}
+                  className="w-full bg-green-600 text-white hover:bg-green-700"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Subscribe
+                </Button>
+              )}
+              {isSubscribed && (
+                <Button
+                  onClick={() => onUnsubscribe(item.publishedFileId)}
+                  className="w-full bg-red-600 text-white hover:bg-red-700"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Unsubscribe
+                </Button>
+              )}
+
+              {downloadInfo &&
+                downloadInfo.total > BigInt(0) &&
+                downloadInfo.current < downloadInfo.total && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>Downloading...</span>
+                      <span>
+                        {Math.round(
+                          (Number(downloadInfo.current) / Number(downloadInfo.total)) * 100,
+                        )}
+                        %
+                      </span>
+                    </div>
+                    <Progress
+                      value={(Number(downloadInfo.current) / Number(downloadInfo.total)) * 100}
+                      className="w-full"
+                    />
+                    <div className="text-center text-xs text-gray-500">
+                      {(Number(downloadInfo.current) / (1024 * 1024)).toFixed(1)} MB /{' '}
+                      {(Number(downloadInfo.total) / (1024 * 1024)).toFixed(1)} MB
+                    </div>
+                  </div>
+                )}
+
+              {/* <div className="flex space-x-2">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Heart className="mr-1 h-4 w-4" />
+                  Favorite
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Share className="mr-1 h-4 w-4" />
+                  Share
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Flag className="h-4 w-4" />
+                </Button>
+              </div> */}
+            </div>
+
+            {/* <div className="space-y-2">
+              <h4 className="font-semibold text-gray-900">Rate this item</h4>
+              <div className="flex space-x-2">
+                <Button
+                  variant={userRating === "like" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleRate("like")}
+                  className={`flex-1 ${
+                    userRating === "like"
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "hover:border-green-300 hover:bg-green-50"
+                  }`}
+                >
+                  <ThumbsUp className="mr-1 h-4 w-4" />
+                  Like
+                </Button>
+                <Button
+                  variant={userRating === "dislike" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleRate("dislike")}
+                  className={`flex-1 ${
+                    userRating === "dislike"
+                      ? "bg-red-600 text-white hover:bg-red-700"
+                      : "hover:border-red-300 hover:bg-red-50"
+                  }`}
+                >
+                  <ThumbsDown className="mr-1 h-4 w-4" />
+                  Dislike
+                </Button>
+              </div>
+            </div> */}
+
+            {/* <div className="space-y-2">
+              <Button variant="outline" className="w-full">
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Comment
+              </Button>
+            </div> */}
+
+            {item.tags.filter(e => e !== '').length > 0 && (
+              <div className="space-y-2">
+                <h4 className="font-semibold text-gray-900">Tags</h4>
+                <div className="flex flex-wrap gap-1">
+                  {item.tags.map(tag => {
+                    if (tag === '') return;
+                    else
+                      return (
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        >
+                          {tag}
+                        </Badge>
+                      );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {item.description && (
+              <div className="space-y-2">
+                <h4 className="font-semibold text-gray-900">Description</h4>
+                <p className="text-sm leading-relaxed text-gray-600">{item.description}</p>
+              </div>
+            )}
+
+            <div className="space-y-2 border-t border-gray-200 pt-4">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {/* <div>
+                  <span className="text-gray-500">File Size:</span>
+                  <p className="text-gray-900">{item.fileSize}</p>
+                </div> */}
+                <div>
+                  <span className="text-gray-500">Uploaded:</span>
+                  <p className="text-gray-900">
+                    {new Date(item.timeCreated * 1000).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-gray-500">Updated:</span>
+                  <p className="text-gray-900">
+                    {new Date(item.timeUpdated * 1000).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+    </div>
+  );
+}

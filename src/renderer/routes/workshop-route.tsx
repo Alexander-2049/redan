@@ -3,15 +3,18 @@ import { useEffect, useState } from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { WorkshopGrid } from '../components/workshop/workshop-grid';
 import { WorkshopPagination } from '../components/workshop/workshop-pagination';
+import { WorkshopPreview } from '../components/workshop/workshop-preview';
 import { useWorkshopPage } from '../hooks/useWorkshopAllItems';
 
-import { WorkshopItem } from '@/shared/types/steam';
+import { DownloadInfo, WorkshopItem } from '@/shared/types/steam';
 
 export const WorkshopRoute = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, isFetching } = useWorkshopPage(currentPage);
   const [items, setItems] = useState<WorkshopItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<WorkshopItem | null>(null);
+  const [isSubscribedOnSelectedItem, setIsSubscribedOnSelectedItem] = useState(false);
+  const [downloadInfo, setDownloadInfo] = useState<DownloadInfo | null>(null);
 
   useEffect(() => {
     if (data && data.items) {
@@ -31,6 +34,24 @@ export const WorkshopRoute = () => {
   const handleItemClick = (item: (typeof items)[0]) => {
     setSelectedItem(item);
   };
+
+  const handleClosePreview = () => {
+    setSelectedItem(null);
+  };
+
+  const handleSubscribe = (itemId: bigint) => {
+    console.log('Subscribing to item:', itemId);
+  };
+  const handleUnsubscribe = (itemId: bigint) => {
+    console.log('Unsubscribe from item:', itemId);
+  };
+  const handleRate = (itemId: bigint, rating: 'like' | 'dislike') => {
+    console.log('Rating item:', itemId, 'with', rating);
+  };
+
+  /*
+          downloadInfo={downloadInfo ? downloadInfo : null}
+          */
 
   return (
     <div className="flex h-full bg-gray-100">
@@ -79,7 +100,7 @@ export const WorkshopRoute = () => {
         </div>
       </div>
 
-      {/* {selectedItem && (
+      {selectedItem && (
         <WorkshopPreview
           item={selectedItem}
           onClose={handleClosePreview}
@@ -91,7 +112,7 @@ export const WorkshopRoute = () => {
           // const { data: downloadInfo } = useWorkshopDownloadInfo();
           // const { mutate: download } = useWorkshopDownloadItem();
         />
-      )} */}
+      )}
     </div>
   );
 };
