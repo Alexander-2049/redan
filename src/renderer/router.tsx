@@ -6,6 +6,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/main-layouts/AppLayout';
 import { PageLayout } from './components/main-layouts/PageLayout';
 import { NotFoundRoute } from './routes/404';
+import SplashRoute from './routes/SplashRoute';
 
 // import { useLayouts } from './api/layouts/get-layouts';
 // import AppLayout from './components/layout/app-layout';
@@ -38,12 +39,13 @@ const Main = () => {
   return (
     <HashRouter>
       <Routes>
+        <Route path="/" element={<SplashRoute />} />
         <Route path="*" element={<AppLayout />}>
           <Route element={<PageLayout />}>
             {/* <Route index element={<DashboardRoute />} />
             <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugRoute />} />
-            <Route path="/my-layouts" element={<MyLayoutsRoute />} />
+            <Route path="/layouts" element={<MyLayoutsRoute />} />
             <Route path="/workshop" element={<WorkshopRoute />} />
             <Route path="/configurator" element={<ConfiguratorRoute />} /> */}
           </Route>
