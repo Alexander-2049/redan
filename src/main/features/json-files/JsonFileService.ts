@@ -44,6 +44,28 @@ export class JsonFileService {
     return fs.existsSync(filePath);
   }
 
+  public static getFilesInDirectory(directoryPath: string): string[] {
+    if (!fs.existsSync(directoryPath) || !fs.statSync(directoryPath).isDirectory()) {
+      this.logger.warn(`Directory not found: ${directoryPath}`);
+      throw new Error(`Directory not found: ${directoryPath}`);
+    }
+
+    try {
+      const files = fs
+        .readdirSync(directoryPath)
+        .filter(file => fs.statSync(path.join(directoryPath, file)).isFile());
+      this.logger.info(`Listed files in directory: ${directoryPath}`);
+      return files;
+    } catch (err) {
+      this.logger.error(`Failed to list files in directory: ${directoryPath}`, {
+        error: err,
+      });
+      throw new Error(
+        `Failed to list files in directory: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+  }
+
   private static safeWrite(filePath: string, json: string): void {
     const dir = path.dirname(filePath);
     fs.mkdirSync(dir, { recursive: true });
