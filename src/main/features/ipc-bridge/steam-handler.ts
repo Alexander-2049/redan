@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
 import { Steam } from '../steam';
@@ -106,6 +106,21 @@ export function registerSteamHandlers() {
       const client = Steam.getInstance().getSteamClient();
       if (!client) return null;
       return client.workshop.installInfo(itemId);
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSHOP.OPEN_IN_STEAM_CLIENT,
+    async (event, workshopId: string | number | bigint) => {
+      const idStr = String(workshopId);
+      const steamUrl = `steam://openurl/https://steamcommunity.com/sharedfiles/filedetails/?id=${idStr}`;
+
+      try {
+        return shell.openExternal(steamUrl);
+      } catch (error) {
+        logger.error('Failed to open Steam URL:', error);
+        return;
+      }
     },
   );
 }

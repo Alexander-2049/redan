@@ -41,6 +41,9 @@ const steam: SteamActions = {
         IPC_CHANNELS.WORKSHOP.GET_INSTALL_INFO,
         item,
       ) as Promise<InstallInfo | null>,
+    openInSteamClient: (workshopId: bigint | number | string) => {
+      void ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.OPEN_IN_STEAM_CLIENT, workshopId);
+    },
   },
 };
 

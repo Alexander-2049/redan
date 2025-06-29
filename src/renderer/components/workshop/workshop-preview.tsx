@@ -156,6 +156,15 @@ export function WorkshopPreview({
               </div> */}
             </div>
 
+            <div className="space-y-2">
+              <Button
+                className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => window.steam.workshop.openInSteamClient(item.publishedFileId)}
+              >
+                Open in Steam Workshop
+              </Button>
+            </div>
+
             {/* <div className="space-y-2">
               <h4 className="font-semibold text-gray-900">Rate this item</h4>
               <div className="flex space-x-2">
