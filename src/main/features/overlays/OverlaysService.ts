@@ -10,7 +10,7 @@ import { OverlayManifestFile } from '@/main/shared/types/OverlayManifestFile';
 
 const logger = LoggerService.getLogger('overlay-service');
 
-export class OverlayHandler {
+export class OverlaysService {
   public static loadAllOverlays(): { folderName: string; manifest: OverlayManifestFile | null }[] {
     logger.info('Loading all overlays...');
 
