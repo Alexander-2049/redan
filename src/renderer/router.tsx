@@ -1,6 +1,7 @@
 // import { useTranslation } from "react-i18next";
 // import './i18n';
 // import { useEffect } from 'react';
+import { Bug, Globe, Layout, Paintbrush } from 'lucide-react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import { AppLayout } from './components/main-layouts/AppLayout';
@@ -36,12 +37,33 @@ const Main = () => {
   //   };
   // }, []);
 
+  const isDebug = true; // or determine from process.env, etc.
+
+  const sidebarLinks = [
+    {
+      group: 'MAIN',
+      links: [
+        { text: 'Layouts', path: '/layouts', icon: Layout },
+        { text: 'Workshop', path: '/workshop', icon: Globe },
+        { text: 'Create', path: '/create', icon: Paintbrush },
+      ],
+    },
+    ...(isDebug
+      ? [
+          {
+            group: 'DEVELOPER',
+            links: [{ text: 'Debug', path: '/debug', icon: Bug }],
+          },
+        ]
+      : []),
+  ];
+
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<SplashRoute />} />
         <Route path="*" element={<AppLayout />}>
-          <Route element={<PageLayout />}>
+          <Route element={<PageLayout sidebarLinks={sidebarLinks} />}>
             {/* <Route index element={<DashboardRoute />} />
             <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugRoute />} />
@@ -49,7 +71,7 @@ const Main = () => {
             <Route path="/workshop" element={<WorkshopRoute />} />
             <Route path="/configurator" element={<ConfiguratorRoute />} /> */}
           </Route>
-          <Route path="*" element={<PageLayout />}>
+          <Route path="*" element={<PageLayout sidebarLinks={sidebarLinks} />}>
             <Route path="*" element={<NotFoundRoute />} />
           </Route>
         </Route>
