@@ -1,14 +1,4 @@
-import {
-  Star,
-  Download,
-  // Heart,
-  // Share,
-  // Flag,
-  // ThumbsUp,
-  // ThumbsDown,
-  // MessageCircle,
-  X,
-} from 'lucide-react';
+import { Star, Download, Trash2 } from 'lucide-react';
 
 import { Progress } from '../ui/progress';
 
@@ -112,7 +102,7 @@ export function WorkshopPreview({
                   onClick={() => onUnsubscribe(item.publishedFileId)}
                   className="w-full bg-red-600 text-white hover:bg-red-700"
                 >
-                  <X className="mr-2 h-4 w-4" />
+                  <Trash2 className="mr-2 h-4 w-4" />
                   Unsubscribe
                 </Button>
               )}
