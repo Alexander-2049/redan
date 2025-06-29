@@ -28,7 +28,7 @@
 
 // import './index.css';
 // import './styles/globals.css';
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 // import { Provider } from 'react-redux';
@@ -38,7 +38,9 @@ import { createRoot } from 'react-dom/client';
 // import Main from './routes';
 // import DashboardRoute from './routes/dashboard-route';
 // import { store } from './store'; // путь к твоему store.ts
-// import './styles/fonts.css';
+import './styles/drag.css';
+import './styles/tailwind.css';
+import Main from './router';
 
 // export const router = createHashRouter([
 //   {
@@ -47,7 +49,7 @@ import { createRoot } from 'react-dom/client';
 //   },
 // ]);
 
-// const queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 const app = document.getElementById('app');
 if (!app) throw new Error('root element with app id was not found');
@@ -56,12 +58,11 @@ const root = createRoot(app);
 
 root.render(
   <React.StrictMode>
-    {/* <QueryClientProvider client={queryClient}> */}
-    {/* <Provider store={store}> */}
-    {/* <Main /> */}
-    <div>Hello, World!</div>
-    {/* <Toaster /> */}
-    {/* </Provider> */}
-    {/* </QueryClientProvider> */}
+    <QueryClientProvider client={queryClient}>
+      <Main />
+      {/* <Provider store={store}> */}
+      {/* <Toaster /> */}
+      {/* </Provider> */}
+    </QueryClientProvider>
   </React.StrictMode>,
 );

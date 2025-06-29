@@ -1,6 +1,13 @@
-// declare global {
-//   interface Window {
-//   }
-// }
+interface WindowAction {
+  minimize: () => void;
+  restore: () => void;
+  close: () => void;
+}
 
-// export {};
+declare global {
+  interface Window {
+    action: WindowAction;
+  }
+}
+
+export {};
