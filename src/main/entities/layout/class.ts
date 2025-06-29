@@ -51,7 +51,7 @@ export class Layout {
         game: this._game,
         title: this._title,
         overlays: this._overlays.map(overlay => {
-          return this.getPropertiesFromOverlay(overlay);
+          return this.getOverlayProperties(overlay);
         }),
         screen: {
           height: this.screen.height,
@@ -64,10 +64,23 @@ export class Layout {
         JsonFileService.path.join(PathService.getPath('LAYOUTS'), this._filename),
         data,
       );
+
+      return resolve(() => {
+        return;
+      });
     });
   }
 
-  private getPropertiesFromOverlay(overlay: Overlay): LayoutOverlay {
-    return overlay.properties;
+  private getOverlayProperties(overlay: Overlay): LayoutOverlay {
+    const bounds = overlay.getWindowBounds();
+
+    return {
+      baseUrl: overlay.baseUrl,
+      id: overlay.id,
+      title: overlay.manifest.title,
+      ...bounds,
+      settings: overlay.settings,
+      visible: overlay.visible,
+    };
   }
 }

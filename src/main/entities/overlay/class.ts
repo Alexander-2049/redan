@@ -1,43 +1,33 @@
 import { BrowserWindow } from 'electron';
 
 import { LoggerService } from '@/main/features/logger/LoggerService';
-import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
+import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
+import { OverlayManifestFile } from '@/main/shared/types/OverlayManifestFile';
+import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions';
+
 declare const OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-interface OverlayWindowOptions {
-  position: {
-    x: number;
-    y: number;
-  };
-  size: {
-    width: number;
-    height: number;
-    minWidth: number;
-    minHeight: number;
-    maxWidth: number;
-    maxHeight: number;
-  };
-}
-
-interface OverlayPosition {
-  x: number;
-  y: number;
-}
-
-interface OverlaySize {
-  width: number;
-  height: number;
-}
-
 export class Overlay {
-  protected _window: BrowserWindow;
-  private _isEditMode = false;
-  private _baseUrl = '';
-  private _queryParameters = '';
-  private logger = LoggerService.getLogger('overlay');
+  private readonly logger = LoggerService.getLogger('overlay');
 
-  constructor(_baseUrl: string, options: OverlayWindowOptions) {
-    this._baseUrl = _baseUrl;
+  private _window: BrowserWindow;
+  private _settings: OverlaySettingInLayout[] = [];
+  private _baseUrl: string;
+  private _manifest: OverlayManifestFile;
+  private _isEditMode = false;
+  private _id: string;
+  private _isPreviewMode = false;
+  private _visible = false;
+
+  constructor(
+    id: string,
+    baseUrl: string,
+    manifest: OverlayManifestFile,
+    options: OverlayWindowBounds,
+  ) {
+    this._id = id;
+    this._baseUrl = baseUrl;
+    this._manifest = manifest;
     this._window = new BrowserWindow({
       show: false,
       frame: false,
@@ -56,7 +46,12 @@ export class Overlay {
         webSecurity: true,
         devTools: false,
       },
-      ...options,
+      minHeight: options.size.minHeight,
+      minWidth: options.size.minWidth,
+      maxHeight: options.size.maxHeight,
+      maxWidth: options.size.maxWidth,
+      x: options.position.x,
+      y: options.position.y,
     });
 
     this._window.setAlwaysOnTop(true, 'screen-saver');
@@ -81,70 +76,155 @@ export class Overlay {
   }
 
   public load() {
-    this._window
-      .loadURL(this._baseUrl)
-      .then(() => {
-        this._window.showInactive();
-      })
-      .catch(e => {
-        this.logger.error(e);
-      });
+    let queryParams = this.convertSettingsToQuery(this._settings);
+    if (this._isPreviewMode) {
+      queryParams = queryParams.length > 0 ? `${queryParams}&preview=true` : 'preview=true';
+    }
+    const url = `${this._baseUrl}?${queryParams}`;
+
+    const currentUrl = this._window.webContents.getURL();
+    if (currentUrl !== url) {
+      this._window
+        .loadURL(url)
+        .then(() => {
+          this._window.showInactive();
+        })
+        .catch(e => {
+          this.logger.error(e);
+        });
+    }
+  }
+
+  /** Update runtime settings and reload without flicker */
+  public updateSettings(newSettings: OverlaySettingInLayout[]) {
+    const changed = JSON.stringify(this._settings) !== JSON.stringify(newSettings);
+    if (!changed) return;
+
+    this._settings = newSettings;
+    this.load();
+  }
+
+  public updateEditMode(isEditMode: boolean) {
+    this._isEditMode = isEditMode;
+    this._window.resizable = isEditMode;
+    this._window.setIgnoreMouseEvents(!isEditMode);
+    this._window.webContents.send('edit-mode', isEditMode);
+  }
+
+  public updatePreviewMode(isPreviewMode: boolean) {
+    if (this._isPreviewMode === isPreviewMode) return;
+    this._isPreviewMode = isPreviewMode;
+    this.load();
   }
 
   public show() {
     this._window.show();
+    this._visible = true;
   }
 
   public hide() {
     this._window.hide();
+    this._visible = false;
   }
 
   public destroy() {
     this._window.destroy();
+    this._visible = false;
+  }
+
+  public on(
+    event: 'change-dimensions',
+    callback: (position: { x: number; y: number }, size: { width: number; height: number }) => void,
+  ) {
+    if (event !== 'change-dimensions') return;
+
+    const handler = () => {
+      const { x, y, width, height } = this._window.getBounds();
+      callback({ x, y }, { width, height });
+    };
+
+    this._window.on('resize', handler);
+    this._window.on('move', handler);
+  }
+
+  public removeListener(event: 'change-dimensions') {
+    if (event === 'change-dimensions') {
+      this._window.removeAllListeners('resize');
+      this._window.removeAllListeners('move');
+    }
+  }
+
+  public getWindowBounds(): OverlayWindowBounds {
+    const { x, y, width, height } = this._window.getBounds();
+    return {
+      position: {
+        x,
+        y,
+      },
+      size: {
+        width,
+        height,
+        maxWidth: this._window.getMaximumSize()[0],
+        maxHeight: this._window.getMaximumSize()[1],
+        minWidth: this._window.getMinimumSize()[0],
+        minHeight: this._window.getMinimumSize()[1],
+      },
+    };
+  }
+
+  public updateWindowBounds(bounds: Partial<OverlayWindowBounds>) {
+    const { position, size } = { ...this.getWindowBounds(), ...bounds };
+
+    this._window.setBounds({
+      ...position,
+      ...size,
+    });
+
+    if (size) {
+      if (typeof size.minWidth === 'number' && typeof size.minHeight === 'number') {
+        this._window.setMinimumSize(size.minWidth, size.minHeight);
+      }
+      if (typeof size.maxWidth === 'number' && typeof size.maxHeight === 'number') {
+        this._window.setMaximumSize(size.maxWidth, size.maxHeight);
+      }
+    }
   }
 
   public isEditMode() {
     return this._isEditMode;
   }
 
-  public toggleEditMode(isEditMode: boolean) {
-    this._window.resizable = isEditMode;
-    this._window.setIgnoreMouseEvents(isEditMode);
-    this._window.webContents.send('set-edit-mode', !isEditMode);
-    this._isEditMode = isEditMode;
+  public isPreviewMode() {
+    return this._isPreviewMode;
   }
 
-  public on(
-    event: 'change-dimentions',
-    callback: (position: OverlayPosition, size: OverlaySize) => void,
-  ) {
-    if (event !== 'change-dimentions') return;
-
-    const sendWindowDimensions = () => {
-      const { x, y, width, height } = this._window.getBounds();
-      callback(
-        {
-          x,
-          y,
-        },
-        {
-          width,
-          height,
-        },
-      );
-    };
-
-    this._window.on('resize', sendWindowDimensions);
-    this._window.on('move', sendWindowDimensions);
+  public get id() {
+    return this._id;
   }
 
-  public removeListener(event: 'change-dimentions') {
-    if (event !== 'change-dimentions') return;
-    this._window.removeAllListeners('resize');
-    this._window.removeAllListeners('move');
+  public get settings() {
+    return this._settings;
   }
 
-  public get properties(): LayoutOverlay {
-    return this.properties;
+  public get manifest() {
+    return this._manifest;
+  }
+
+  public get baseUrl(): string {
+    return this.baseUrl;
+  }
+
+  public get visible() {
+    return this._visible;
+  }
+
+  public convertSettingsToQuery(settings: OverlaySettingInLayout[]): string {
+    return settings
+      .map(setting =>
+        Object.entries(setting)
+          .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+          .join('&'),
+      )
+      .join('&');
   }
 }

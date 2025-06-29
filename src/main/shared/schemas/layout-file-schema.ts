@@ -21,7 +21,7 @@ export const overlaySettingInLayoutFileSchema = z.object({
 export const overlayInLayoutFileSchema = z.object({
   id: z.string(),
   baseUrl: z.string(),
-  name: z.string(),
+  title: z.string(),
   settings: z.array(overlaySettingInLayoutFileSchema),
   visible: z.boolean(),
   position: overlayPositionInLayoutFileSchema,
