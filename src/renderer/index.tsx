@@ -49,7 +49,13 @@ import Main from './router';
 //   },
 // ]);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const app = document.getElementById('app');
 if (!app) throw new Error('root element with app id was not found');
