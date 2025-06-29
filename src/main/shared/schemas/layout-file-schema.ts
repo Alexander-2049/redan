@@ -1,6 +1,8 @@
 // %appdata%/SimRacingToolkit/Layouts/${LAYOUT_FILENAME}
 import { z } from 'zod';
 
+import { gameNameSchema } from './game-name-schema';
+
 export const overlaySizeInLayoutFileSchema = z.object({
   width: z.number(),
   height: z.number(),
@@ -20,6 +22,7 @@ export const overlaySettingInLayoutFileSchema = z.object({
 
 export const overlayInLayoutFileSchema = z.object({
   id: z.string(),
+  folderName: z.string(),
   baseUrl: z.string(),
   title: z.string(),
   settings: z.array(overlaySettingInLayoutFileSchema),
@@ -29,7 +32,7 @@ export const overlayInLayoutFileSchema = z.object({
 });
 
 export const layoutFileSchema = z.object({
-  game: z.string(), // Defines which game this layout used for
+  game: gameNameSchema, // Defines which game this layout used for
   title: z.string(),
   overlays: z.array(overlayInLayoutFileSchema),
   screen: z.object({

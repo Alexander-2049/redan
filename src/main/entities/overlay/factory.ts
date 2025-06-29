@@ -12,19 +12,38 @@ export class OverlayFactory {
     uniqueId: string,
     baseUrl: string,
     folderPath: string,
-    options: OverlayWindowBounds,
+    bounds: Partial<OverlayWindowBounds>,
+    visible: boolean,
   ): Overlay | null {
     const data = JsonFileService.read(path.join(folderPath, 'manifest.json'));
     const manifest = overlayManifestFileSchema.parse(data);
-    return new Overlay(uniqueId, baseUrl, manifest, options);
+    return new Overlay(
+      uniqueId,
+      baseUrl,
+      manifest,
+      {
+        position: {
+          x: bounds.position?.x || 0,
+          y: bounds.position?.y || 0,
+        },
+        size: {
+          height: bounds.size?.height || manifest.dimentions.defaultHeight,
+          width: bounds.size?.width || manifest.dimentions.defaultWidth,
+          ...manifest.dimentions,
+        },
+        ...bounds,
+      },
+      visible,
+    );
   }
 
   static createFromManifest(
     uniqueId: string,
     baseUrl: string,
     manifest: OverlayManifestFile,
-    options: OverlayWindowBounds,
+    bounds: OverlayWindowBounds,
+    visible: boolean,
   ): Overlay {
-    return new Overlay(uniqueId, baseUrl, manifest, options);
+    return new Overlay(uniqueId, baseUrl, manifest, bounds, visible);
   }
 }

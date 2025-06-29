@@ -23,11 +23,13 @@ export class Overlay {
     id: string,
     baseUrl: string,
     manifest: OverlayManifestFile,
-    options: OverlayWindowBounds,
+    bounds: OverlayWindowBounds,
+    visible: boolean,
   ) {
     this._id = id;
     this._baseUrl = baseUrl;
     this._manifest = manifest;
+    this._visible = visible;
     this._window = new BrowserWindow({
       show: false,
       frame: false,
@@ -46,12 +48,12 @@ export class Overlay {
         webSecurity: true,
         devTools: false,
       },
-      minHeight: options.size.minHeight,
-      minWidth: options.size.minWidth,
-      maxHeight: options.size.maxHeight,
-      maxWidth: options.size.maxWidth,
-      x: options.position.x,
-      y: options.position.y,
+      minHeight: bounds.size.minHeight,
+      minWidth: bounds.size.minWidth,
+      maxHeight: bounds.size.maxHeight,
+      maxWidth: bounds.size.maxWidth,
+      x: bounds.position.x,
+      y: bounds.position.y,
     });
 
     this._window.setAlwaysOnTop(true, 'screen-saver');
@@ -117,19 +119,27 @@ export class Overlay {
     this.load();
   }
 
+  public setVisibile(visible: boolean, updateImmediately: boolean) {
+    if (visible === this._visible) return;
+    this._visible = visible;
+    if (updateImmediately && this._visible) {
+      this.show();
+    }
+    if (updateImmediately && !this._visible) {
+      this.hide();
+    }
+  }
+
   public show() {
-    this._window.show();
-    this._visible = true;
+    if (this.visible) this._window.show();
   }
 
   public hide() {
     this._window.hide();
-    this._visible = false;
   }
 
   public destroy() {
     this._window.destroy();
-    this._visible = false;
   }
 
   public on(
