@@ -1,19 +1,12 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { API } from '../api';
 
-export const useWorkshopAllItems = (startPage = 1) => {
-  return useInfiniteQuery({
-    queryKey: ['steam-workshop-all-items'],
-    queryFn: async ({ pageParam = startPage }) => {
-      const response = await API.steam.workshop.getWorkshopAllItems(pageParam);
-      return response?.items ?? [];
-    },
-    initialPageParam: startPage,
-    getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.length === 0) return undefined;
-      return allPages.length + 1;
-    },
+export const useWorkshopPage = (page: number) => {
+  return useQuery({
+    queryKey: ['steam-workshop-all-items', page],
+    queryFn: () => API.steam.workshop.getWorkshopAllItems(page),
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // prevent refetching for 5 minutes
   });
 };

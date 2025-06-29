@@ -1,15 +1,99 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useWorkshopAllItems } from '../hooks/useWorkshopAllItems';
+import { ScrollArea } from '../components/ui/scroll-area';
+import { WorkshopGrid } from '../components/workshop/workshop-grid';
+import { WorkshopPagination } from '../components/workshop/workshop-pagination';
+import { useWorkshopPage } from '../hooks/useWorkshopAllItems';
+
+import { WorkshopItem } from '@/shared/types/steam';
 
 export const WorkshopRoute = () => {
-  const { data, fetchNextPage, hasNextPage, isLoading, isError, error } = useWorkshopAllItems();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { data, isFetching } = useWorkshopPage(currentPage);
+  const [items, setItems] = useState<WorkshopItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<WorkshopItem | null>(null);
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
+    if (data && data.items) {
+      const currentPageItems = data.items.filter(e => !!e);
+      if (currentPageItems) {
+        setItems(currentPageItems);
+      }
+    } else {
+      setItems([]);
+    }
+  }, [data, currentPage]);
 
-  return <div></div>;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemClick = (item: (typeof items)[0]) => {
+    setSelectedItem(item);
+  };
+
+  return (
+    <div className="flex h-full bg-gray-100">
+      {/* <div className="flex h-full min-w-0 border-r border-gray-200 bg-gray-50 p-4">
+        <ScrollArea className="h-full">
+          <WorkshopFilters onResetFilters={handleResetFilters} />
+        </ScrollArea>
+      </div> */}
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* <div className="flex-shrink-0 border-b border-gray-200 bg-white p-4">
+          <WorkshopSearch
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            onSearch={handleSearch}
+            totalItems={items.length}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
+        </div> */}
+
+        {/* Split layout: Grid takes remaining space, Pagination is fixed at bottom */}
+        <div className="flex min-h-0 flex-1 flex-col">
+          {/* Items Grid - Scrollable area that takes all available space */}
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="p-4">
+                <WorkshopGrid
+                  items={items}
+                  isLoading={isFetching}
+                  onItemClick={handleItemClick}
+                  selectedItemId={selectedItem?.publishedFileId}
+                />
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Pagination - Fixed at bottom */}
+          <div className="flex-shrink-0 border-t border-gray-200 bg-white">
+            <WorkshopPagination
+              currentPage={currentPage}
+              totalPages={1000}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* {selectedItem && (
+        <WorkshopPreview
+          item={selectedItem}
+          onClose={handleClosePreview}
+          onSubscribe={handleSubscribe}
+          onUnsubscribe={handleUnsubscribe}
+          onRate={handleRate}
+          isSubscribed={isSubscribedOnSelectedItem}
+          downloadInfo={downloadInfo ? downloadInfo : null}
+          // const { data: downloadInfo } = useWorkshopDownloadInfo();
+          // const { mutate: download } = useWorkshopDownloadItem();
+        />
+      )} */}
+    </div>
+  );
 };
 
 // import { useEffect, useState } from 'react';
