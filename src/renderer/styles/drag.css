@@ -5,3 +5,8 @@
     -webkit-app-region: no-drag;
   }
 }
+
+a, img {
+  -webkit-user-drag: none; /* Safari, Chrome */
+  user-select: none;        /* Prevents selection */
+}
