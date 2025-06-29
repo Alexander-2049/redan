@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron/renderer';
 
-import { SteamActions } from '@/ipc-bridge-types';
+import { LayoutsActions, SteamActions, WindowActions } from '@/ipc-bridge-types';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 import {
   WorkshopItemQueryConfig,
@@ -9,12 +9,13 @@ import {
   InstallInfo,
 } from '@/shared/types/steam';
 
+const windowActions: WindowActions = {
+  minimize: () => void ipcRenderer.invoke(IPC_CHANNELS.ACTIONS.MINIMIZE),
+  restore: () => void ipcRenderer.invoke(IPC_CHANNELS.ACTIONS.RESTORE),
+  close: () => void ipcRenderer.invoke(IPC_CHANNELS.ACTIONS.CLOSE),
+};
 // Actions for window controls
-contextBridge.exposeInMainWorld('actions', {
-  minimize: () => ipcRenderer.invoke(IPC_CHANNELS.ACTIONS.MINIMIZE),
-  restore: () => ipcRenderer.invoke(IPC_CHANNELS.ACTIONS.RESTORE),
-  close: () => ipcRenderer.invoke(IPC_CHANNELS.ACTIONS.CLOSE),
-});
+contextBridge.exposeInMainWorld('actions', windowActions);
 
 // Steam actions
 const steam: SteamActions = {
@@ -48,3 +49,8 @@ const steam: SteamActions = {
 };
 
 contextBridge.exposeInMainWorld('steam', steam);
+
+const layouts: LayoutsActions = {
+  getLayouts: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS),
+};
+contextBridge.exposeInMainWorld('layouts', layouts);

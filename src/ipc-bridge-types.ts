@@ -1,3 +1,4 @@
+import { LayoutFile } from './main/shared/types/LayoutFile';
 import {
   DownloadInfo,
   InstallInfo,
@@ -28,4 +29,8 @@ export interface SteamWorkshopActions {
 export interface SteamActions {
   isOnline: () => Promise<boolean>;
   workshop: SteamWorkshopActions;
+}
+
+export interface LayoutsActions {
+  getLayouts: () => Promise<LayoutFile[]>;
 }

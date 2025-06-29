@@ -3,6 +3,7 @@ import { LayoutFactory } from '@/main/entities/layout/factory';
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
+import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { layoutSettingsFileSchema } from '@/main/shared/schemas/layout-settings-file-schema';
 import { LayoutFile } from '@/main/shared/types/LayoutFile';
 import { LayoutSettings } from '@/main/shared/types/LayoutSetting';
@@ -155,6 +156,27 @@ class LayoutWindowManager {
 
   public get filenames() {
     return Array.from(this._layouts.keys());
+  }
+
+  public getLayouts() {
+    this.logger.info('Retrieving all layouts...');
+    const layouts = [];
+
+    for (let i = 0; i < this.filenames.length; i++) {
+      const filename = this.filenames[i];
+      this.logger.debug(`Reading layout file: ${filename}`);
+      try {
+        const file = JsonFileService.read(JsonFileService.path.join(this._layoutsPath, filename));
+        const data = layoutFileSchema.parse(file);
+        layouts.push(data);
+        this.logger.debug(`Successfully parsed layout file: ${filename}`);
+      } catch (error) {
+        this.logger.error(`Failed to read or parse layout file: ${filename}`, error);
+      }
+    }
+
+    this.logger.info(`Total layouts retrieved: ${layouts.length}`);
+    return layouts;
   }
 
   private addLayout(layout: Layout) {

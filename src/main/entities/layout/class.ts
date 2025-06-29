@@ -65,7 +65,6 @@ export class Layout {
           width: this.screen.width,
         },
       };
-      layoutFileSchema.parse({});
 
       JsonFileService.write(
         JsonFileService.path.join(PathService.getPath('LAYOUTS'), this._filename),
