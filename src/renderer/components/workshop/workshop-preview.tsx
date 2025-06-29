@@ -234,12 +234,14 @@ export function WorkshopPreview({
                     {new Date(item.timeCreated * 1000).toLocaleDateString()}
                   </p>
                 </div>
-                <div>
-                  <span className="text-gray-500">Updated:</span>
-                  <p className="text-gray-900">
-                    {new Date(item.timeUpdated * 1000).toLocaleDateString()}
-                  </p>
-                </div>
+                {item.timeUpdated !== item.timeCreated && (
+                  <div>
+                    <span className="text-gray-500">Updated:</span>
+                    <p className="text-gray-900">
+                      {new Date(item.timeUpdated * 1000).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
