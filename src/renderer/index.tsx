@@ -38,7 +38,9 @@ import { createRoot } from 'react-dom/client';
 // import Main from './routes';
 // import DashboardRoute from './routes/dashboard-route';
 // import { store } from './store'; // путь к твоему store.ts
+import './styles/main.css';
 import './styles/drag.css';
+import './styles/fonts.css';
 import './styles/tailwind.css';
 import Main from './router';
 
