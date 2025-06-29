@@ -4,6 +4,7 @@ import { WebSocketServer } from '../features/game-source/web-socket-server';
 import { LoggerService } from '../features/logger/LoggerService';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { HttpServer } from '../infrastructure/http-server';
+import { layoutWindowManager } from '../widgets/layout-management';
 
 import { HTTP_SERVER_PORT } from '@/main/shared/constants';
 
@@ -25,6 +26,17 @@ async function main() {
     server: httpServer.server,
   });
   gameSource.selectGame('iRacing');
+
+  // layoutWindowManager.createLayout('JasonStathem.json', {
+  //   title: 'Jason Stathem',
+  //   game: 'iRacing',
+  //   overlays: [],
+  //   screen: {
+  //     width: 1920,
+  //     height: 1080,
+  //   },
+  // });
+  layoutWindowManager.load();
 }
 
 main().catch(e => {

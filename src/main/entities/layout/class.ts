@@ -121,6 +121,10 @@ export class Layout {
     });
   }
 
+  public get filename(): string | null {
+    return this._filename;
+  }
+
   private getOverlayProperties(overlay: Overlay): LayoutOverlay {
     const bounds = overlay.getWindowBounds();
 

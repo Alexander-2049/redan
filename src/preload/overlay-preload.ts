@@ -18,7 +18,7 @@ class OverlayDraggable {
     div.style.right = '0%';
     div.style.bottom = '0%';
     div.style.backgroundColor = 'rgba(0,0,0,0)';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     (div.style as any)['-webkit-app-region'] = 'drag';
     return div;
   }
@@ -108,11 +108,13 @@ class OverlayDraggable {
 }
 
 // Initialize the draggable overlay and overlay borders when the DOM is loaded
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener('DOMContentLoaded', () => {
   const div = new OverlayDraggable();
 
-  const isEditableMode = await ipcRenderer.invoke('is-editable-mode');
-  div.setEditableMode(isEditableMode);
+  void (async () => {
+    const isEditableMode = (await ipcRenderer.invoke('is-editable-mode')) as boolean;
+    div.setEditableMode(isEditableMode);
+  })();
 
   ipcRenderer.on('set-editable-mode', (_, enabled: boolean) => {
     div.setEditableMode(enabled);

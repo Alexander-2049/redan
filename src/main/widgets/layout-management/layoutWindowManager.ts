@@ -1,58 +1,178 @@
+import { Layout } from '@/main/entities/layout';
+import { LayoutFactory } from '@/main/entities/layout/factory';
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
 import { layoutSettingsFileSchema } from '@/main/shared/schemas/layout-settings-file-schema';
+import { LayoutFile } from '@/main/shared/types/LayoutFile';
 import { LayoutSettings } from '@/main/shared/types/LayoutSetting';
 
 class LayoutWindowManager {
-  private _layoutsPath: string;
   private logger = LoggerService.getLogger('layout-window-manager');
-  private _activeLayoutFilename: string | null = null;
+  private _layoutsPath: string;
   private _layoutOrder: string[] = [];
+  private _layouts: Map<string, Layout> = new Map();
+  private _activeLayout: Layout | null = null;
   private _settingsFilePath: string;
 
   constructor(layoutsPath: string) {
     this._layoutsPath = layoutsPath;
     this._settingsFilePath = JsonFileService.path.join(this._layoutsPath, 'settings.json');
-    const settings = this.readSettings();
-    if (settings) {
-      this._activeLayoutFilename = settings.activeLayoutFilename;
-      this._layoutOrder = settings.layoutOrder;
-    }
+    this.logger.info(`Initializing LayoutWindowManager at path: ${this._layoutsPath}`);
+    this.load();
   }
 
   public readSettings() {
-    if (!JsonFileService.exists(this._settingsFilePath)) return null;
+    this.logger.debug('Reading layout settings...');
+    if (!JsonFileService.exists(this._settingsFilePath)) {
+      this.logger.warn('Settings file does not exist.');
+      return null;
+    }
     const settingsFileContents = JsonFileService.read(this._settingsFilePath);
     try {
-      return layoutSettingsFileSchema.parse(settingsFileContents);
+      const parsed = layoutSettingsFileSchema.parse(settingsFileContents);
+      this.logger.info('Successfully parsed layout settings.');
+      return parsed;
     } catch (e) {
       this.logger.error('Failed to parse layout settings file:', e);
       return null;
     }
   }
 
-  public saveSettings() {
-    const data: LayoutSettings = {
-      activeLayoutFilename: this._activeLayoutFilename,
-      layoutOrder: this._layoutOrder,
-    };
-    JsonFileService.write(this._settingsFilePath, data);
+  public updateLayoutsOrder(order: string[]) {
+    this.logger.info(`Updating layout order: ${JSON.stringify(order)}`);
+    this._layoutOrder = order;
+    this.saveSettings();
   }
 
-  public readLayoutFileNames() {
+  public setActiveLayout(fileName: string | null, show = true) {
+    this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
+    this._activeLayout?.hide();
+
+    if (fileName === null) {
+      this._activeLayout = null;
+      this.logger.debug('Active layout set to null');
+      return;
+    }
+
+    this._activeLayout = this._layouts.get(fileName) || null;
+
+    if (!this._activeLayout) {
+      this.logger.warn(`Layout "${fileName}" not found`);
+      return;
+    }
+
+    this.saveSettings();
+
+    if (show) {
+      this.logger.debug(`Showing layout: ${fileName}`);
+      this._activeLayout?.show();
+    }
+  }
+
+  public getLayoutFilenames() {
     try {
-      return JsonFileService.getFilesInDirectory(this._layoutsPath).filter(
+      this.logger.debug('Reading layout file names from directory');
+      const files = JsonFileService.getFilesInDirectory(this._layoutsPath).filter(
         e => e !== 'settings.json',
       );
+      this.logger.info(`Found layout files: ${JSON.stringify(files)}`);
+      return files;
     } catch (e) {
       this.logger.error('Failed to read layout file names:', e);
       return [];
     }
   }
 
+  public createLayout(filename: string, layoutData: LayoutFile) {
+    this.logger.info(`Creating new layout: ${filename}`);
+    const layout = LayoutFactory.createAndSaveNewLayout(filename, layoutData);
+    if (layout && layout.filename) {
+      this._layouts.set(layout.filename, layout);
+      this.logger.debug(`Layout created and stored: ${layout.filename}`);
+      this.updateLayoutsOrder(this._layoutOrder);
+      return true;
+    }
+    this.logger.warn(`Failed to create layout: ${filename}`);
+    return false;
+  }
+
+  public deleteLayout(filename: string) {
+    this.logger.info(`Deleting layout: ${filename}`);
+    this._layoutOrder = this.layoutOrder.filter(f => f !== filename);
+    const deleted = this._layouts.delete(filename);
+    if (deleted) {
+      this.logger.debug(`Layout deleted: ${filename}`);
+    } else {
+      this.logger.warn(`Layout to delete not found: ${filename}`);
+    }
+
+    if (this._activeLayout?.filename === filename) {
+      this.logger.debug(`Deleted layout was active. Resetting active layout.`);
+      this.setActiveLayout(null);
+    }
+  }
+
   public get layoutsPath(): string {
     return this._layoutsPath;
+  }
+
+  public get layoutOrder(): ReadonlyArray<string> {
+    return this._layoutOrder;
+  }
+
+  public load() {
+    this.logger.info('Loading layouts from disk');
+    this._activeLayout?.hide();
+    this._activeLayout = null;
+    this._layouts.clear();
+    this._layoutOrder = [];
+
+    const filenames = this.getLayoutFilenames();
+    for (const filename of filenames) {
+      const layout = LayoutFactory.createFromFile(filename);
+      if (!layout) {
+        this.logger.warn(`Failed to load layout: ${filename}`);
+        continue;
+      }
+      const added = this.addLayout(layout);
+      if (added) {
+        this.logger.debug(`Loaded layout: ${filename}`);
+      }
+    }
+
+    const settings = this.readSettings();
+    if (settings) {
+      this.logger.info('Applying saved layout settings...');
+      this.setActiveLayout(settings.activeLayoutFilename || null);
+      this._layoutOrder = settings.layoutOrder;
+    }
+  }
+
+  public get filenames() {
+    return Array.from(this._layouts.keys());
+  }
+
+  private addLayout(layout: Layout) {
+    if (!layout.filename) {
+      this.logger.warn('Attempted to add layout with no filename');
+      return false;
+    }
+    if (this._layouts.has(layout.filename)) {
+      this.logger.warn(`Layout "${layout.filename}" already exists. Skipping.`);
+      return false;
+    }
+    this._layouts.set(layout.filename, layout);
+    return true;
+  }
+
+  private saveSettings() {
+    const data: LayoutSettings = {
+      activeLayoutFilename: this._activeLayout?.filename || null,
+      layoutOrder: this._layoutOrder,
+    };
+    this.logger.debug(`Saving settings: ${JSON.stringify(data)}`);
+    JsonFileService.write(this._settingsFilePath, data);
   }
 }
 
