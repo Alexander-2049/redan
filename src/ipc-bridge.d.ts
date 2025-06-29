@@ -1,22 +1,9 @@
-import { WorkshopItemQueryConfig, WorkshopPaginatedResult } from './shared/types/steam';
-
-interface WindowAction {
-  minimize: () => void;
-  restore: () => void;
-  close: () => void;
-}
-
-interface SteamAPI {
-  getWorkshopAllItems: (
-    page: number,
-    queryConfig: WorkshopItemQueryConfig,
-  ) => Promise<WorkshopPaginatedResult | null>;
-}
+import { SteamActions, WindowActions } from './ipc-bridge-types';
 
 declare global {
   interface Window {
-    actions: WindowAction;
-    steam: SteamAPI;
+    actions: WindowActions;
+    steam: SteamActions;
   }
 }
 

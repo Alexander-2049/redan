@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+
 import { ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
@@ -5,6 +7,7 @@ import { Steam } from '../steam';
 
 import { STEAM_APP_ID } from '@/main/shared/constants';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
+import { DownloadInfo, InstallInfo } from '@/shared/types/steam';
 
 const logger = LoggerService.getLogger('ipc-workshop-handlers');
 
@@ -33,4 +36,76 @@ export function registerSteamHandlers() {
       return null;
     }
   });
+
+  ipcMain.handle(IPC_CHANNELS.STEAM.IS_ONLINE, (): boolean => {
+    const client = Steam.getInstance().getSteamClient();
+    if (client) return true;
+    return false;
+  });
+
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.SUBSCRIBE, async (event, itemId: bigint): Promise<void> => {
+    const client = Steam.getInstance().getSteamClient();
+    if (!client) return;
+    logger.info(`Subscribing to workshop item: ${itemId}`);
+    await client.workshop.subscribe(itemId);
+  });
+
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSHOP.UNSUBSCRIBE,
+    async (event, itemId: bigint): Promise<void> => {
+      const client = Steam.getInstance().getSteamClient();
+      if (!client) return;
+      logger.info(`Unsubscribing from workshop item: ${itemId}`);
+
+      const folder = client.workshop.installInfo(itemId)?.folder;
+      if (folder) {
+        try {
+          // Optional: safety check to avoid accidental root deletion
+          if (folder.length > 10) {
+            logger.info(`Removing folder: ${folder}`);
+            await fs.rm(folder, { recursive: true, force: true });
+            logger.info(`Folder removed: ${folder}`);
+          } else {
+            logger.warn(`Refused to delete suspiciously short folder path: ${folder}`);
+          }
+        } catch (error) {
+          logger.error(`Failed to remove folder: ${folder}`, error);
+        }
+      }
+
+      await client.workshop.unsubscribe(itemId);
+    },
+  );
+
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_SUBSCRIBED_ITEMS, async () => {
+    const client = Steam.getInstance().getSteamClient();
+    if (!client) return [];
+    logger.info('Fetching subscribed workshop items');
+    await new Promise(r => setTimeout(r, 1000));
+    return client.workshop.getSubscribedItems();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.DOWNLOAD_ITEM, (event, itemId: bigint): boolean => {
+    const client = Steam.getInstance().getSteamClient();
+    if (!client) return false;
+    return client.workshop.download(itemId, true);
+  });
+
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSHOP.DOWNLOAD_INFO,
+    (event, itemId: bigint): DownloadInfo | null => {
+      const client = Steam.getInstance().getSteamClient();
+      if (!client) return null;
+      return client.workshop.downloadInfo(itemId);
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSHOP.GET_INSTALL_INFO,
+    (event, itemId: bigint): InstallInfo | null => {
+      const client = Steam.getInstance().getSteamClient();
+      if (!client) return null;
+      return client.workshop.installInfo(itemId);
+    },
+  );
 }

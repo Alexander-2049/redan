@@ -7,7 +7,7 @@ const SplashRoute = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate('/layouts');
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [navigate]);

@@ -4,6 +4,7 @@
 import { Bug, Globe, Layout, Paintbrush } from 'lucide-react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
+import { useSteamOnline } from './api/steam/is-steam-online';
 import { AppLayout } from './components/main-layouts/app-layout';
 import { PageLayout } from './components/main-layouts/page-layout';
 import { NotFoundRoute } from './routes/404-route';
@@ -38,6 +39,7 @@ const Main = () => {
   //   };
   // }, []);
 
+  const { data: isSteamOnline } = useSteamOnline();
   const isDebug = true; // or determine from process.env, etc.
 
   const sidebarLinks = [
@@ -65,7 +67,10 @@ const Main = () => {
         <Route path="/" element={<SplashRoute />} />
         <Route path="/" element={<AppLayout />}>
           <Route element={<PageLayout sidebarLinks={sidebarLinks} />}>
-            <Route path="/workshop" element={<WorkshopRoute />} />
+            <Route
+              path="/workshop"
+              element={<WorkshopRoute isSteamOnline={isSteamOnline || false} />}
+            />
             {/* <Route index element={<DashboardRoute />} />
             <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugRoute />} />

@@ -1,20 +1,46 @@
 import { useEffect, useState } from 'react';
 
+import { useWorkshopDownloadInfo } from '../api/steam/workshop-download-info';
+import { useWorkshopDownloadItem } from '../api/steam/workshop-download-item';
+import { useWorkshopPage } from '../api/steam/workshop-get-page';
+import { useWorkshopSubscribedItems } from '../api/steam/workshop-get-subscribed-items';
+import { useWorkshopSubscribeItem } from '../api/steam/workshop-subscribe-item';
+import { useWorkshopUnsubscribeItem } from '../api/steam/workshop-unsubscribe-item';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { WorkshopGrid } from '../components/workshop/workshop-grid';
+import WorkshopNoSteamConnection from '../components/workshop/workshop-no-steam-connection';
 import { WorkshopPagination } from '../components/workshop/workshop-pagination';
 import { WorkshopPreview } from '../components/workshop/workshop-preview';
-import { useWorkshopPage } from '../hooks/useWorkshopAllItems';
 
-import { DownloadInfo, WorkshopItem } from '@/shared/types/steam';
+import { WorkshopItem } from '@/shared/types/steam';
 
-export const WorkshopRoute = () => {
+export const WorkshopRoute = ({ isSteamOnline }: { isSteamOnline: boolean }) => {
+  if (!isSteamOnline) {
+    return <WorkshopNoSteamConnection />;
+  }
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, isFetching } = useWorkshopPage(currentPage);
   const [items, setItems] = useState<WorkshopItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<WorkshopItem | null>(null);
   const [isSubscribedOnSelectedItem, setIsSubscribedOnSelectedItem] = useState(false);
-  const [downloadInfo, setDownloadInfo] = useState<DownloadInfo | null>(null);
+  const { mutate: download } = useWorkshopDownloadItem();
+  const { mutate: subscribe } = useWorkshopSubscribeItem();
+  const { mutate: unsubscribe } = useWorkshopUnsubscribeItem();
+  const { data: downloadInfo, refetch: refetchWorkshopDownloadInfo } = useWorkshopDownloadInfo(
+    selectedItem ? selectedItem.publishedFileId : null,
+  );
+  const { data: subscribedItems } = useWorkshopSubscribedItems();
+
+  useEffect(() => {
+    if (!subscribedItems || !selectedItem) return;
+    void refetchWorkshopDownloadInfo();
+
+    const a = selectedItem.publishedFileId.toString();
+    const b = subscribedItems.map(c => c.toString());
+
+    setIsSubscribedOnSelectedItem(b.includes(a));
+  }, [subscribedItems, selectedItem]);
 
   useEffect(() => {
     if (data && data.items) {
@@ -26,6 +52,15 @@ export const WorkshopRoute = () => {
       setItems([]);
     }
   }, [data, currentPage]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      void refetchWorkshopDownloadInfo();
+    }, 100);
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -39,11 +74,20 @@ export const WorkshopRoute = () => {
     setSelectedItem(null);
   };
 
+  const handleDownload = (itemId: bigint) => {
+    console.log('Downloading item:', itemId);
+    download({ itemId });
+  };
+
   const handleSubscribe = (itemId: bigint) => {
     console.log('Subscribing to item:', itemId);
+    subscribe({ item: itemId });
+    handleDownload(itemId);
+    void refetchWorkshopDownloadInfo();
   };
   const handleUnsubscribe = (itemId: bigint) => {
-    console.log('Unsubscribe from item:', itemId);
+    console.log('Unsubscribing item:', itemId);
+    unsubscribe({ item: itemId });
   };
   const handleRate = (itemId: bigint, rating: 'like' | 'dislike') => {
     console.log('Rating item:', itemId, 'with', rating);
