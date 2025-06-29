@@ -2,19 +2,18 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { API } from '../api';
 
-export const useWorkshopAllItems = () => {
+export const useWorkshopAllItems = (startPage = 1) => {
   return useInfiniteQuery({
     queryKey: ['steam-workshop-all-items'],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam = startPage }) => {
       const response = await API.steam.workshop.getWorkshopAllItems(pageParam);
-      if (!response) return [];
-      return response.items;
+      return response?.items ?? [];
     },
-    initialPageParam: 1,
+    initialPageParam: startPage,
     getNextPageParam: (lastPage, allPages) => {
-      // Example logic, adjust according to your API's pagination
       if (lastPage.length === 0) return undefined;
       return allPages.length + 1;
     },
+    refetchOnWindowFocus: false,
   });
 };
