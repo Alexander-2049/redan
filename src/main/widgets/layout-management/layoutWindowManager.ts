@@ -149,6 +149,10 @@ class LayoutWindowManager {
     }
   }
 
+  public destroy() {
+    this._layouts.forEach(layout => layout.destroy());
+  }
+
   public get filenames() {
     return Array.from(this._layouts.keys());
   }

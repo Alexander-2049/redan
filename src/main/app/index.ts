@@ -1,3 +1,6 @@
+import { app } from 'electron';
+
+import { MainWindow } from '../entities/main-window';
 import { AssetsRouter } from '../features/assets';
 import gameSource from '../features/game-source/GameSource';
 import { WebSocketServer } from '../features/game-source/web-socket-server';
@@ -9,6 +12,9 @@ import { layoutWindowManager } from '../widgets/layout-management';
 import { HTTP_SERVER_PORT } from '@/main/shared/constants';
 
 const logger = LoggerService.getLogger('main');
+
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 async function main() {
@@ -37,8 +43,13 @@ async function main() {
   //   },
   // });
   layoutWindowManager.load();
+
+  app.on('ready', () => {
+    const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.load();
+  });
 }
 
-main().catch(e => {
-  logger.error(e);
+main().catch((e: unknown) => {
+  logger.error(e instanceof Error ? e.message : String(e));
 });

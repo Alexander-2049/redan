@@ -121,6 +121,12 @@ export class Layout {
     });
   }
 
+  public destroy() {
+    this._overlays.forEach(overlay => {
+      overlay.destroy();
+    });
+  }
+
   public get filename(): string | null {
     return this._filename;
   }
