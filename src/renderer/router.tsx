@@ -8,6 +8,7 @@ import { useSteamOnline } from './api/steam/is-steam-online';
 import { AppLayout } from './components/main-layouts/app-layout';
 import { PageLayout } from './components/main-layouts/page-layout';
 import { NotFoundRoute } from './routes/404-route';
+import CreateOverlayRoute from './routes/create-overlay-route';
 import LayoutsRoute from './routes/layouts-route';
 import SplashRoute from './routes/splash-route';
 import { WorkshopRoute } from './routes/workshop-route';
@@ -73,6 +74,7 @@ const Main = () => {
               element={<WorkshopRoute isSteamOnline={isSteamOnline || false} />}
             />
             <Route path="/layouts" element={<LayoutsRoute />} />
+            <Route path="/create" element={<CreateOverlayRoute />} />
             {/* <Route index element={<DashboardRoute />} />
             <Route path="/dashboard" element={<DashboardRoute />} />
             <Route path="/debug" element={<DebugRoute />} />
