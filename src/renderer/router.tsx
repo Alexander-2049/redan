@@ -7,9 +7,9 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useSteamOnline } from './api/steam/is-steam-online';
 import { AppLayout } from './components/main-layouts/app-layout';
 import { PageLayout } from './components/main-layouts/page-layout';
-import { NotFoundRoute } from './routes/404-route';
 import CreateOverlayRoute from './routes/create-overlay-route';
 import LayoutsRoute from './routes/layouts-route';
+import { NotFoundRoute } from './routes/not-found-route';
 import SplashRoute from './routes/splash-route';
 import { WorkshopRoute } from './routes/workshop-route';
 
