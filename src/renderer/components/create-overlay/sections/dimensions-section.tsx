@@ -19,9 +19,8 @@ export const DimensionsSection = ({
   errors,
   onValidate,
 }: DimensionsSectionProps) => {
-  const updateDimensions = (key: keyof OverlayManifestFile['dimentions'], value: string) => {
-    const numValue = value === '' ? 0 : Number.parseInt(value) || 0;
-    const newDimensions = { ...manifest.dimentions, [key]: numValue };
+  const updateDimensions = (key: keyof OverlayManifestFile['dimentions'], value: number) => {
+    const newDimensions = { ...manifest.dimentions, [key]: value };
     onUpdate({ dimentions: newDimensions });
     onValidate(newDimensions);
   };
