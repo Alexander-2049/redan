@@ -34,7 +34,7 @@ import { createRoot } from 'react-dom/client';
 // import { Provider } from 'react-redux';
 // import { createHashRouter } from 'react-router-dom';
 
-// import { Toaster } from './components/ui/sonner';
+import { Toaster } from './components/ui/sonner';
 // import Main from './routes';
 // import DashboardRoute from './routes/dashboard-route';
 // import { store } from './store'; // путь к твоему store.ts
@@ -69,7 +69,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <Main />
       {/* <Provider store={store}> */}
-      {/* <Toaster /> */}
+      <Toaster />
       {/* </Provider> */}
     </QueryClientProvider>
   </React.StrictMode>,
