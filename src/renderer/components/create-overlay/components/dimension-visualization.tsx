@@ -5,21 +5,36 @@ interface DimensionVisualizationProps {
 }
 
 export const DimensionVisualization = ({ dimensions }: DimensionVisualizationProps) => {
-  // Calculate dimensions for visualization (scaled down)
   const scale = 0.2;
-  const maxBoxWidth = dimensions.maxWidth * scale;
-  const maxBoxHeight = dimensions.maxHeight * scale;
-  const defaultBoxWidth = dimensions.defaultWidth * scale;
-  const defaultBoxHeight = dimensions.defaultHeight * scale;
-  const minBoxWidth = dimensions.minWidth * scale;
-  const minBoxHeight = dimensions.minHeight * scale;
+  const { maxWidth, maxHeight, defaultWidth, defaultHeight, minWidth, minHeight } = dimensions;
+
+  const maxBoxWidth = maxWidth * scale;
+  const maxBoxHeight = maxHeight * scale;
+  const defaultBoxWidth = defaultWidth * scale;
+  const defaultBoxHeight = defaultHeight * scale;
+  const minBoxWidth = minWidth * scale;
+  const minBoxHeight = minHeight * scale;
+
+  // Validate relationships
+  const isMinLargerThanMax = minWidth > maxWidth || minHeight > maxHeight;
+  const isDefaultLargerThanMax = defaultWidth > maxWidth || defaultHeight > maxHeight;
+  const isDefaultSmallerThanMin = defaultWidth < minWidth || defaultHeight < minHeight;
+
+  const minBoxClass = isMinLargerThanMax
+    ? 'border-yellow-500 bg-yellow-100'
+    : 'border-green-300 bg-green-50';
+  const defaultBoxClass =
+    isDefaultLargerThanMax || isDefaultSmallerThanMin
+      ? 'border-yellow-500 bg-yellow-100'
+      : 'border-blue-300 bg-blue-50';
+  const maxBoxClass = 'border-red-300 bg-red-50';
 
   return (
     <div className="flex justify-center">
       <div className="relative">
         {/* Max dimensions box */}
         <div
-          className="relative flex items-center justify-center border-2 border-red-300 bg-red-50"
+          className={`relative flex items-center justify-center border-2 ${maxBoxClass}`}
           style={{
             width: Math.max(maxBoxWidth, 60),
             height: Math.max(maxBoxHeight, 40),
@@ -29,7 +44,7 @@ export const DimensionVisualization = ({ dimensions }: DimensionVisualizationPro
 
           {/* Default dimensions box */}
           <div
-            className="absolute flex items-center justify-center border-2 border-blue-300 bg-blue-50"
+            className={`absolute flex items-center justify-center border-2 ${defaultBoxClass}`}
             style={{
               width: Math.max(defaultBoxWidth, 40),
               height: Math.max(defaultBoxHeight, 30),
@@ -42,7 +57,7 @@ export const DimensionVisualization = ({ dimensions }: DimensionVisualizationPro
 
             {/* Min dimensions box */}
             <div
-              className="absolute flex items-center justify-center border-2 border-green-300 bg-green-50"
+              className={`absolute flex items-center justify-center border-2 ${minBoxClass}`}
               style={{
                 width: Math.max(minBoxWidth, 20),
                 height: Math.max(minBoxHeight, 20),
