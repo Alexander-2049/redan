@@ -1,6 +1,8 @@
 import type React from 'react';
 import { useState } from 'react';
 
+import { SettingsSection } from './sections/settings-section';
+
 import { useManifestValidation } from '@/renderer/components/create-overlay/hooks/use-manifest-validation';
 import { BasicInfoSection } from '@/renderer/components/create-overlay/sections/basic-info-section';
 import { ConfigureHeader } from '@/renderer/components/create-overlay/sections/configure-header';
@@ -47,6 +49,8 @@ const CreateOverlayConfigureTab = ({
             errors={errors}
             onValidate={validateDimensions}
           />
+
+          <SettingsSection manifest={manifest} onUpdate={updateManifest} />
 
           <JsonPreviewSection manifest={manifest} />
         </div>
