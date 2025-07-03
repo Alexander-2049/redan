@@ -7,6 +7,7 @@ import { WebSocketServer } from '../features/game-source/web-socket-server';
 import { registerIpcMessageHandlers } from '../features/ipc-bridge';
 import { LoggerService } from '../features/logger/LoggerService';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
+import { SchemasRouter } from '../features/schemas/SchemasRouter';
 import { HttpServer } from '../infrastructure/http-server';
 import { layoutWindowManager } from '../widgets/layout-management';
 
@@ -22,6 +23,7 @@ async function main() {
   const routes = [
     { path: '/assets', router: new AssetsRouter().router },
     { path: '/overlays', router: new OverlaysRouter().router },
+    { path: '/schemas', router: new SchemasRouter().router },
   ];
 
   const httpServer = new HttpServer(HTTP_SERVER_PORT, routes);
