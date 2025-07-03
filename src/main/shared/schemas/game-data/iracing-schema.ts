@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { gameNameSchema } from './game-name-schema';
-import { wetnessSchema } from './wetness';
+import { gameNameSchema } from '../game-name-schema';
+import { wetnessSchema } from '../wetness';
 
 export const minimalRealtime = z.object({
   throttle: z.number(),

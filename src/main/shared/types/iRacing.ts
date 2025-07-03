@@ -5,7 +5,7 @@ import {
   minimalDriver,
   minimalRealtime,
   minimalSession,
-} from '../schemas/iracing-data';
+} from '../schemas/game-data/iracing-schema';
 
 export type iRacingData = z.infer<typeof iRacingDataSchema>;
 export type iRacingRealtimeData = z.infer<typeof minimalRealtime>;
