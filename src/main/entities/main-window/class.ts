@@ -1,9 +1,15 @@
-import { BrowserWindow } from 'electron';
+import path from 'path';
+
+import { app, BrowserWindow } from 'electron';
 
 import { LoggerService } from '@/main/features/logger/LoggerService';
 // import { layoutWindowManager } from '@/main/widgets/layout-management';
 
 const logger = LoggerService.getLogger('main-window');
+
+const iconPath = app.isPackaged
+  ? path.join(process.resourcesPath, 'public', 'logo.ico')
+  : path.join(__dirname, '..', '..', 'public', 'logo.ico');
 
 export class MainWindow {
   private _entry: string;
@@ -26,7 +32,7 @@ export class MainWindow {
       },
       frame: false,
       titleBarStyle: 'hidden',
-      // icon: iconPath,
+      icon: iconPath,
     });
 
     // registerHandlers(mainWindow);
