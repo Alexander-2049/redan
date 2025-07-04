@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { RunTestSection } from '../components/create-overlay/sections/run-test-section';
+
 import CreateOverlayConfigureTab from '@/renderer/components/create-overlay/create-overlay-configure-tab';
 import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/renderer/components/ui/tabs';
@@ -44,9 +46,7 @@ const CreateOverlayRoute = () => {
             <CreateOverlayConfigureTab manifest={manifest} onManifestChange={setManifest} />
           </TabsContent>
           <TabsContent value="test">
-            <div className="text-muted-foreground p-8 text-center">
-              Test functionality will be implemented here
-            </div>
+            <RunTestSection manifest={manifest} />
           </TabsContent>
           <TabsContent value="upload">
             <div className="text-muted-foreground p-8 text-center">
