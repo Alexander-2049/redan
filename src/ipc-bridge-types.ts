@@ -1,4 +1,5 @@
 import { LayoutFile } from './main/shared/types/LayoutFile';
+import { OverlayManifestFile } from './shared/types/OverlayManifestFile';
 import { SettingsMap } from './shared/types/SettingValue';
 import {
   DownloadInfo,
@@ -37,7 +38,7 @@ export interface LayoutsActions {
 }
 
 export interface OverlayActions {
-  open: (url: string) => Promise<void>;
+  open: (url: string, manifest: OverlayManifestFile) => Promise<void>;
   close: () => Promise<void>;
   updateEditMode: (mode: boolean) => Promise<void>;
   updateSettings: (settings: SettingsMap[]) => Promise<void>;

@@ -1,7 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron/renderer';
 
-import { LayoutsActions, SteamActions, WindowActions } from '@/ipc-bridge-types';
+import { LayoutsActions, OverlayActions, SteamActions, WindowActions } from '@/ipc-bridge-types';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
+import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
+import { SettingsMap } from '@/shared/types/SettingValue';
 import {
   WorkshopItemQueryConfig,
   WorkshopPaginatedResult,
@@ -54,3 +56,15 @@ const layouts: LayoutsActions = {
   getLayouts: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS),
 };
 contextBridge.exposeInMainWorld('layouts', layouts);
+
+const overlay: OverlayActions = {
+  open: (url: string, manifest: OverlayManifestFile) =>
+    ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.OPEN, url, manifest) as Promise<void>,
+  close: () => ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.CLOSE) as Promise<void>,
+  updateEditMode: (mode: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.UPDATE_EDIT_MODE, mode) as Promise<void>,
+  updateSettings: (settings: SettingsMap[]) =>
+    ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.UPDATE_SETTINGS, settings) as Promise<void>,
+};
+
+contextBridge.exposeInMainWorld('overlay', overlay);

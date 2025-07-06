@@ -111,12 +111,16 @@ class OverlayDraggable {
 window.addEventListener('DOMContentLoaded', () => {
   const div = new OverlayDraggable();
 
+  // Get the edit-mode channel from additional arguments
+  const editModeChannel =
+    process.argv.find(arg => arg.startsWith('--edit-mode-channel='))?.split('=')[1] ?? 'edit-mode';
+
   void (async () => {
-    const isEditableMode = (await ipcRenderer.invoke('is-editable-mode')) as boolean;
+    const isEditableMode = (await ipcRenderer.invoke(editModeChannel)) as boolean;
     div.setEditableMode(isEditableMode);
   })();
 
-  ipcRenderer.on('set-editable-mode', (_, enabled: boolean) => {
+  ipcRenderer.on('edit-mode', (_, enabled: boolean) => {
     div.setEditableMode(enabled);
   });
 });

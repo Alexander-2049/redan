@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
@@ -19,6 +19,8 @@ export class Overlay {
   private _isPreviewMode = false;
   private _visible = false;
 
+  private readonly _ipcEditModeChannel: string;
+
   constructor(
     id: string,
     baseUrl: string,
@@ -30,6 +32,9 @@ export class Overlay {
     this._baseUrl = baseUrl;
     this._manifest = manifest;
     this._visible = visible;
+
+    this._ipcEditModeChannel = `edit-mode-${this._id}`;
+
     this._window = new BrowserWindow({
       show: false,
       frame: false,
@@ -47,6 +52,7 @@ export class Overlay {
         sandbox: false,
         webSecurity: true,
         devTools: false,
+        additionalArguments: [`--edit-mode-channel=${this._ipcEditModeChannel}`],
       },
       minHeight: bounds.size.minHeight,
       minWidth: bounds.size.minWidth,
@@ -57,7 +63,7 @@ export class Overlay {
     });
 
     this._window.setAlwaysOnTop(true, 'screen-saver');
-    this._window.setVisibleOnAllWorkspaces(true); // Ensures it's visible across all workspaces
+    this._window.setVisibleOnAllWorkspaces(true);
     this._window.setFullScreenable(false);
 
     this._window.on('minimize', () => {
@@ -75,6 +81,18 @@ export class Overlay {
     this._window.webContents.setWindowOpenHandler(() => {
       return { action: 'deny' };
     });
+
+    // Register unique IPC handler
+    ipcMain.handle(this._ipcEditModeChannel, (_event: IpcMainInvokeEvent) => {
+      return this._isEditMode;
+    });
+
+    // Cleanup on close
+    this._window.on('closed', () => {
+      ipcMain.removeHandler(this._ipcEditModeChannel);
+    });
+
+    this._window.setIgnoreMouseEvents(true);
   }
 
   public load() {
@@ -97,7 +115,6 @@ export class Overlay {
     }
   }
 
-  /** Update runtime settings and reload without flicker */
   public updateSettings(newSettings: OverlaySettingInLayout[]) {
     const changed = JSON.stringify(this._settings) !== JSON.stringify(newSettings);
     if (!changed) return;
@@ -140,6 +157,7 @@ export class Overlay {
 
   public destroy() {
     this._window.destroy();
+    ipcMain.removeHandler(this._ipcEditModeChannel);
   }
 
   public on(
@@ -221,7 +239,7 @@ export class Overlay {
   }
 
   public get baseUrl(): string {
-    return this.baseUrl;
+    return this._baseUrl;
   }
 
   public get visible() {

@@ -20,4 +20,10 @@ export const IPC_CHANNELS = {
   LAYOUTS: {
     GET_LAYOUTS: 'layouts:getLayouts',
   },
+  OVERLAY: {
+    OPEN: 'overlay:open',
+    CLOSE: 'overlay:close',
+    UPDATE_EDIT_MODE: 'overlay:updateEditMode',
+    UPDATE_SETTINGS: 'overlay:updateSettings',
+  },
 } as const;

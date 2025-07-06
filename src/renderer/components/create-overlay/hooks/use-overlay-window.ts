@@ -24,7 +24,7 @@ export const useOverlayWindow = (manifest: OverlayManifestFile, baseUrl: string)
       // Try to use Electron API first, fallback to window.open
       if (window.overlay?.open) {
         // Use Electron API when available
-        void window.overlay.open(overlayUrl);
+        void window.overlay.open(overlayUrl, manifest);
         setIsOverlayOpen(true);
 
         toast.success('Overlay Opened', {
