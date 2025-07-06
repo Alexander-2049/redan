@@ -1,6 +1,5 @@
 import { SessionInfoData, TelemetryValues } from 'iracing-sdk-2025/src/JsIrSdk';
 
-import { calculateDriversLivePositions } from '../calculations/calculateDriversLivePositions';
 import { calculateIRatingChanges } from '../calculations/calculateIRatingChanges';
 import { getCarIsOnTrack } from '../helpers/getCarIsOnTrack';
 import { getLapDistTotalPct } from '../helpers/getLapDistTotalPct';
@@ -13,7 +12,8 @@ export function getDriversFields(
   sessionInfo: SessionInfoData,
 ): iRacingDriverData[] {
   const drivers: iRacingDriverData[] = [];
-  const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
+  // live position is calculated wrong when driver is out of vision
+  // const livePosition = calculateDriversLivePositions(telemetry, sessionInfo);
   telemetry.CarIdxTrackSurface[telemetry.CamCarIdx] !== 'NotInWorld';
 
   for (const driver of sessionInfo.DriverInfo.Drivers) {
@@ -25,7 +25,9 @@ export function getDriversFields(
       if (other.CarIsPaceCar || other.IsSpectator) continue;
 
       const id = other.CarIdx;
-      const position = livePosition.get(id)?.classPosition || 0;
+      // live position is calculated wrong when driver is out of vision
+      // const position = livePosition.get(id)?.classPosition || 0;
+      const position = telemetry.CarIdxClassPosition[driver.CarIdx];
       const rating = other.IRating;
       const cid = other.CarClassID;
 
@@ -43,18 +45,17 @@ export function getDriversFields(
       firstName: parseDriverName(driver.UserName).firstName,
       lastName: parseDriverName(driver.UserName).lastName,
       middleName: parseDriverName(driver.UserName).middleName,
-      lapDistPct:
-        telemetry.CarIdxLapDistPct[driver.CarIdx] > 0
-          ? telemetry.CarIdxLapDistPct[driver.CarIdx]
-          : 0,
+      lapDistPct: telemetry.CarIdxLapDistPct[driver.CarIdx], // -1 when driver is not on track or not in vision
       lapDistTotalPct: getLapDistTotalPct(telemetry, driver.CarIdx) || 0,
       lapsCompleted:
         telemetry.CarIdxLapCompleted[driver.CarIdx] >= 0
           ? telemetry.CarIdxLapCompleted[driver.CarIdx]
           : 0,
       currentLap: telemetry.CarIdxLap[driver.CarIdx] > 0 ? telemetry.CarIdxLap[driver.CarIdx] : 0,
-      position: livePosition.get(driver.CarIdx)?.position || 0,
-      classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0,
+      // position: livePosition.get(driver.CarIdx)?.position || 0, (AS SOME DRIVERS ARE OUT OF VISION IT COULD BE CALCULATED WRONG)
+      position: telemetry.CarIdxPosition[driver.CarIdx],
+      // classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0, (AS SOME DRIVERS ARE OUT OF VISION IT COULD BE CALCULATED WRONG)
+      classPosition: telemetry.CarIdxClassPosition[driver.CarIdx],
       isCarOnTrack: getCarIsOnTrack(telemetry, driver.CarIdx),
       iRating: driver.IRating,
       iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
