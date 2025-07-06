@@ -1,15 +1,14 @@
-import type React from 'react';
 import { useState } from 'react';
 
+import { useManifestValidation } from './hooks/use-manifest-validation';
+import { BasicInfoSection } from './sections/basic-info-section';
+import { ConfigureHeader } from './sections/configure-header';
+import { DimensionsSection } from './sections/dimensions-section';
 import { FieldsSection } from './sections/fields-section';
+import { JsonPreviewSection } from './sections/json-preview-section';
 import { SettingsSection } from './sections/settings-section';
+import { TagsSection } from './sections/tags-section';
 
-import { useManifestValidation } from '@/renderer/components/create-overlay/hooks/use-manifest-validation';
-import { BasicInfoSection } from '@/renderer/components/create-overlay/sections/basic-info-section';
-import { ConfigureHeader } from '@/renderer/components/create-overlay/sections/configure-header';
-import { DimensionsSection } from '@/renderer/components/create-overlay/sections/dimensions-section';
-import { JsonPreviewSection } from '@/renderer/components/create-overlay/sections/json-preview-section';
-import { TagsSection } from '@/renderer/components/create-overlay/sections/tags-section';
 import { TooltipProvider } from '@/renderer/components/ui/tooltip';
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 

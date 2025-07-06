@@ -1,8 +1,6 @@
-import { Globe, Check, X, HelpCircle } from 'lucide-react';
-import { useState } from 'react';
+import { Globe, HelpCircle } from 'lucide-react';
 
 import { Alert, AlertDescription } from '../../ui/alert';
-import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
@@ -10,13 +8,14 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
 interface BaseUrlConfigProps {
   baseUrl: string;
   onBaseUrlChange: (url: string) => void;
+  disabled?: boolean;
 }
 
-export const BaseUrlConfig = ({ baseUrl, onBaseUrlChange }: BaseUrlConfigProps) => {
-  const [tempUrl, setTempUrl] = useState(baseUrl);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isValidUrl, setIsValidUrl] = useState(true);
-
+export const BaseUrlConfig = ({
+  baseUrl,
+  onBaseUrlChange,
+  disabled = false,
+}: BaseUrlConfigProps) => {
   const validateUrl = (url: string): boolean => {
     try {
       new URL(url);
@@ -27,26 +26,10 @@ export const BaseUrlConfig = ({ baseUrl, onBaseUrlChange }: BaseUrlConfigProps) 
   };
 
   const handleUrlChange = (value: string) => {
-    setTempUrl(value);
-    setIsValidUrl(validateUrl(value));
+    onBaseUrlChange(value);
   };
 
-  const handleSave = () => {
-    if (isValidUrl && tempUrl !== baseUrl) {
-      onBaseUrlChange(tempUrl);
-    }
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setTempUrl(baseUrl);
-    setIsValidUrl(true);
-    setIsEditing(false);
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  const isValidUrl = validateUrl(baseUrl);
 
   return (
     <div className="space-y-4">
@@ -62,48 +45,43 @@ export const BaseUrlConfig = ({ baseUrl, onBaseUrlChange }: BaseUrlConfigProps) 
         </Tooltip>
       </div>
 
-      {isEditing ? (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Globe className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-            <Input
-              id="baseUrl"
-              value={tempUrl}
-              onChange={e => handleUrlChange(e.target.value)}
-              placeholder="http://localhost:3000"
-              className={!isValidUrl ? 'border-red-500' : ''}
-            />
-            <Button onClick={handleSave} disabled={!isValidUrl} size="sm" variant="default">
-              <Check className="h-4 w-4" />
-            </Button>
-            <Button onClick={handleCancel} size="sm" variant="outline">
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          {!isValidUrl && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Please enter a valid URL (e.g., http://localhost:3000)
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
-      ) : (
-        <div className="flex items-center gap-2">
-          <Globe className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-          <code className="bg-muted flex-1 rounded-md px-3 py-2 font-mono text-sm">{baseUrl}</code>
-          <Button onClick={handleEdit} size="sm" variant="outline">
-            Edit
-          </Button>
-        </div>
+      <div className="flex items-center gap-2">
+        <Globe className="text-muted-foreground h-4 w-4 flex-shrink-0" />
+        <Input
+          id="baseUrl"
+          value={baseUrl}
+          onChange={e => handleUrlChange(e.target.value)}
+          placeholder="http://localhost:3000"
+          className={!isValidUrl ? 'border-red-500' : ''}
+          disabled={disabled}
+        />
+      </div>
+
+      {!isValidUrl && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            Please enter a valid URL (e.g., http://localhost:3000)
+          </AlertDescription>
+        </Alert>
       )}
 
-      <Alert>
-        <AlertDescription>
-          Make sure your overlay development server is running on this URL before opening the
-          overlay.
-        </AlertDescription>
-      </Alert>
+      {disabled && (
+        <Alert>
+          <AlertDescription>
+            Base URL cannot be changed while the overlay is open. Close the overlay to modify the
+            URL.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {!disabled && (
+        <Alert>
+          <AlertDescription>
+            Make sure your overlay development server is running on this URL before opening the
+            overlay.
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 };

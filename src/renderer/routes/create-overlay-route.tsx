@@ -1,29 +1,49 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { RunTestSection } from '../components/create-overlay/sections/run-test-section';
+import { getCookie, setCookie } from '../components/create-overlay/utils/cookies-utils';
 
 import CreateOverlayConfigureTab from '@/renderer/components/create-overlay/create-overlay-configure-tab';
 import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/renderer/components/ui/tabs';
+import { overlayManifestFileSchema } from '@/shared/schemas/overlayManifestFileSchema';
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 
+const MANIFEST_COOKIE_KEY = 'configurator:manifest.json';
+
 const CreateOverlayRoute = () => {
-  const [manifest, setManifest] = useState<OverlayManifestFile>({
-    title: '',
-    description: '',
-    tags: [],
-    dimentions: {
-      defaultWidth: 300,
-      defaultHeight: 200,
-      minWidth: 100,
-      minHeight: 100,
-      maxWidth: 800,
-      maxHeight: 600,
-    },
-    settings: [],
-    requiredFields: [],
-    optionalFields: [],
+  const [manifest, setManifest] = useState<OverlayManifestFile>(() => {
+    const savedManifest = getCookie(MANIFEST_COOKIE_KEY);
+    if (savedManifest) {
+      try {
+        const parsed = overlayManifestFileSchema.parse(JSON.parse(savedManifest));
+        return parsed;
+      } catch (error) {
+        //
+      }
+    }
+
+    return {
+      title: '',
+      description: '',
+      tags: [],
+      dimentions: {
+        defaultWidth: 300,
+        defaultHeight: 200,
+        minWidth: 100,
+        minHeight: 100,
+        maxWidth: 800,
+        maxHeight: 600,
+      },
+      settings: [],
+      requiredFields: [],
+      optionalFields: [],
+    };
   });
+
+  useEffect(() => {
+    setCookie(MANIFEST_COOKIE_KEY, JSON.stringify(manifest), 30);
+  }, [manifest]);
 
   return (
     <ScrollArea className="h-full w-full">

@@ -5,7 +5,11 @@ import { generateOverlayUrl } from '../utils/overlay-utils';
 
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 
-export const useOverlayWindow = (manifest: OverlayManifestFile, baseUrl: string) => {
+export const useOverlayWindow = (
+  manifest: OverlayManifestFile,
+  baseUrl: string,
+  onOverlayClosed?: () => void,
+) => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const overlayWindowRef = useRef<Window | null>(null);
@@ -58,6 +62,10 @@ export const useOverlayWindow = (manifest: OverlayManifestFile, baseUrl: string)
             setIsOverlayOpen(false);
             clearInterval(checkClosed);
             overlayWindowRef.current = null;
+
+            if (onOverlayClosed) {
+              onOverlayClosed();
+            }
           }
         }, 1000);
 
@@ -79,7 +87,7 @@ export const useOverlayWindow = (manifest: OverlayManifestFile, baseUrl: string)
     if (window.overlay?.close) {
       void window.overlay.close();
       setIsOverlayOpen(false);
-
+      if (onOverlayClosed) onOverlayClosed();
       toast.success('Overlay Closed', {
         description: 'The overlay has been closed using Electron API.',
       });

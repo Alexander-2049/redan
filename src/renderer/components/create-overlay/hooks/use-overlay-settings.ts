@@ -41,6 +41,10 @@ export const useOverlaySettings = (manifest: OverlayManifestFile, overlayWindow:
     setSettings(newSettings);
   }, [manifest.settings]);
 
+  const loadSettings = useCallback((savedSettings: SettingsMap) => {
+    setSettings(savedSettings);
+  }, []);
+
   const sendSettingsToOverlay = useCallback(() => {
     if (overlayWindow && !overlayWindow.closed) {
       try {
@@ -53,7 +57,7 @@ export const useOverlaySettings = (manifest: OverlayManifestFile, overlayWindow:
         );
       } catch (error) {
         // Silent error handling for closed windows
-        console.debug('Failed to send settings to overlay:', error);
+        // console.debug('Failed to send settings to overlay:', error);
       }
     }
   }, [overlayWindow, settings]);
@@ -63,6 +67,7 @@ export const useOverlaySettings = (manifest: OverlayManifestFile, overlayWindow:
     updateSetting,
     resetSetting,
     resetAllSettings,
+    loadSettings,
     sendSettingsToOverlay,
   };
 };

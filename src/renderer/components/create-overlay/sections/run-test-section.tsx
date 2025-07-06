@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { BaseUrlConfig } from '../components/base-url-config';
@@ -6,6 +6,7 @@ import { OverlayControls } from '../components/overlay-controls';
 import { OverlaySettings } from '../components/overlay-settings';
 import { useOverlaySettings } from '../hooks/use-overlay-settings';
 import { useOverlayWindow } from '../hooks/use-overlay-window';
+import { getCookie, setCookie } from '../utils/cookies-utils';
 
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import type { SettingValue } from '@/shared/types/SettingValue';
@@ -14,9 +15,24 @@ interface RunTestSectionProps {
   manifest: OverlayManifestFile;
 }
 
+const BASE_URL_COOKIE_KEY = 'configurator:base_url';
+
 export const RunTestSection = ({ manifest }: RunTestSectionProps) => {
   const [editMode, setEditMode] = useState(false);
-  const [baseUrl, setBaseUrl] = useState('http://localhost:3000');
+  const [baseUrl, setBaseUrl] = useState(() => {
+    const fallback = 'http://localhost:3000';
+    try {
+      const url = getCookie(BASE_URL_COOKIE_KEY);
+      if (!url) return fallback;
+      return url;
+    } catch (error) {
+      return fallback;
+    }
+  });
+
+  useEffect(() => {
+    setCookie(BASE_URL_COOKIE_KEY, baseUrl, 30);
+  }, [baseUrl]);
 
   const {
     isOverlayOpen,
@@ -24,10 +40,18 @@ export const RunTestSection = ({ manifest }: RunTestSectionProps) => {
     openOverlay,
     closeOverlay,
     isLoading: windowLoading,
-  } = useOverlayWindow(manifest, baseUrl);
+  } = useOverlayWindow(manifest, baseUrl, () => {
+    setEditMode(false);
+  });
 
   const { settings, updateSetting, resetSetting, resetAllSettings, sendSettingsToOverlay } =
     useOverlaySettings(manifest, overlayWindow);
+
+  useEffect(() => {
+    return () => {
+      if (isOverlayOpen) closeOverlay();
+    };
+  }, []);
 
   const handleToggleEditMode = () => {
     const newEditMode = !editMode;
