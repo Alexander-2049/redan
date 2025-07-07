@@ -123,12 +123,7 @@ export interface AppIDs {
   creator?: number;
   consumer?: number;
 }
-export const enum UgcItemVisibility {
-  Public = 0,
-  FriendsOnly = 1,
-  Private = 2,
-  Unlisted = 3,
-}
+export type UgcItemVisibility = 'Public' | 'FriendsOnly' | 'Private' | 'Unlisted';
 export interface PlayerSteamId {
   steamId64: bigint;
   steamId32: string;
@@ -150,5 +145,4 @@ export interface UgcUpdate {
   previewPath?: string;
   contentPath?: string;
   tags?: Array<string>;
-  visibility?: UgcItemVisibility;
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { RunTestSection } from '../components/create-overlay/sections/run-test-section';
+import { UploadSection } from '../components/create-overlay/sections/upload-section';
 import { getCookie, setCookie } from '../components/create-overlay/utils/cookies-utils';
 
 import CreateOverlayConfigureTab from '@/renderer/components/create-overlay/create-overlay-configure-tab';
@@ -69,9 +70,7 @@ const CreateOverlayRoute = () => {
             <RunTestSection manifest={manifest} />
           </TabsContent>
           <TabsContent value="upload">
-            <div className="text-muted-foreground p-8 text-center">
-              Upload functionality will be implemented here
-            </div>
+            <UploadSection />
           </TabsContent>
         </Tabs>
       </div>

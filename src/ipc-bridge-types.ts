@@ -4,6 +4,8 @@ import { SettingsMap } from './shared/types/SettingValue';
 import {
   DownloadInfo,
   InstallInfo,
+  UgcItemVisibility,
+  UgcUpdate,
   WorkshopItemQueryConfig,
   WorkshopPaginatedResult,
 } from './shared/types/steam';
@@ -22,11 +24,17 @@ export interface SteamWorkshopActions {
     queryConfig: WorkshopItemQueryConfig,
   ) => Promise<WorkshopPaginatedResult | null>;
   getSubscribedItems: () => Promise<bigint[]>;
+  getMyItems: (page: number) => Promise<WorkshopPaginatedResult | null>;
   downloadItem: (item: bigint) => Promise<boolean>;
   downloadInfo: (item: bigint) => Promise<DownloadInfo | null>;
   getInstallInfo: (item: bigint) => Promise<InstallInfo | null>;
   openInSteamClient: (workshopId: bigint | number | string) => void;
-  upload: (workshopId: bigint) => Promise<void>;
+  create: () => Promise<bigint | null>;
+  updateItem: (
+    itemId: bigint,
+    props: UgcUpdate,
+    visibility?: UgcItemVisibility,
+  ) => Promise<bigint | null>;
 }
 
 export interface SteamActions {

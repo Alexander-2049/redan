@@ -9,6 +9,8 @@ import {
   WorkshopPaginatedResult,
   DownloadInfo,
   InstallInfo,
+  UgcUpdate,
+  UgcItemVisibility,
 } from '@/shared/types/steam';
 
 const windowActions: WindowActions = {
@@ -33,6 +35,7 @@ const steam: SteamActions = {
         page,
         queryConfig,
       ) as Promise<WorkshopPaginatedResult | null>,
+    getMyItems: (page: number) => ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.GET_MY_ITEMS, page),
     getSubscribedItems: () =>
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.GET_SUBSCRIBED_ITEMS) as Promise<bigint[]>,
     downloadItem: (item: bigint) =>
@@ -47,6 +50,9 @@ const steam: SteamActions = {
     openInSteamClient: (workshopId: bigint | number | string) => {
       void ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.OPEN_IN_STEAM_CLIENT, workshopId);
     },
+    create: () => ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.CREATE),
+    updateItem: (itemId: bigint, props: UgcUpdate, visibility?: UgcItemVisibility) =>
+      ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.UPDATE_ITEM, itemId, props, visibility),
   },
 };
 
