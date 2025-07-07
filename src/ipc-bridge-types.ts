@@ -26,6 +26,7 @@ export interface SteamWorkshopActions {
   downloadInfo: (item: bigint) => Promise<DownloadInfo | null>;
   getInstallInfo: (item: bigint) => Promise<InstallInfo | null>;
   openInSteamClient: (workshopId: bigint | number | string) => void;
+  upload: (workshopId: bigint) => Promise<void>;
 }
 
 export interface SteamActions {

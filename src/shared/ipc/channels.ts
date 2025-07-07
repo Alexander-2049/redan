@@ -16,6 +16,8 @@ export const IPC_CHANNELS = {
     DOWNLOAD_INFO: 'workshop:downloadInfo',
     GET_INSTALL_INFO: 'workshop:getInstallInfo',
     OPEN_IN_STEAM_CLIENT: 'workshop:openInSteamClient',
+    CREATE: 'workshop:create',
+    UPDATE_ITEM: 'workshop:updateItem',
   },
   LAYOUTS: {
     GET_LAYOUTS: 'layouts:getLayouts',

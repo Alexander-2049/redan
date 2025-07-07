@@ -123,4 +123,29 @@ export function registerSteamHandlers() {
       }
     },
   );
+
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.CREATE, async (): Promise<null | bigint> => {
+    const client = Steam.getInstance().getSteamClient();
+    if (!client) return null;
+    const item = await client.workshop.createItem(STEAM_APP_ID);
+    if (item.needsToAcceptAgreement) {
+      const steamUrl = `steam://openurl/https://steamcommunity.com/workshop/workshoplegalagreement/`;
+      try {
+        await shell.openExternal(steamUrl);
+      } catch (error) {
+        logger.error('Failed to open Steam URL:', error);
+      }
+    }
+    return item.itemId;
+  });
+
+  // ipcMain.handle(
+  //   IPC_CHANNELS.WORKSHOP.UPDATE_ITEM,
+  //   async (event, itemId: bigint, props: UgcUpdate) => {
+  //     const client = Steam.getInstance().getSteamClient();
+  //     if (!client) return null;
+
+  //     const result = await client.workshop.updateItem(itemId, props, STEAM_APP_ID);
+  //   },
+  // );
 }

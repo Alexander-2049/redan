@@ -143,3 +143,12 @@ export interface InstallInfo {
   sizeOnDisk: bigint;
   timestamp: number;
 }
+export interface UgcUpdate {
+  title?: string;
+  description?: string;
+  changeNote?: string;
+  previewPath?: string;
+  contentPath?: string;
+  tags?: Array<string>;
+  visibility?: UgcItemVisibility;
+}
