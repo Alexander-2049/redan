@@ -29,7 +29,7 @@ export function registerSteamHandlers() {
       const result = await client.workshop.getAllItems(
         page,
         client.workshop.UGCQueryType.RankedByVote,
-        client.workshop.UGCType.All,
+        client.workshop.UGCType.ItemsReadyToUse,
         STEAM_APP_ID,
         STEAM_APP_ID,
       );
@@ -107,28 +107,30 @@ export function registerSteamHandlers() {
   });
 
   ipcMain.handle(IPC_CHANNELS.WORKSHOP.DOWNLOAD_ITEM, (event, itemId: bigint): boolean => {
-    logger.info(`Received request to download item ${itemId}`);
+    logger.info(`Received request to download item ${itemId.toString()}`);
     const client = Steam.getInstance().getSteamClient();
     if (!client) {
       logger.warn('Steam client not available while downloading');
       return false;
     }
     const result = client.workshop.download(itemId, true);
-    logger.info(`Download triggered for item ${itemId}: ${result ? 'true' : 'false'}`);
+    logger.info(`Download triggered for item ${itemId.toString()}: ${result ? 'true' : 'false'}`);
     return result;
   });
 
   ipcMain.handle(
     IPC_CHANNELS.WORKSHOP.DOWNLOAD_INFO,
     (event, itemId: bigint): DownloadInfo | null => {
-      logger.info(`Received request to get download info for item ${itemId}`);
+      logger.info(`Received request to get download info for item ${itemId.toString()}`);
       const client = Steam.getInstance().getSteamClient();
       if (!client) {
         logger.warn('Steam client not available while getting download info');
         return null;
       }
       const info = client.workshop.downloadInfo(itemId);
-      logger.info(`Download info for item ${itemId}: ${JSON.stringify(info)}`);
+      logger.info(
+        `Download info for item ${itemId.toString()}: ${info?.current?.toString() || ''} / ${info?.total?.toString() || ''}`,
+      );
       return info;
     },
   );
@@ -164,6 +166,24 @@ export function registerSteamHandlers() {
     },
   );
 
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.OPEN_IN_STEAM_CLIENT_UPLOADED_FILES, async () => {
+    const client = Steam.getInstance().getSteamClient();
+    if (!client) {
+      logger.warn('Steam client not available while getting install info');
+      return null;
+    }
+    const userId = client.localplayer.getSteamId().steamId64.toString();
+    const steamUrl = `steam://openurl/https://steamcommunity.com/profiles/${userId}/myworkshopfiles/?appid=${STEAM_APP_ID}`;
+    logger.info(`Opening workshop uploaded files in Steam client: ${steamUrl}`);
+
+    try {
+      await shell.openExternal(steamUrl);
+      logger.info(`Steam client opened URL: ${steamUrl}`);
+    } catch (error) {
+      logger.error('Failed to open Steam URL:', error);
+    }
+  });
+
   const openWorkshopAgreement = async () => {
     const steamUrl = `steam://openurl/https://steamcommunity.com/workshop/workshoplegalagreement/`;
     logger.info('Attempting to open workshop legal agreement URL');
@@ -175,21 +195,54 @@ export function registerSteamHandlers() {
     }
   };
 
-  ipcMain.handle(IPC_CHANNELS.WORKSHOP.CREATE, async (): Promise<null | bigint> => {
-    logger.info('Received request to create new workshop item');
-    const client = Steam.getInstance().getSteamClient();
-    if (!client) {
-      logger.warn('Steam client not available while creating item');
-      return null;
-    }
-    const item = await client.workshop.createItem(STEAM_APP_ID);
-    logger.info(`Workshop item creation result: ${item.itemId.toString()}}`);
-    if (item.needsToAcceptAgreement) {
-      logger.info('User needs to accept workshop agreement');
-      await openWorkshopAgreement();
-    }
-    return item.itemId;
-  });
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSHOP.CREATE,
+    async (event, props: UgcUpdate, visibility?: UgcItemVisibility): Promise<null | bigint> => {
+      logger.info('Received request to create new workshop item');
+      const client = Steam.getInstance().getSteamClient();
+      if (!client) {
+        logger.warn('Steam client not available while creating item');
+        return null;
+      }
+      const createdItem = await client.workshop.createItem(STEAM_APP_ID);
+
+      let convertedVisibility: number | undefined;
+      if (visibility) {
+        logger.info(`Setting visibility to: ${visibility}`);
+      }
+
+      switch (visibility) {
+        case 'FriendsOnly':
+          convertedVisibility = client.workshop.UgcItemVisibility.FriendsOnly;
+          break;
+        case 'Private':
+          convertedVisibility = client.workshop.UgcItemVisibility.Private;
+          break;
+        case 'Unlisted':
+          convertedVisibility = client.workshop.UgcItemVisibility.Unlisted;
+          break;
+        case 'Public':
+          convertedVisibility = client.workshop.UgcItemVisibility.Public;
+          break;
+      }
+
+      const item = await client.workshop.updateItem(
+        createdItem.itemId,
+        {
+          ...props,
+          visibility: convertedVisibility,
+        },
+        STEAM_APP_ID,
+      );
+
+      logger.info(`Workshop item creation result: ${createdItem.itemId.toString()}}`);
+      if (createdItem.needsToAcceptAgreement) {
+        logger.info('User needs to accept workshop agreement');
+        await openWorkshopAgreement();
+      }
+      return item.itemId;
+    },
+  );
 
   ipcMain.handle(
     IPC_CHANNELS.WORKSHOP.UPDATE_ITEM,

@@ -1,19 +1,28 @@
-import { Upload, X, AlertTriangle } from 'lucide-react';
+import { Upload, X, AlertTriangle, ImageIcon } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
 import { Alert, AlertDescription } from '../../ui/alert';
 import { Button } from '../../ui/button';
+import { Card, CardContent } from '../../ui/card';
 import { Label } from '../../ui/label';
 
 interface ImageUploaderProps {
   value: string;
   onChange: (path: string) => void;
+  showPreview?: boolean;
+  label?: string;
 }
 
-export const ImageUploader = ({ value, onChange }: ImageUploaderProps) => {
+export const ImageUploader = ({
+  value,
+  onChange,
+  showPreview = false,
+  label = 'Preview Image',
+}: ImageUploaderProps) => {
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const validateImage = (file: File): string | null => {
     // Check file type
@@ -36,6 +45,12 @@ export const ImageUploader = ({ value, onChange }: ImageUploaderProps) => {
     if (validationError) {
       setError(validationError);
       return;
+    }
+
+    // Create preview URL
+    if (showPreview) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
 
     // In Electron, you would get the full path
@@ -72,20 +87,55 @@ export const ImageUploader = ({ value, onChange }: ImageUploaderProps) => {
   const handleRemove = () => {
     onChange('');
     setError(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
   };
 
   return (
     <div className="space-y-4">
-      <Label>Preview Image</Label>
+      <Label>{label}</Label>
 
       {value ? (
-        <div className="space-y-2">
+        <div className="space-y-4">
+          {/* File Info */}
           <div className="bg-muted/50 flex items-center justify-between rounded-lg border p-3">
             <span className="truncate font-mono text-sm">{value}</span>
             <Button onClick={handleRemove} size="sm" variant="ghost">
               <X className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* Preview */}
+          {showPreview && previewUrl && (
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={previewUrl || '/placeholder.svg'}
+                      alt="Thumbnail preview"
+                      className="h-20 w-20 rounded border object-cover"
+                      onError={() => {
+                        setPreviewUrl(null);
+                        setError('Failed to load image preview');
+                      }}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <ImageIcon className="text-muted-foreground h-4 w-4" />
+                      <span className="text-sm font-medium">Thumbnail Preview</span>
+                    </div>
+                    <p className="text-muted-foreground text-xs">
+                      This is how your thumbnail will appear in Steam Workshop
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       ) : (
         <div

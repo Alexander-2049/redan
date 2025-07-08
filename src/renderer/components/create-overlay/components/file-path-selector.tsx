@@ -54,7 +54,13 @@ export const FilePathSelector = ({
       <Label>{label}</Label>
       <div className="flex gap-2">
         <Input value={value} readOnly placeholder="No file selected" className="flex-1" />
-        <Button onClick={void handleSelectFile} disabled={isSelecting} variant="outline">
+        <Button
+          onClick={() => {
+            handleSelectFile();
+          }}
+          disabled={isSelecting}
+          variant="outline"
+        >
           {icon}
           {isSelecting ? 'Selecting...' : 'Browse'}
         </Button>

@@ -1,3 +1,4 @@
+import { registerFsHandlers } from './fs-handler';
 import { registerLayoutHandlers } from './layout-handler';
 import { registerOverlayHandlers } from './overlay-handler';
 import { registerSteamHandlers } from './steam-handler';
@@ -8,4 +9,5 @@ export const registerIpcMessageHandlers = () => {
   registerSteamHandlers();
   registerLayoutHandlers();
   registerOverlayHandlers();
+  registerFsHandlers();
 };

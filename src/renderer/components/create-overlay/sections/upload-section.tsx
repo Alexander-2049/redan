@@ -1,20 +1,12 @@
-import { Plus, RefreshCw, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { Alert, AlertDescription } from '../../ui/alert';
-import { Button } from '../../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { CreateWorkshopItemDialog } from '../components/create-workshop-item-dialog';
-import { WorkshopItemsList } from '../components/workshop-items-list';
-import { useWorkshopItems } from '../hooks/use-workshop-items';
-
-import { UgcUpdate, WorkshopItem } from '@/shared/types/steam';
+import { Card, CardHeader, CardTitle } from '../../ui/card';
+import { WorkshopUploadForm } from '../components/workshop-upload-form';
 
 export const UploadSection = () => {
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
-
-  const { items, isLoading, error, refreshItems, createItem, updateItem } = useWorkshopItems();
 
   // Check Steam online status
   useEffect(() => {
@@ -34,19 +26,6 @@ export const UploadSection = () => {
 
     void checkSteamStatus();
   }, []);
-
-  const handleCreateItem = async () => {
-    const success = await createItem();
-    if (success) {
-      setIsCreateDialogOpen(false);
-      await refreshItems();
-    }
-  };
-
-  const handleUpdateItem = async (item: WorkshopItem, updates: UgcUpdate) => {
-    await updateItem(item.publishedFileId, updates);
-    await refreshItems();
-  };
 
   if (isOnline === null) {
     return (
@@ -73,55 +52,16 @@ export const UploadSection = () => {
       {/* Header */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Steam Workshop Upload</CardTitle>
-              <p className="text-muted-foreground mt-1 text-sm">
-                Manage your overlay uploads to Steam Workshop
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => {
-                  void refreshItems();
-                }}
-                variant="outline"
-                disabled={isLoading}
-              >
-                <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-              <Button onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create New Item
-              </Button>
-            </div>
-          </div>
+          <CardTitle>Steam Workshop Upload</CardTitle>
+          <p className="text-muted-foreground text-sm">
+            Upload your overlay to Steam Workshop. Title, description, and tags will be
+            automatically taken from your manifest.json file.
+          </p>
         </CardHeader>
       </Card>
 
-      {/* Workshop Items List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Workshop Items</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <WorkshopItemsList items={items} isLoading={isLoading} onUpdateItem={handleUpdateItem} />
-        </CardContent>
-      </Card>
-
-      {/* Create Item Dialog */}
-      <CreateWorkshopItemDialog
-        isOpen={isCreateDialogOpen}
-        onClose={() => setIsCreateDialogOpen(false)}
-        onConfirm={handleCreateItem}
-      />
+      {/* Upload Form */}
+      <WorkshopUploadForm />
     </div>
   );
 };

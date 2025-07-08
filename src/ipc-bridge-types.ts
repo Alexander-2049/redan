@@ -29,7 +29,8 @@ export interface SteamWorkshopActions {
   downloadInfo: (item: bigint) => Promise<DownloadInfo | null>;
   getInstallInfo: (item: bigint) => Promise<InstallInfo | null>;
   openInSteamClient: (workshopId: bigint | number | string) => void;
-  create: () => Promise<bigint | null>;
+  openInSteamClientUploadedFiles: () => void;
+  create: (props: UgcUpdate, visibility?: UgcItemVisibility) => Promise<bigint | null>;
   updateItem: (
     itemId: bigint,
     props: UgcUpdate,
@@ -51,4 +52,8 @@ export interface OverlayActions {
   close: () => Promise<void>;
   updateEditMode: (mode: boolean) => Promise<void>;
   updateSettings: (settings: SettingsMap[]) => Promise<void>;
+}
+
+export interface FSActions {
+  read: (path: string) => Promise<string>;
 }

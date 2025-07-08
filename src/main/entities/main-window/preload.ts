@@ -1,6 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron/renderer';
 
-import { LayoutsActions, OverlayActions, SteamActions, WindowActions } from '@/ipc-bridge-types';
+import {
+  FSActions,
+  LayoutsActions,
+  OverlayActions,
+  SteamActions,
+  WindowActions,
+} from '@/ipc-bridge-types';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import { SettingsMap } from '@/shared/types/SettingValue';
@@ -50,7 +56,11 @@ const steam: SteamActions = {
     openInSteamClient: (workshopId: bigint | number | string) => {
       void ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.OPEN_IN_STEAM_CLIENT, workshopId);
     },
-    create: () => ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.CREATE),
+    openInSteamClientUploadedFiles: () => {
+      void ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.OPEN_IN_STEAM_CLIENT_UPLOADED_FILES);
+    },
+    create: (props: UgcUpdate, visibility?: UgcItemVisibility) =>
+      ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.CREATE, props, visibility),
     updateItem: (itemId: bigint, props: UgcUpdate, visibility?: UgcItemVisibility) =>
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.UPDATE_ITEM, itemId, props, visibility),
   },
@@ -74,3 +84,9 @@ const overlay: OverlayActions = {
 };
 
 contextBridge.exposeInMainWorld('overlay', overlay);
+
+const fs: FSActions = {
+  read: (path: string) => ipcRenderer.invoke(IPC_CHANNELS.FS.READ, path),
+};
+
+contextBridge.exposeInMainWorld('fs', fs);

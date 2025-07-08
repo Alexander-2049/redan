@@ -1,4 +1,10 @@
-import { LayoutsActions, OverlayActions, SteamActions, WindowActions } from './ipc-bridge-types';
+import {
+  FSActions,
+  LayoutsActions,
+  OverlayActions,
+  SteamActions,
+  WindowActions,
+} from './ipc-bridge-types';
 
 declare global {
   interface Window {
@@ -6,6 +12,7 @@ declare global {
     steam: SteamActions;
     layouts: LayoutsActions;
     overlay: OverlayActions;
+    fs: FSActions;
   }
 }
 

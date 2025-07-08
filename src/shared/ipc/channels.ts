@@ -19,6 +19,7 @@ export const IPC_CHANNELS = {
     CREATE: 'workshop:create',
     UPDATE_ITEM: 'workshop:updateItem',
     GET_MY_ITEMS: 'workshop:getMyItems',
+    OPEN_IN_STEAM_CLIENT_UPLOADED_FILES: 'workshop:openInSteamClientUploadedFiles',
   },
   LAYOUTS: {
     GET_LAYOUTS: 'layouts:getLayouts',
@@ -28,5 +29,8 @@ export const IPC_CHANNELS = {
     CLOSE: 'overlay:close',
     UPDATE_EDIT_MODE: 'overlay:updateEditMode',
     UPDATE_SETTINGS: 'overlay:updateSettings',
+  },
+  FS: {
+    READ: 'fs:read',
   },
 } as const;
