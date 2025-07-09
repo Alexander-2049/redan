@@ -1,4 +1,3 @@
-// %appdata%/SimRacingToolkit/Layouts/settings.json
 import { z } from 'zod';
 
 export const layoutSettingsFileSchema = z.object({

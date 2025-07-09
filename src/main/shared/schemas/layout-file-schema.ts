@@ -1,4 +1,3 @@
-// %appdata%/SimRacingToolkit/Layouts/${LAYOUT_FILENAME}
 import { z } from 'zod';
 
 import { gameNameSchema } from './game-name-schema';

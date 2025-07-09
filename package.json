@@ -1,8 +1,8 @@
 {
-  "name": "sim-racing-toolkit",
-  "productName": "SimRacingToolkit",
+  "name": "pitbox-pro",
+  "productName": "PitboxPro",
   "version": "1.0.0",
-  "description": "Toolkit application for Sim Racing Games",
+  "description": "Utility application for Sim Racing Games",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start -- -- --debug",
