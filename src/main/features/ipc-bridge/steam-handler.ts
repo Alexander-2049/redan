@@ -121,16 +121,16 @@ export function registerSteamHandlers() {
   ipcMain.handle(
     IPC_CHANNELS.WORKSHOP.DOWNLOAD_INFO,
     (event, itemId: bigint): DownloadInfo | null => {
-      logger.info(`Received request to get download info for item ${itemId.toString()}`);
+      // logger.info(`Received request to get download info for item ${itemId.toString()}`);
       const client = Steam.getInstance().getSteamClient();
       if (!client) {
         logger.warn('Steam client not available while getting download info');
         return null;
       }
       const info = client.workshop.downloadInfo(itemId);
-      logger.info(
-        `Download info for item ${itemId.toString()}: ${info?.current?.toString() || ''} / ${info?.total?.toString() || ''}`,
-      );
+      // logger.info(
+      //   `Download info for item ${itemId.toString()}: ${info?.current?.toString() || ''} / ${info?.total?.toString() || ''}`,
+      // );
       return info;
     },
   );
