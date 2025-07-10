@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
 
-import { LayoutFile } from '@/main/shared/types/LayoutFile';
+import { LayoutFile } from '@/shared/types/LayoutFile';
 import { layoutWindowManager } from '@/main/widgets/layout-management';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 

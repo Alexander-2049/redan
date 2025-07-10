@@ -1,4 +1,4 @@
-import { LayoutFile } from './main/shared/types/LayoutFile';
+import { LayoutFile } from './shared/types/LayoutFile';
 import { OverlayManifestFile } from './shared/types/OverlayManifestFile';
 import { SettingsMap } from './shared/types/SettingValue';
 import {

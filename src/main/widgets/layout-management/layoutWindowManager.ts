@@ -5,7 +5,7 @@ import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
 import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { layoutSettingsFileSchema } from '@/main/shared/schemas/layout-settings-file-schema';
-import { LayoutFile } from '@/main/shared/types/LayoutFile';
+import { LayoutFile } from '@/shared/types/LayoutFile';
 import { LayoutSettings } from '@/main/shared/types/LayoutSetting';
 
 class LayoutWindowManager {
