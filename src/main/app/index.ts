@@ -11,7 +11,7 @@ import { SchemasRouter } from '../features/schemas/SchemasRouter';
 import { HttpServer } from '../infrastructure/http-server';
 import { layoutWindowManager } from '../widgets/layout-management';
 
-import { HTTP_SERVER_PORT } from '@/main/shared/constants';
+import { HTTP_SERVER_PORT } from '@/shared/constants';
 
 const logger = LoggerService.getLogger('main');
 

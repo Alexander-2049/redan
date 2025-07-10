@@ -7,10 +7,10 @@ import { Layout } from './class';
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
-import { HTTP_SERVER_PORT } from '@/main/shared/constants';
 import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
-import { LayoutFile } from '@/main/shared/types/LayoutFile';
 import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions';
+import { HTTP_SERVER_PORT } from '@/shared/constants';
+import { LayoutFile } from '@/shared/types/LayoutFile';
 
 const logger = LoggerService.getLogger('layout-factory');
 

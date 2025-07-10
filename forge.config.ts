@@ -9,7 +9,7 @@ import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import path from 'path';
 import fsp from 'fs/promises';
-import { HTTP_SERVER_PORT } from './src/main/shared/constants';
+import { HTTP_SERVER_PORT } from './src/shared/constants';
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
