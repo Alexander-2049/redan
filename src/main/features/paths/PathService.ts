@@ -4,7 +4,7 @@ import { app } from 'electron';
 
 import { Steam } from '../steam';
 
-import { STEAM_APP_ID } from '@/main/shared/constants';
+import { STEAM_APP_ID } from '@/shared/constants';
 
 export class PathService {
   private static paths = {

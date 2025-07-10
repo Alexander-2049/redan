@@ -5,7 +5,7 @@ import { ipcMain, shell } from 'electron';
 import { LoggerService } from '../logger/LoggerService';
 import { Steam } from '../steam';
 
-import { STEAM_APP_ID } from '@/main/shared/constants';
+import { STEAM_APP_ID } from '@/shared/constants';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 import {
   DownloadInfo,

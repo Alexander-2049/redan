@@ -8,7 +8,7 @@ import VDF from 'vdf';
 
 import { LoggerService } from '../logger/LoggerService';
 
-import { STEAM_APP_ID } from '@/main/shared/constants';
+import { STEAM_APP_ID } from '@/shared/constants';
 
 const logger = LoggerService.getLogger('steam');
 
