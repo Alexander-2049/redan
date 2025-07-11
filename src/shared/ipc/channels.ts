@@ -23,6 +23,7 @@ export const IPC_CHANNELS = {
   },
   LAYOUTS: {
     GET_LAYOUTS: 'layouts:getLayouts',
+    CREATE_LAYOUT: 'layouts:createLayout',
   },
   OVERLAY: {
     OPEN: 'overlay:open',

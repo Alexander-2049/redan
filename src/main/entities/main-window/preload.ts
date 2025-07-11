@@ -7,7 +7,9 @@ import {
   SteamActions,
   WindowActions,
 } from '@/ipc-bridge-types';
+import { GameName } from '@/main/shared/types/GameName';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
+import { CreateLayoutProps } from '@/shared/types/CreateLayoutProps';
 import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import { SettingsMap } from '@/shared/types/SettingValue';
 import {
@@ -69,7 +71,9 @@ const steam: SteamActions = {
 contextBridge.exposeInMainWorld('steam', steam);
 
 const layouts: LayoutsActions = {
-  getLayouts: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS),
+  getLayouts: (game: GameName) => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS, game),
+  createLayout: (props: CreateLayoutProps) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.CREATE_LAYOUT, props),
 };
 contextBridge.exposeInMainWorld('layouts', layouts);
 

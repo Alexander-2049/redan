@@ -45,7 +45,10 @@ async function main() {
   //     height: 1080,
   //   },
   // });
-  layoutWindowManager.load();
+
+  gameSource.addListener('game', game => {
+    layoutWindowManager.load(game || 'None');
+  });
 
   app.on('ready', () => {
     const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);

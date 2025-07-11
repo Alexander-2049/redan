@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 
-export const getLayouts = () => {
-  return window.layouts.getLayouts();
+import { GameName } from '@/main/shared/types/GameName';
+
+export const getLayouts = ({ queryKey }: { queryKey: [string, GameName] }) => {
+  const [, game] = queryKey;
+  return window.layouts.getLayouts(game);
 };
 
-export const useLayouts = () => {
+export const useLayouts = (game: GameName) => {
   return useQuery({
-    queryKey: ['layouts'],
+    queryKey: ['layouts', game],
     queryFn: getLayouts,
     refetchOnWindowFocus: true,
   });

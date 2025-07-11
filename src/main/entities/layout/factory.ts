@@ -8,15 +8,21 @@ import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
 import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
+import { GameName } from '@/main/shared/types/GameName';
 import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions';
+import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-file-name';
 import { HTTP_SERVER_PORT } from '@/shared/constants';
 import { LayoutFile } from '@/shared/types/LayoutFile';
 
 const logger = LoggerService.getLogger('layout-factory');
 
 export class LayoutFactory {
-  static createFromFile(filename: string): Layout | null {
-    const filePath = path.join(JsonFileService.path.join(PathService.getPath('LAYOUTS')), filename);
+  static createFromFile(filename: string, game: GameName): Layout | null {
+    const filePath = path.join(
+      JsonFileService.path.join(PathService.getPath('LAYOUTS')),
+      toValidWindowsFileName(game),
+      filename,
+    );
     logger.info(`Loading layout from file: ${filePath}`);
 
     let parsed: LayoutFile;
@@ -31,7 +37,7 @@ export class LayoutFactory {
 
     const layout = new Layout({
       filename,
-      game: parsed.game,
+      game,
       screen: parsed.screen,
     });
 
@@ -72,9 +78,13 @@ export class LayoutFactory {
     return layout;
   }
 
-  static createAndSaveNewLayout(filename: string, layoutData: LayoutFile): Layout | null {
+  static createAndSaveNewLayout(
+    filename: string,
+    layoutData: LayoutFile,
+    game: GameName,
+  ): Layout | null {
     const layoutsPath = PathService.getPath('LAYOUTS');
-    const filePath = path.join(layoutsPath, filename);
+    const filePath = path.join(layoutsPath, toValidWindowsFileName(game), filename);
     logger.info(`Creating and saving new layout: ${filename}`);
 
     if (JsonFileService.exists(filePath)) {
@@ -99,6 +109,6 @@ export class LayoutFactory {
       return null;
     }
 
-    return this.createFromFile(filename);
+    return this.createFromFile(filename, game);
   }
 }

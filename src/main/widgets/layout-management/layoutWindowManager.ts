@@ -5,8 +5,10 @@ import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
 import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { layoutSettingsFileSchema } from '@/main/shared/schemas/layout-settings-file-schema';
-import { LayoutFile } from '@/shared/types/LayoutFile';
+import { GameName } from '@/main/shared/types/GameName';
 import { LayoutSettings } from '@/main/shared/types/LayoutSetting';
+import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-file-name';
+import { LayoutFile } from '@/shared/types/LayoutFile';
 
 class LayoutWindowManager {
   private logger = LoggerService.getLogger('layout-window-manager');
@@ -14,22 +16,25 @@ class LayoutWindowManager {
   private _layoutOrder: string[] = [];
   private _layouts: Map<string, Layout> = new Map();
   private _activeLayout: Layout | null = null;
-  private _settingsFilePath: string;
 
-  constructor(layoutsPath: string) {
+  constructor(layoutsPath: string, game?: GameName) {
     this._layoutsPath = layoutsPath;
-    this._settingsFilePath = JsonFileService.path.join(this._layoutsPath, 'settings.json');
     this.logger.info(`Initializing LayoutWindowManager at path: ${this._layoutsPath}`);
-    this.load();
+    this.load(game || 'None');
   }
 
-  public readSettings() {
+  public readSettings(game: GameName) {
+    const filepath = JsonFileService.path.join(
+      this._layoutsPath,
+      toValidWindowsFileName(game),
+      'settings.json',
+    );
     this.logger.debug('Reading layout settings...');
-    if (!JsonFileService.exists(this._settingsFilePath)) {
+    if (!JsonFileService.exists(filepath)) {
       this.logger.warn('Settings file does not exist.');
       return null;
     }
-    const settingsFileContents = JsonFileService.read(this._settingsFilePath);
+    const settingsFileContents = JsonFileService.read(JsonFileService.path.join(filepath));
     try {
       const parsed = layoutSettingsFileSchema.parse(settingsFileContents);
       this.logger.info('Successfully parsed layout settings.');
@@ -40,13 +45,13 @@ class LayoutWindowManager {
     }
   }
 
-  public updateLayoutsOrder(order: string[]) {
+  public updateLayoutsOrder(order: string[], game: GameName) {
     this.logger.info(`Updating layout order: ${JSON.stringify(order)}`);
     this._layoutOrder = order;
-    this.saveSettings();
+    this.saveSettings(game);
   }
 
-  public setActiveLayout(fileName: string | null, show = true) {
+  public setActiveLayout(fileName: string | null, game: GameName, show = true) {
     this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
     this._activeLayout?.hide();
 
@@ -63,7 +68,7 @@ class LayoutWindowManager {
       return;
     }
 
-    this.saveSettings();
+    this.saveSettings(game);
 
     if (show) {
       this.logger.debug(`Showing layout: ${fileName}`);
@@ -71,12 +76,12 @@ class LayoutWindowManager {
     }
   }
 
-  public getLayoutFilenames() {
+  public getLayoutFilenames(game: GameName) {
     try {
       this.logger.debug('Reading layout file names from directory');
-      const files = JsonFileService.getFilesInDirectory(this._layoutsPath).filter(
-        e => e !== 'settings.json',
-      );
+      const files = JsonFileService.getFilesInDirectory(
+        JsonFileService.path.join(this._layoutsPath, toValidWindowsFileName(game)),
+      ).filter(e => e !== 'settings.json');
       this.logger.info(`Found layout files: ${JSON.stringify(files)}`);
       return files;
     } catch (e) {
@@ -85,20 +90,20 @@ class LayoutWindowManager {
     }
   }
 
-  public createLayout(filename: string, layoutData: LayoutFile) {
+  public createLayout(filename: string, layoutData: LayoutFile & { game: GameName }) {
     this.logger.info(`Creating new layout: ${filename}`);
-    const layout = LayoutFactory.createAndSaveNewLayout(filename, layoutData);
+    const layout = LayoutFactory.createAndSaveNewLayout(filename, layoutData, layoutData.game);
     if (layout && layout.filename) {
       this._layouts.set(layout.filename, layout);
       this.logger.debug(`Layout created and stored: ${layout.filename}`);
-      this.updateLayoutsOrder(this._layoutOrder);
+      this.updateLayoutsOrder(this._layoutOrder, layoutData.game);
       return true;
     }
     this.logger.warn(`Failed to create layout: ${filename}`);
     return false;
   }
 
-  public deleteLayout(filename: string) {
+  public deleteLayout(filename: string, game: GameName) {
     this.logger.info(`Deleting layout: ${filename}`);
     this._layoutOrder = this.layoutOrder.filter(f => f !== filename);
     const deleted = this._layouts.delete(filename);
@@ -110,7 +115,7 @@ class LayoutWindowManager {
 
     if (this._activeLayout?.filename === filename) {
       this.logger.debug(`Deleted layout was active. Resetting active layout.`);
-      this.setActiveLayout(null);
+      this.setActiveLayout(null, game);
     }
   }
 
@@ -122,16 +127,16 @@ class LayoutWindowManager {
     return this._layoutOrder;
   }
 
-  public load() {
+  public load(game: GameName) {
     this.logger.info('Loading layouts from disk');
     this._activeLayout?.hide();
     this._activeLayout = null;
     this._layouts.clear();
     this._layoutOrder = [];
 
-    const filenames = this.getLayoutFilenames();
+    const filenames = this.getLayoutFilenames(game);
     for (const filename of filenames) {
-      const layout = LayoutFactory.createFromFile(filename);
+      const layout = LayoutFactory.createFromFile(filename, game);
       if (!layout) {
         this.logger.warn(`Failed to load layout: ${filename}`);
         continue;
@@ -142,10 +147,10 @@ class LayoutWindowManager {
       }
     }
 
-    const settings = this.readSettings();
+    const settings = this.readSettings(game);
     if (settings) {
       this.logger.info('Applying saved layout settings...');
-      this.setActiveLayout(settings.activeLayoutFilename || null);
+      this.setActiveLayout(settings.activeLayoutFilename || null, game);
       this._layoutOrder = settings.layoutOrder;
     }
   }
@@ -158,7 +163,7 @@ class LayoutWindowManager {
     return Array.from(this._layouts.keys());
   }
 
-  public getLayouts() {
+  public getLayouts(game: GameName): (LayoutFile & { filename: string })[] {
     this.logger.info('Retrieving all layouts...');
     const layouts = [];
 
@@ -166,9 +171,11 @@ class LayoutWindowManager {
       const filename = this.filenames[i];
       this.logger.debug(`Reading layout file: ${filename}`);
       try {
-        const file = JsonFileService.read(JsonFileService.path.join(this._layoutsPath, filename));
+        const file = JsonFileService.read(
+          JsonFileService.path.join(this._layoutsPath, toValidWindowsFileName(game), filename),
+        );
         const data = layoutFileSchema.parse(file);
-        layouts.push(data);
+        layouts.push({ ...data, filename });
         this.logger.debug(`Successfully parsed layout file: ${filename}`);
       } catch (error) {
         this.logger.error(`Failed to read or parse layout file: ${filename}`, error);
@@ -192,13 +199,18 @@ class LayoutWindowManager {
     return true;
   }
 
-  private saveSettings() {
+  private saveSettings(game: GameName) {
+    const filepath = JsonFileService.path.join(
+      this._layoutsPath,
+      toValidWindowsFileName(game),
+      'settings.json',
+    );
     const data: LayoutSettings = {
       activeLayoutFilename: this._activeLayout?.filename || null,
       layoutOrder: this._layoutOrder,
     };
     this.logger.debug(`Saving settings: ${JSON.stringify(data)}`);
-    JsonFileService.write(this._settingsFilePath, data);
+    JsonFileService.write(filepath, data);
   }
 }
 

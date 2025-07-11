@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { gameNameSchema } from './game-name-schema';
-
 export const overlaySizeInLayoutFileSchema = z.object({
   width: z.number(),
   height: z.number(),
@@ -31,7 +29,6 @@ export const overlayInLayoutFileSchema = z.object({
 });
 
 export const layoutFileSchema = z.object({
-  game: gameNameSchema, // Defines which game this layout used for
   title: z.string(),
   overlays: z.array(overlayInLayoutFileSchema),
   screen: z.object({

@@ -1,3 +1,5 @@
+import { GameName } from './main/shared/types/GameName';
+import { CreateLayoutProps } from './shared/types/CreateLayoutProps';
 import { LayoutFile } from './shared/types/LayoutFile';
 import { OverlayManifestFile } from './shared/types/OverlayManifestFile';
 import { SettingsMap } from './shared/types/SettingValue';
@@ -44,7 +46,8 @@ export interface SteamActions {
 }
 
 export interface LayoutsActions {
-  getLayouts: () => Promise<LayoutFile[]>;
+  getLayouts: (game: GameName) => Promise<(LayoutFile & { filename: string })[]>;
+  createLayout: (props: CreateLayoutProps) => Promise<boolean>;
 }
 
 export interface OverlayActions {

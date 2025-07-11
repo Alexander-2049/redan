@@ -55,7 +55,6 @@ export class Layout {
       if (this._title === null) return reject('Title is not specified');
 
       const data: z.infer<typeof layoutFileSchema> = {
-        game: this._game,
         title: this._title,
         overlays: this._overlays.map(overlay => {
           return this.getOverlayProperties(overlay);

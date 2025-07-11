@@ -32,6 +32,9 @@ export class JsonFileService {
     const json = prettify ? JSON.stringify(data, null, 2) : JSON.stringify(data);
 
     try {
+      const dir = path.dirname(filePath);
+      fs.mkdirSync(dir, { recursive: true });
+
       this.safeWrite(filePath, json);
     } catch (err) {
       this.logger.error(`Write failed for ${filePath}`, {
