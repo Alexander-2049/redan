@@ -34,7 +34,6 @@ async function main() {
   webSocketServer.start({
     server: httpServer.server,
   });
-  gameSource.selectGame('iRacing');
 
   // layoutWindowManager.createLayout('JasonStathem.json', {
   //   title: 'Jason Stathem',
@@ -49,6 +48,7 @@ async function main() {
   gameSource.addListener('game', game => {
     layoutWindowManager.load(game || 'None');
   });
+  gameSource.selectGame('iRacing');
 
   app.on('ready', () => {
     const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
