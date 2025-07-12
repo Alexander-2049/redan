@@ -71,16 +71,24 @@ export const LayoutItem = ({
 
   return (
     <div
-      draggable="true"
-      onDragStart={e => onDragStart(e, index)}
-      onDragOver={e => onDragOver(e, index)} // Pass index for target
-      onDrop={e => onDrop(e, index)} // Pass index for target
+      draggable={!isEditingTitle} // disable drag while editing to be extra safe
+      onMouseDown={e => {
+        const target = e.target as HTMLElement;
+        if (target.closest('input, textarea, [contenteditable="true"]')) {
+          e.stopPropagation(); // prevent drag initiation
+        }
+      }}
+      onDragStart={e => {
+        onDragStart(e, index);
+      }}
+      onDragOver={e => onDragOver(e, index)}
+      onDrop={e => onDrop(e, index)}
       onDragEnd={onDragEnd}
       className={cn(
         'group bg-card/80 hover:bg-card border-border/50 hover:border-border flex min-h-[120px] w-56 min-w-0 flex-col items-stretch justify-between gap-2 rounded-lg border p-3 text-center transition-all duration-200 hover:shadow-sm',
-        !isEditingTitle && 'hover:scale-[1.02] hover:cursor-pointer active:scale-[0.98]', // Apply scale/cursor only when not editing
-        draggedItemIndex === index && 'border-dashed opacity-50', // Visual feedback for dragged item
-        isActive && 'border-primary ring-primary/50 ring-2', // Active state styling
+        !isEditingTitle && 'hover:scale-[1.02] hover:cursor-pointer active:scale-[0.98]',
+        draggedItemIndex === index && 'border-dashed opacity-50',
+        isActive && 'border-primary ring-primary/50 ring-2',
       )}
     >
       {/* Title and Actions */}
@@ -92,6 +100,7 @@ export const LayoutItem = ({
             onChange={handleTitleChange}
             onBlur={handleSaveTitle}
             onKeyDown={handleKeyDown}
+            autoFocus={true}
             className="text-foreground/90 h-8 flex-1 text-sm font-medium"
           />
         ) : (
@@ -108,31 +117,34 @@ export const LayoutItem = ({
         )}
         <div className="absolute top-1/2 right-0 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           {!isEditingTitle && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground h-7 w-7"
-              onClick={e => {
-                e.stopPropagation();
-                setIsEditingTitle(true);
-              }}
-              aria-label="Rename layout"
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground h-7 w-7"
+                onClick={e => {
+                  e.stopPropagation();
+                  setIsEditingTitle(true);
+                }}
+                aria-label="Rename layout"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive/80 hover:text-destructive h-7 w-7"
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeleteLayout(layout.filename);
+                }}
+                aria-label="Delete layout"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-destructive/80 hover:text-destructive h-7 w-7"
-            onClick={e => {
-              e.stopPropagation();
-              handleDeleteLayout(layout.filename);
-            }}
-            aria-label="Delete layout"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
