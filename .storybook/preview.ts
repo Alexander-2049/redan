@@ -1,5 +1,5 @@
-import type { Preview } from "@storybook/react";
-import "!style-loader!css-loader!postcss-loader!tailwindcss/index.css";
+import type { Preview } from '@storybook/react-webpack5';
+import '../src/renderer/styles/main.css';
 
 const preview: Preview = {
   parameters: {
