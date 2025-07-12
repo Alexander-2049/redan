@@ -43,6 +43,22 @@ export class JsonFileService {
     }
   }
 
+  public static delete(filePath: string): boolean {
+    if (!fs.existsSync(filePath)) {
+      this.logger.warn(`File not found, cannot delete: ${filePath}`);
+      return false;
+    }
+
+    try {
+      fs.unlinkSync(filePath);
+      this.logger.info(`Deleted file: ${filePath}`);
+      return true;
+    } catch (err) {
+      this.logger.error(`Failed to delete file: ${filePath}`, { error: err });
+      return false;
+    }
+  }
+
   public static exists(filePath: string): boolean {
     return fs.existsSync(filePath);
   }
