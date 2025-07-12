@@ -120,17 +120,26 @@ class LayoutWindowManager {
   public deleteLayout(filename: string, game: GameName) {
     this.logger.info(`Deleting layout: ${filename}`);
     this._layoutOrder = this.layoutOrder.filter(f => f !== filename);
-    const deleted = this._layouts.delete(filename);
-    if (deleted) {
-      this.logger.debug(`Layout deleted: ${filename}`);
-    } else {
-      this.logger.warn(`Layout to delete not found: ${filename}`);
+    if (this._game === game) {
+      const deleted = this._layouts.delete(filename);
+      if (deleted) {
+        this.logger.debug(`Layout deleted: ${filename}`);
+      } else {
+        this.logger.warn(`Layout to delete not found: ${filename}`);
+      }
+
+      if (this._activeLayout?.filename === filename) {
+        this.logger.debug(`Deleted layout was active. Resetting active layout.`);
+        this.setActiveLayout(null, game);
+      }
     }
 
-    if (this._activeLayout?.filename === filename) {
-      this.logger.debug(`Deleted layout was active. Resetting active layout.`);
-      this.setActiveLayout(null, game);
-    }
+    const filePath = JsonFileService.path.join(
+      PathService.getPath('LAYOUTS'),
+      toValidWindowsFileName(game),
+      filename,
+    );
+    return JsonFileService.delete(filePath);
   }
 
   public get layoutsPath(): string {
