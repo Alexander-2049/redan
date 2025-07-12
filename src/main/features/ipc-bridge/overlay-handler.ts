@@ -17,12 +17,11 @@ export function registerOverlayHandlers() {
     logger.info(`Opening overlay with URL: ${url}`);
 
     const bounds: OverlayWindowBounds = {
-      position: { x: 200, y: 200 },
-      size: {
-        height: manifest.dimentions.defaultHeight,
-        width: manifest.dimentions.defaultWidth,
-        ...manifest.dimentions,
-      },
+      x: 200,
+      y: 200,
+      height: manifest.dimentions.defaultHeight,
+      width: manifest.dimentions.defaultWidth,
+      ...manifest.dimentions,
     };
 
     const id = 'overlay-1';

@@ -48,6 +48,10 @@ export interface SteamActions {
 export interface LayoutsActions {
   getLayouts: (game: GameName) => Promise<(LayoutFile & { filename: string })[]>;
   createLayout: (props: CreateLayoutProps) => Promise<boolean>;
+  deleteLayout: (filename: string, game: GameName) => Promise<void>;
+  updateLayout: (filename: string, data: LayoutFile, game: GameName) => Promise<void>;
+  getLayoutsOrder: (game: GameName) => Promise<string[]>;
+  reorderLayouts: (filenames: string[], game: GameName) => Promise<void>;
 }
 
 export interface OverlayActions {

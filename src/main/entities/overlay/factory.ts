@@ -22,15 +22,11 @@ export class OverlayFactory {
       baseUrl,
       manifest,
       {
-        position: {
-          x: bounds.position?.x || 0,
-          y: bounds.position?.y || 0,
-        },
-        size: {
-          height: bounds.size?.height || manifest.dimentions.defaultHeight,
-          width: bounds.size?.width || manifest.dimentions.defaultWidth,
-          ...manifest.dimentions,
-        },
+        x: bounds.x || 0,
+        y: bounds.y || 0,
+        height: bounds.height || manifest.dimentions.defaultHeight,
+        width: bounds.width || manifest.dimentions.defaultWidth,
+        ...manifest.dimentions,
         ...bounds,
       },
       visible,

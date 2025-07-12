@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, screen } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
 
@@ -21,17 +21,45 @@ export function registerLayoutHandlers() {
     },
   );
 
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.DELETE_LAYOUT, (event, filename: string, game: GameName) => {
+    logger.info('Deleting layout...');
+    return layoutWindowManager.deleteLayout(filename, game);
+  });
+
   ipcMain.handle(IPC_CHANNELS.LAYOUTS.CREATE_LAYOUT, (event, props: CreateLayoutProps): boolean => {
     logger.info('Creating new layout...');
+    const { width, height } = screen.getPrimaryDisplay().size;
+
     const isLayoutCreated = layoutWindowManager.createLayout(props.filename, {
       game: props.game,
       title: props.title,
       overlays: [],
       screen: {
-        height: 0,
-        width: 0,
+        height,
+        width,
       },
     });
     return isLayoutCreated;
+  });
+
+  ipcMain.handle(
+    IPC_CHANNELS.LAYOUTS.UPDATE_LAYOUT,
+    (event, filename: string, data: LayoutFile, game: GameName) => {
+      logger.info('Updating layout...');
+      return layoutWindowManager.updateLayout(filename, data, game);
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.LAYOUTS.REORDER_LAYOUTS,
+    (event, filenames: string[], game: GameName) => {
+      logger.info('Reordering layouts...');
+      return layoutWindowManager.updateLayoutsOrder(filenames, game);
+    },
+  );
+
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS_ORDER, (event, game: GameName) => {
+    logger.info('Fetching layouts order...');
+    return layoutWindowManager.getLayoutOrder(game);
   });
 }

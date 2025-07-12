@@ -43,14 +43,12 @@ export class LayoutFactory {
 
     for (const overlayConfig of parsed.overlays) {
       const bounds: OverlayWindowBounds = {
-        position: overlayConfig.position,
-        size: {
-          ...overlayConfig.size,
-          minWidth: overlayConfig.size.width,
-          minHeight: overlayConfig.size.height,
-          maxWidth: overlayConfig.size.width,
-          maxHeight: overlayConfig.size.height,
-        },
+        ...overlayConfig.position,
+        ...overlayConfig.size,
+        minWidth: overlayConfig.size.width,
+        minHeight: overlayConfig.size.height,
+        maxWidth: overlayConfig.size.width,
+        maxHeight: overlayConfig.size.height,
       };
 
       const overlay = OverlayFactory.createFromFolder(

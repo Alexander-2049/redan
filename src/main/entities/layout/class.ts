@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
 import { Overlay } from '../overlay';
+import { OverlayFactory } from '../overlay/factory';
 
 import { JsonFileService } from '@/main/features/json-files';
 import { PathService } from '@/main/features/paths/PathService';
 import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { GameName } from '@/main/shared/types/GameName';
 import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
+import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-file-name';
+import { LayoutFile } from '@/shared/types/LayoutFile';
 
 export interface LayoutProperties {
   filename: string;
@@ -66,7 +69,11 @@ export class Layout {
       };
 
       JsonFileService.write(
-        JsonFileService.path.join(PathService.getPath('LAYOUTS'), this._filename),
+        JsonFileService.path.join(
+          PathService.getPath('LAYOUTS'),
+          toValidWindowsFileName(this._game),
+          this._filename,
+        ),
         data,
       );
 
@@ -74,6 +81,45 @@ export class Layout {
         return;
       });
     });
+  }
+
+  public update(data: LayoutFile) {
+    this._title = data.title;
+    const overlays = [...this._overlays];
+    this._screenWidth = data.screen.width;
+    this._screenHeight = data.screen.height;
+
+    // Update settings for existing/open overlays
+    // Close overlays that were removed from layout file
+    for (let i = 0; i < overlays.length; i++) {
+      const overlay = overlays[i];
+      const settings = data.overlays.find(e => e.id === overlay.id)?.settings;
+      if (settings) {
+        overlay.updateSettings(settings);
+      } else {
+        this.removeOverlayById(overlay.id);
+      }
+    }
+
+    // Open overlays that are in layout file, but are not open yet
+    for (let i = 0; i < data.overlays.length; i++) {
+      const overlayConfig = data.overlays[i];
+      const overlay = this._overlays.find(e => e.id === overlayConfig.id);
+      if (!overlay) {
+        OverlayFactory.createFromFolder(
+          overlayConfig.id,
+          overlayConfig.baseUrl,
+          JsonFileService.path.join(PathService.getPath('OVERLAYS'), overlayConfig.folderName),
+          {
+            ...overlayConfig.size,
+            ...overlayConfig.position,
+          },
+          overlayConfig.visible,
+        );
+      }
+    }
+
+    return this.save();
   }
 
   public setOverlayVisibleById(overlayId: string, visible: boolean) {
@@ -129,6 +175,10 @@ export class Layout {
     return this._filename;
   }
 
+  public get title() {
+    return this._title || 'unknown';
+  }
+
   private getOverlayProperties(overlay: Overlay): LayoutOverlay {
     const bounds = overlay.getWindowBounds();
 
@@ -136,7 +186,12 @@ export class Layout {
       baseUrl: overlay.baseUrl,
       id: overlay.id,
       title: overlay.manifest.title,
-      ...bounds,
+      position: {
+        ...bounds,
+      },
+      size: {
+        ...bounds,
+      },
       settings: overlay.settings,
       visible: overlay.visible,
       folderName: this._overlayFolders.get(overlay) || '',

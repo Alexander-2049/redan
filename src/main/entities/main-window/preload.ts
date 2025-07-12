@@ -10,6 +10,7 @@ import {
 import { GameName } from '@/main/shared/types/GameName';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 import { CreateLayoutProps } from '@/shared/types/CreateLayoutProps';
+import { LayoutFile } from '@/shared/types/LayoutFile';
 import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import { SettingsMap } from '@/shared/types/SettingValue';
 import {
@@ -74,6 +75,14 @@ const layouts: LayoutsActions = {
   getLayouts: (game: GameName) => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS, game),
   createLayout: (props: CreateLayoutProps) =>
     ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.CREATE_LAYOUT, props),
+  deleteLayout: (filename: string, game: GameName) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.DELETE_LAYOUT, filename, game),
+  updateLayout: (filename: string, data: LayoutFile, game: GameName) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.UPDATE_LAYOUT, filename, data, game),
+  reorderLayouts: (filenames: string[], game: GameName) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.REORDER_LAYOUTS, filenames, game),
+  getLayoutsOrder: (game: GameName) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS_ORDER, game),
 };
 contextBridge.exposeInMainWorld('layouts', layouts);
 

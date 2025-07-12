@@ -16,6 +16,7 @@ class LayoutWindowManager {
   private _layoutOrder: string[] = [];
   private _layouts: Map<string, Layout> = new Map();
   private _activeLayout: Layout | null = null;
+  private _game: GameName = 'None';
 
   constructor(layoutsPath: string, game?: GameName) {
     this._layoutsPath = layoutsPath;
@@ -46,9 +47,22 @@ class LayoutWindowManager {
   }
 
   public updateLayoutsOrder(order: string[], game: GameName) {
-    this.logger.info(`Updating layout order: ${JSON.stringify(order)}`);
-    this._layoutOrder = order;
+    this.logger.info(`Updating layout order for ${game}: ${JSON.stringify(order)}`);
+
+    if (game === this._game) {
+      this._layoutOrder = order;
+    }
+
     this.saveSettings(game);
+  }
+
+  public getLayoutOrder(game: GameName) {
+    if (this._game === game) return this._layoutOrder;
+
+    const settings = this.readSettings(game);
+    if (settings) return settings.layoutOrder;
+
+    return [];
   }
 
   public setActiveLayout(fileName: string | null, game: GameName, show = true) {
@@ -133,6 +147,7 @@ class LayoutWindowManager {
     this._activeLayout = null;
     this._layouts.clear();
     this._layoutOrder = [];
+    this._game = game;
 
     const filenames = this.getLayoutFilenames(game);
     for (const filename of filenames) {
@@ -184,6 +199,27 @@ class LayoutWindowManager {
 
     this.logger.info(`Total layouts retrieved: ${layouts.length}`);
     return layouts;
+  }
+
+  public updateLayout(filename: string, data: LayoutFile, game: GameName): Promise<void> {
+    const layout =
+      this._game === game
+        ? this._layouts.get(filename)
+        : LayoutFactory.createFromFile(filename, game);
+    if (layout)
+      return new Promise((res, rej) => {
+        layout
+          .update(data)
+          .then(() => {
+            res();
+          })
+          .catch(e => {
+            rej(e);
+          });
+      });
+    return new Promise((res, rej) => {
+      rej('Could not update layout. Layout not found.');
+    });
   }
 
   private addLayout(layout: Layout) {

@@ -54,12 +54,12 @@ export class Overlay {
         devTools: false,
         additionalArguments: [`--edit-mode-channel=${this._ipcEditModeChannel}`],
       },
-      minHeight: bounds.size.minHeight,
-      minWidth: bounds.size.minWidth,
-      maxHeight: bounds.size.maxHeight,
-      maxWidth: bounds.size.maxWidth,
-      x: bounds.position.x,
-      y: bounds.position.y,
+      minHeight: bounds.minHeight,
+      minWidth: bounds.minWidth,
+      maxHeight: bounds.maxHeight,
+      maxWidth: bounds.maxWidth,
+      x: bounds.x,
+      y: bounds.y,
     });
 
     this._window.setAlwaysOnTop(true, 'screen-saver');
@@ -185,36 +185,35 @@ export class Overlay {
   public getWindowBounds(): OverlayWindowBounds {
     const { x, y, width, height } = this._window.getBounds();
     return {
-      position: {
-        x,
-        y,
-      },
-      size: {
-        width,
-        height,
-        maxWidth: this._window.getMaximumSize()[0],
-        maxHeight: this._window.getMaximumSize()[1],
-        minWidth: this._window.getMinimumSize()[0],
-        minHeight: this._window.getMinimumSize()[1],
-      },
+      x,
+      y,
+      width,
+      height,
+      maxWidth: this._window.getMaximumSize()[0],
+      maxHeight: this._window.getMaximumSize()[1],
+      minWidth: this._window.getMinimumSize()[0],
+      minHeight: this._window.getMinimumSize()[1],
     };
   }
 
   public updateWindowBounds(bounds: Partial<OverlayWindowBounds>) {
-    const { position, size } = { ...this.getWindowBounds(), ...bounds };
+    const { x, y, width, height, minWidth, minHeight, maxWidth, maxHeight } = {
+      ...this.getWindowBounds(),
+      ...bounds,
+    };
 
     this._window.setBounds({
-      ...position,
-      ...size,
+      width,
+      height,
+      x,
+      y,
     });
 
-    if (size) {
-      if (typeof size.minWidth === 'number' && typeof size.minHeight === 'number') {
-        this._window.setMinimumSize(size.minWidth, size.minHeight);
-      }
-      if (typeof size.maxWidth === 'number' && typeof size.maxHeight === 'number') {
-        this._window.setMaximumSize(size.maxWidth, size.maxHeight);
-      }
+    if (typeof minWidth === 'number' && typeof minHeight === 'number') {
+      this._window.setMinimumSize(minWidth, minHeight);
+    }
+    if (typeof maxWidth === 'number' && typeof maxHeight === 'number') {
+      this._window.setMaximumSize(maxWidth, maxHeight);
     }
   }
 
