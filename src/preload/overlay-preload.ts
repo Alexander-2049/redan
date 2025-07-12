@@ -18,6 +18,7 @@ class OverlayDraggable {
     div.style.right = '0%';
     div.style.bottom = '0%';
     div.style.backgroundColor = 'rgba(0,0,0,0)';
+    div.style.zIndex = '999999999';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     (div.style as any)['-webkit-app-region'] = 'drag';
     return div;
