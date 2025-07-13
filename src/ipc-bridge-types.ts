@@ -1,5 +1,6 @@
 import { GameName } from './main/shared/types/GameName';
 import { CreateLayoutProps } from './shared/types/CreateLayoutProps';
+import { LayoutConfig } from './shared/types/LayoutConfig';
 import { LayoutFile } from './shared/types/LayoutFile';
 import { OverlayManifestFile } from './shared/types/OverlayManifestFile';
 import { SettingsMap } from './shared/types/SettingValue';
@@ -52,6 +53,8 @@ export interface LayoutsActions {
   updateLayout: (filename: string, data: LayoutFile, game: GameName) => Promise<void>;
   getLayoutsOrder: (game: GameName) => Promise<string[]>;
   reorderLayouts: (filenames: string[], game: GameName) => Promise<void>;
+  setActiveLayout: (filename: string, game: GameName) => Promise<void>;
+  getActiveLayout: () => Promise<LayoutConfig | null>;
 }
 
 export interface OverlayActions {

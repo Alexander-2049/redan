@@ -9,16 +9,9 @@ import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { GameName } from '@/main/shared/types/GameName';
 import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
 import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-file-name';
+import { LayoutConfig } from '@/shared/types/LayoutConfig';
 import { LayoutFile } from '@/shared/types/LayoutFile';
-
-export interface LayoutProperties {
-  filename: string;
-  game: GameName;
-  screen: {
-    width: number;
-    height: number;
-  };
-}
+import { LayoutProperties } from '@/shared/types/LayoutProperties';
 
 export class Layout {
   private _game: GameName = 'None'; // Defines which game this layout used for
@@ -177,6 +170,18 @@ export class Layout {
 
   public get title() {
     return this._title || 'unknown';
+  }
+
+  public getConfig(): LayoutConfig {
+    return {
+      filename: this._filename || 'unknown',
+      game: this._game,
+      screen: {
+        width: this._screenWidth,
+        height: this._screenHeight,
+      },
+      overlays: this._overlays.map(e => e.manifest),
+    };
   }
 
   private getOverlayProperties(overlay: Overlay): LayoutOverlay {

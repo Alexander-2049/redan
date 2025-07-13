@@ -16,6 +16,7 @@ interface LayoutListProps {
   handleDeleteLayout: (filename: string) => void;
   handleRenameLayout: (filename: string, newTitle: string) => void;
   handleReorderLayouts: (filenames: string[]) => void;
+  handleSelectLayout: (filename: string) => void;
 }
 
 export const LayoutList = ({
@@ -24,6 +25,7 @@ export const LayoutList = ({
   handleDeleteLayout,
   handleRenameLayout,
   handleReorderLayouts,
+  handleSelectLayout,
 }: LayoutListProps): ReactElement => {
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
 
@@ -79,6 +81,7 @@ export const LayoutList = ({
           onDragEnd={handleDragEnd}
           handleDeleteLayout={handleDeleteLayout}
           handleRenameLayout={handleRenameLayout}
+          onSelect={handleSelectLayout}
         />
       ))}
     </>

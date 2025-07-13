@@ -6,6 +6,7 @@ import { GameName } from '@/main/shared/types/GameName';
 import { layoutWindowManager } from '@/main/widgets/layout-management';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 import { CreateLayoutProps } from '@/shared/types/CreateLayoutProps';
+import { LayoutConfig } from '@/shared/types/LayoutConfig';
 import { LayoutFile } from '@/shared/types/LayoutFile';
 
 const logger = LoggerService.getLogger('ipc-layout-handlers');
@@ -62,4 +63,17 @@ export function registerLayoutHandlers() {
     logger.info('Fetching layouts order...');
     return layoutWindowManager.getLayoutOrder(game);
   });
+
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.GET_ACTIVE_LAYOUT, (): LayoutConfig | null => {
+    logger.info('Fetching active layout...');
+    return layoutWindowManager.getActiveLayout();
+  });
+
+  ipcMain.handle(
+    IPC_CHANNELS.LAYOUTS.SET_ACTIVE_LAYOUT,
+    (event, filename: string, game: GameName): void => {
+      logger.info('Setting active layout...');
+      return layoutWindowManager.setActiveLayout(filename, game, true);
+    },
+  );
 }

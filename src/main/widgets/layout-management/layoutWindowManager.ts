@@ -8,6 +8,7 @@ import { layoutSettingsFileSchema } from '@/main/shared/schemas/layout-settings-
 import { GameName } from '@/main/shared/types/GameName';
 import { LayoutSettings } from '@/main/shared/types/LayoutSetting';
 import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-file-name';
+import { LayoutConfig } from '@/shared/types/LayoutConfig';
 import { LayoutFile } from '@/shared/types/LayoutFile';
 
 class LayoutWindowManager {
@@ -69,6 +70,10 @@ class LayoutWindowManager {
     this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
     this._activeLayout?.hide();
 
+    if (this._game !== game) {
+      this.load(game);
+    }
+
     if (fileName === null) {
       this._activeLayout = null;
       this.logger.debug('Active layout set to null');
@@ -88,6 +93,10 @@ class LayoutWindowManager {
       this.logger.debug(`Showing layout: ${fileName}`);
       this._activeLayout?.show();
     }
+  }
+
+  public getActiveLayout(): LayoutConfig | null {
+    return this._activeLayout?.getConfig() || null;
   }
 
   public getLayoutFilenames(game: GameName) {

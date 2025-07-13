@@ -83,6 +83,9 @@ const layouts: LayoutsActions = {
     ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.REORDER_LAYOUTS, filenames, game),
   getLayoutsOrder: (game: GameName) =>
     ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_LAYOUTS_ORDER, game),
+  getActiveLayout: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_ACTIVE_LAYOUT),
+  setActiveLayout: (filename: string, game: GameName) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.SET_ACTIVE_LAYOUT, filename, game),
 };
 contextBridge.exposeInMainWorld('layouts', layouts);
 

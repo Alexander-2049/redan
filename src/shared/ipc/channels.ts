@@ -28,6 +28,8 @@ export const IPC_CHANNELS = {
     DELETE_LAYOUT: 'layouts:deleteLayout',
     UPDATE_LAYOUT: 'layouts:updateLayout',
     REORDER_LAYOUTS: 'layouts:reorderLayouts',
+    GET_ACTIVE_LAYOUT: 'layouts:getActiveLayout',
+    SET_ACTIVE_LAYOUT: 'layouts:setActiveLayout',
   },
   OVERLAY: {
     OPEN: 'overlay:open',

@@ -20,6 +20,7 @@ interface LayoutSelectorProps {
   handleDeleteLayout: (filename: string) => void;
   handleRenameLayout: (filename: string, newTitle: string) => void;
   handleReorderLayouts: (filenames: string[]) => void;
+  handleSelectLayout: (filename: string) => void;
 }
 
 export const LayoutSelector = (props: LayoutSelectorProps): ReactElement => {
@@ -69,6 +70,7 @@ export const LayoutSelector = (props: LayoutSelectorProps): ReactElement => {
               handleDeleteLayout={props.handleDeleteLayout}
               handleRenameLayout={props.handleRenameLayout}
               handleReorderLayouts={props.handleReorderLayouts}
+              handleSelectLayout={props.handleSelectLayout}
             />
             <CreateLayoutButton handleCreateLayout={props.handleCreateLayout} />
           </div>
