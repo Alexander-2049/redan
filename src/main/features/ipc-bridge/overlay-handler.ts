@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
+import { OverlayPreviewRouter } from '../overlays/OverlayPreviewRouter';
 
 import { Overlay } from '@/main/entities/overlay';
 import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
@@ -59,4 +60,17 @@ export function registerOverlayHandlers() {
       }
     },
   );
+
+  ipcMain.handle(IPC_CHANNELS.OVERLAY.SERVE_PREVIEW, (event, folderPath: string) => {
+    try {
+      OverlayPreviewRouter.getInstance().startServing(folderPath);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  });
+
+  ipcMain.handle(IPC_CHANNELS.OVERLAY.STOP_SERVING_PREVIEW, () => {
+    OverlayPreviewRouter.getInstance().stopServing();
+  });
 }

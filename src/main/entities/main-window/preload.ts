@@ -97,6 +97,10 @@ const overlay: OverlayActions = {
     ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.UPDATE_EDIT_MODE, mode) as Promise<void>,
   updateSettings: (settings: SettingsMap[]) =>
     ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.UPDATE_SETTINGS, settings) as Promise<void>,
+  servePreview: (folderPath: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.SERVE_PREVIEW, folderPath) as Promise<boolean>,
+  stopServingPreview: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.STOP_SERVING_PREVIEW) as Promise<void>,
 };
 
 contextBridge.exposeInMainWorld('overlay', overlay);

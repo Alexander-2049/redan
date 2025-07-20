@@ -62,6 +62,8 @@ export interface OverlayActions {
   close: () => Promise<void>;
   updateEditMode: (mode: boolean) => Promise<void>;
   updateSettings: (settings: SettingsMap[]) => Promise<void>;
+  servePreview: (folderPath: string) => Promise<boolean>;
+  stopServingPreview: () => Promise<void>;
 }
 
 export interface FSActions {

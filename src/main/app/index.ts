@@ -6,6 +6,7 @@ import gameSource from '../features/game-source/GameSource';
 import { WebSocketServer } from '../features/game-source/web-socket-server';
 import { registerIpcMessageHandlers } from '../features/ipc-bridge';
 import { LoggerService } from '../features/logger/LoggerService';
+import { OverlayPreviewRouter } from '../features/overlays/OverlayPreviewRouter';
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { SchemasRouter } from '../features/schemas/SchemasRouter';
 import { HttpServer } from '../infrastructure/http-server';
@@ -24,16 +25,17 @@ async function main() {
     { path: '/assets', router: new AssetsRouter().router },
     { path: '/overlays', router: new OverlaysRouter().router },
     { path: '/schemas', router: new SchemasRouter().router },
+    { path: '/preview', router: OverlayPreviewRouter.getInstance().router },
   ];
 
   const httpServer = new HttpServer(HTTP_SERVER_PORT, routes);
   const webSocketServer = new WebSocketServer();
-  httpServer.start();
 
   // Pass existing HTTP server to WebSocketServer (same port)
   webSocketServer.start({
     server: httpServer.server,
   });
+  httpServer.start();
 
   // layoutWindowManager.createLayout('JasonStathem.json', {
   //   title: 'Jason Stathem',

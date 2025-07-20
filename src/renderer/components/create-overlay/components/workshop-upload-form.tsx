@@ -1,5 +1,5 @@
 import { Upload, ExternalLink, FolderOpen, Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Alert, AlertDescription } from '../../ui/alert';
@@ -11,7 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 
 import { FilePathSelector } from './file-path-selector';
 import { ImageUploader } from './image-uploader';
+import OverlayPreview from './overlay-preview';
 
+import { HTTP_SERVER_PORT } from '@/shared/constants';
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import { UgcItemVisibility, UgcUpdate } from '@/shared/types/steam';
 
@@ -23,6 +25,16 @@ export const WorkshopUploadForm = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [publishedItemId, setPublishedItemId] = useState<bigint | null>(null);
   const [manifestData, setManifestData] = useState<OverlayManifestFile | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<null | string>(null);
+
+  useEffect(() => {
+    setPreviewUrl(null);
+    void window.overlay.servePreview(contentPath).then(isServed => {
+      if (isServed) {
+        setPreviewUrl(`http://localhost:${HTTP_SERVER_PORT}/preview?=${Math.random()}`);
+      }
+    });
+  }, [contentPath, setPreviewUrl]);
 
   const handleManifestPathSelect = async (path: string) => {
     setManifestPath(path);
@@ -133,6 +145,21 @@ export const WorkshopUploadForm = () => {
             </Alert>
           )}
         </div>
+
+        {previewUrl && (
+          <div
+            style={{ width: '100%', height: '450px' }}
+            className="flex items-center justify-center"
+          >
+            <OverlayPreview
+              iframeUrl={previewUrl}
+              backgroundImageUrl={`http://localhost:${HTTP_SERVER_PORT}/assets/images/738c2f57-adad-4978-898c-0ac778680d9b.jpg`}
+              defaultHeight={450}
+              defaultWidth={600}
+              parentHeight={450}
+            />
+          </div>
+        )}
 
         {/* Manifest Preview */}
         {manifestData && (
