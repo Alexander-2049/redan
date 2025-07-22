@@ -64,6 +64,7 @@ export interface OverlayActions {
   updateSettings: (settings: SettingsMap[]) => Promise<void>;
   servePreview: (folderPath: string) => Promise<boolean>;
   stopServingPreview: () => Promise<void>;
+  screenshot: () => Promise<string>;
 }
 
 export interface FSActions {

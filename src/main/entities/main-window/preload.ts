@@ -101,6 +101,7 @@ const overlay: OverlayActions = {
     ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.SERVE_PREVIEW, folderPath) as Promise<boolean>,
   stopServingPreview: () =>
     ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.STOP_SERVING_PREVIEW) as Promise<void>,
+  screenshot: () => ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.SCREENSHOT),
 };
 
 contextBridge.exposeInMainWorld('overlay', overlay);

@@ -5,6 +5,9 @@ import express, { Request, Response, Router } from 'express';
 
 import { LoggerService } from '../logger/LoggerService';
 
+import { HTTP_SERVER_PORT } from '@/shared/constants';
+import { overlayManifestFileSchema } from '@/shared/schemas/overlayManifestFileSchema';
+
 export class OverlayPreviewRouter {
   private static instance: OverlayPreviewRouter;
   private logger = LoggerService.getLogger('preview-server');
@@ -66,18 +69,93 @@ export class OverlayPreviewRouter {
       next();
     });
 
-    // Serve index.html at /preview/
-    this.router.get('/', (req: Request, res: Response) => {
+    this.router.get('/screenshot', (req: Request, res: Response) => {
       if (!this.activeFolder) {
-        return res.status(503).send('Preview server is not running.');
+        return res.status(404).send('Overlay is not selected.');
       }
 
-      const indexPath = path.join(this.activeFolder, 'index.html');
-      if (fs.existsSync(indexPath) && fs.statSync(indexPath).isFile()) {
-        return res.sendFile(indexPath);
-      } else {
-        return res.status(404).send('index.html not found.');
+      // Determine root overlay folder
+      const requestedPath = path.join(this.activeFolder);
+      const overlayRoot = fs.statSync(requestedPath).isDirectory()
+        ? requestedPath
+        : path.dirname(requestedPath);
+
+      const manifestPath = path.join(overlayRoot, 'manifest.json');
+
+      if (!fs.existsSync(manifestPath)) {
+        return res.status(404).send('Required files not found.');
       }
+
+      let manifestRaw: string;
+      try {
+        manifestRaw = fs.readFileSync(manifestPath, 'utf-8');
+      } catch (err) {
+        return res.status(404).send('Could not read manifest.json.');
+      }
+
+      let manifestData;
+      try {
+        const parsed = JSON.parse(manifestRaw) as unknown;
+        manifestData = overlayManifestFileSchema.parse(parsed);
+      } catch (err) {
+        return res.status(404).send('Invalid manifest.json structure.');
+      }
+
+      const { defaultWidth, defaultHeight } = manifestData.dimentions;
+
+      const containerSize = 190;
+      const widthRatio = containerSize / defaultWidth;
+      const heightRatio = containerSize / defaultHeight;
+      const scale = Math.min(widthRatio, heightRatio); // Scale to cover
+
+      const iframeSrc = `http://localhost:${HTTP_SERVER_PORT}/preview`; // remove query params from src
+      const html = `
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Overlay Screenshot</title>
+      <style>
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 200px;
+          height: 200px;
+          overflow: hidden;
+        }
+        .frame-container {
+          width: 200px;
+          height: 200px;
+          box-sizing: border-box;
+          background-image: url("http://localhost:${HTTP_SERVER_PORT}/assets/images/738c2f57-adad-4978-898c-0ac778680d9b.jpg");
+          background-position: center;
+          background-size: auto;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        iframe {
+          width: ${defaultWidth}px;
+          height: ${defaultHeight}px;
+          transform: scale(${scale});
+          transform-origin: center;
+          border: none;
+          pointer-events: none;
+          flex-shrink: 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="frame-container">
+        <iframe src="${iframeSrc}"></iframe>
+      </div>
+    </body>
+  </html>
+`;
+      return res.send(html);
     });
 
     // Serve /preview/* files

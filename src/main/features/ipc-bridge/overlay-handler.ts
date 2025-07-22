@@ -1,7 +1,11 @@
-import { ipcMain } from 'electron';
+import fs from 'fs';
+import path from 'path';
+
+import { BrowserWindow, ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
 import { OverlayPreviewRouter } from '../overlays/OverlayPreviewRouter';
+import { PathService } from '../paths/PathService';
 
 import { Overlay } from '@/main/entities/overlay';
 import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
@@ -72,5 +76,26 @@ export function registerOverlayHandlers() {
 
   ipcMain.handle(IPC_CHANNELS.OVERLAY.STOP_SERVING_PREVIEW, () => {
     OverlayPreviewRouter.getInstance().stopServing();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.OVERLAY.SCREENSHOT, async () => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const iframeURL = 'http://localhost:42049/preview/screenshot';
+    const win = new BrowserWindow({ show: false, width: 200, height: 200, frame: false });
+    await win.loadURL(iframeURL);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const image = await win.capturePage();
+
+    const dirPath = path.join(PathService.getPath('CACHE'), 'OverlayPreview');
+    fs.mkdirSync(dirPath, { recursive: true });
+
+    const filePath = path.join(dirPath, 'Preview.png');
+
+    fs.writeFileSync(filePath, image.toPNG());
+
+    return filePath;
   });
 }

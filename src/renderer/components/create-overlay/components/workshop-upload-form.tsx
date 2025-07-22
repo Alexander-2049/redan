@@ -10,7 +10,6 @@ import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 
 import { FilePathSelector } from './file-path-selector';
-import { ImageUploader } from './image-uploader';
 import OverlayPreview from './overlay-preview';
 
 import { HTTP_SERVER_PORT } from '@/shared/constants';
@@ -20,12 +19,12 @@ import { UgcItemVisibility, UgcUpdate } from '@/shared/types/steam';
 export const WorkshopUploadForm = () => {
   const [manifestPath, setManifestPath] = useState('');
   const [contentPath, setContentPath] = useState('');
-  const [thumbnailPath, setThumbnailPath] = useState('');
   const [visibility, setVisibility] = useState<UgcItemVisibility>('Private');
   const [isUploading, setIsUploading] = useState(false);
   const [publishedItemId, setPublishedItemId] = useState<bigint | null>(null);
   const [manifestData, setManifestData] = useState<OverlayManifestFile | null>(null);
   const [previewUrl, setPreviewUrl] = useState<null | string>(null);
+  const [thumbnailPath, setThumbnailPath] = useState<string | null>(null);
 
   useEffect(() => {
     setPreviewUrl(null);
@@ -34,16 +33,26 @@ export const WorkshopUploadForm = () => {
         setPreviewUrl(`http://localhost:${HTTP_SERVER_PORT}/preview?=${Math.random()}`);
       }
     });
-  }, [contentPath, setPreviewUrl]);
+  }, [contentPath]);
+
+  useEffect(() => {
+    if (!manifestData) return;
+
+    setThumbnailPath(null);
+    void window.overlay.screenshot().then(path => {
+      if (path) {
+        setThumbnailPath(path);
+      } else {
+        toast.error('Failed to generate screenshot');
+      }
+    });
+  }, [manifestData]);
 
   const handleManifestPathSelect = async (path: string) => {
     setManifestPath(path);
     setContentPath(path.replace(/[^/\\]*$/, '')); // Get directory path
 
-    // Try to read and parse the manifest file
     try {
-      // In Electron, you would use fs.readFileSync
-      // For now, we'll simulate this
       const manifestContent = await window.fs.read(path);
       const parsedManifest = JSON.parse(manifestContent) as OverlayManifestFile;
       setManifestData(parsedManifest);
@@ -72,6 +81,13 @@ export const WorkshopUploadForm = () => {
       return;
     }
 
+    if (!thumbnailPath) {
+      toast.error('No Screenshot', {
+        description: 'Screenshot not ready yet. Please wait a moment and try again.',
+      });
+      return;
+    }
+
     if (!window.steam?.workshop.create) {
       toast.error('Steam API Not Available', {
         description: 'Steam Workshop API is not available.',
@@ -87,7 +103,7 @@ export const WorkshopUploadForm = () => {
         description: manifestData.description || 'Overlay created with Overlay Configurator',
         tags: manifestData.tags,
         contentPath: contentPath,
-        previewPath: thumbnailPath,
+        previewPath: thumbnailPath, // optionally: use screenshotPath instead
         changeNote: 'Initial upload',
       };
 
@@ -117,7 +133,7 @@ export const WorkshopUploadForm = () => {
     }
   };
 
-  const canUpload = manifestData && thumbnailPath && !isUploading;
+  const canUpload = manifestData && thumbnailPath && thumbnailPath && !isUploading;
 
   return (
     <Card>
@@ -208,16 +224,6 @@ export const WorkshopUploadForm = () => {
             </CardContent>
           </Card>
         )}
-
-        {/* Thumbnail Upload */}
-        <div className="space-y-4">
-          <ImageUploader
-            value={thumbnailPath}
-            onChange={setThumbnailPath}
-            showPreview={true}
-            label="Workshop Thumbnail"
-          />
-        </div>
 
         {/* Visibility Selection */}
         <div className="space-y-2">
