@@ -38,7 +38,7 @@ export const IPC_CHANNELS = {
     UPDATE_SETTINGS: 'overlay:updateSettings',
     SERVE_PREVIEW: 'overlay:serverPreview',
     STOP_SERVING_PREVIEW: 'overlay:stopServingPreview',
-    SCREENSHOT: 'overlay:screenshot',
+    GENERATE_THUMBNAIL: 'overlay:generateThumbnail',
   },
   FS: {
     READ: 'fs:read',

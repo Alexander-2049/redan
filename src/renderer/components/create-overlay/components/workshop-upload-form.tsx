@@ -39,7 +39,7 @@ export const WorkshopUploadForm = () => {
     if (!manifestData) return;
 
     setThumbnailPath(null);
-    void window.overlay.screenshot().then(path => {
+    void window.overlay.generateThumbnail().then(path => {
       if (path) {
         setThumbnailPath(path);
       } else {

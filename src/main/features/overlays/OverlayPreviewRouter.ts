@@ -69,7 +69,7 @@ export class OverlayPreviewRouter {
       next();
     });
 
-    this.router.get('/screenshot', (req: Request, res: Response) => {
+    this.router.get('/thumbnail', (req: Request, res: Response) => {
       if (!this.activeFolder) {
         return res.status(404).send('Overlay is not selected.');
       }
