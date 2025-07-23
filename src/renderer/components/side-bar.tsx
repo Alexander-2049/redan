@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 
 import { ScrollArea } from './ui/scroll-area';
@@ -16,47 +16,42 @@ interface SidebarLinkGroup {
   links: SidebarLink[];
 }
 
-interface SidebarProps {
+interface CollapsedSidebarProps {
   sidebarLinks: SidebarLinkGroup[];
 }
 
-const Sidebar = ({ sidebarLinks }: SidebarProps) => {
+const Sidebar = ({ sidebarLinks }: CollapsedSidebarProps) => {
   const location = useLocation();
   const { pathname } = location;
 
   return (
     <ScrollArea className="bg-muted/10 border-r">
-      <div className="w-24 p-3 xl:w-56">
-        {sidebarLinks.map(group => (
-          <div key={group.group} className="mb-2 xl:mb-6">
-            <div className="mb-2 hidden px-2 text-xs font-semibold tracking-wider text-gray-500 uppercase xl:block">
-              {group.group}
-            </div>
-            <div className="flex flex-col gap-2">
+      <div className="w-20 p-2">
+        {sidebarLinks.map((group, index) => (
+          <div key={group.group} className="mb-4">
+            {/* Group separator line instead of text label */}
+            {index > 0 && <div className="mx-2 mb-3 h-px bg-gray-200" />}
+
+            <div className="flex flex-col gap-1">
               {group.links.map(link => {
                 const isActive = pathname.startsWith(link.path);
-
                 return (
                   <Link
                     key={link.text}
                     to={link.path}
                     className={cn(
-                      'flex flex-col items-center xl:flex-row xl:items-center xl:justify-start',
-                      'rounded-xl px-2 py-2 text-sm font-medium transition-all duration-150',
-                      'hover:bg-gray-100 hover:shadow-md',
+                      'flex flex-col items-center justify-center',
+                      'rounded-lg px-2 py-3 text-sm font-medium transition-all duration-150',
+                      'hover:bg-gray-100 hover:shadow-sm',
                       'active:translate-y-[1px] active:shadow-inner',
                       isActive
-                        ? 'bg-white text-blue-600 shadow-md ring-2 ring-blue-400'
-                        : 'text-gray-800',
+                        ? 'bg-white text-blue-600 shadow-md ring-1 ring-blue-300'
+                        : 'text-gray-700 hover:text-gray-900',
                     )}
+                    title={link.text} // Tooltip for accessibility
                   >
-                    <link.icon className="h-5 w-5" />
-                    <span
-                      className={cn(
-                        'mt-1 text-center xl:mt-0 xl:ml-2 xl:text-left',
-                        'text-xs leading-tight xl:text-sm',
-                      )}
-                    >
+                    <link.icon className="mb-1 h-5 w-5" />
+                    <span className="line-clamp-2 px-1 text-center text-xs leading-tight">
                       {link.text}
                     </span>
                   </Link>
