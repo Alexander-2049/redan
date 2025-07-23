@@ -9,6 +9,7 @@ export const IPC_CHANNELS = {
   },
   WORKSHOP: {
     GET_ALL_ITEMS: 'workshop:getAllItems',
+    GET_MY_PUBLISHED_ITEMS: 'workshop:getMyPublishedItems',
     SUBSCRIBE: 'workshop:subscribe',
     UNSUBSCRIBE: 'workshop:unsubscribe',
     GET_SUBSCRIBED_ITEMS: 'workshop:getSubscribedItems',

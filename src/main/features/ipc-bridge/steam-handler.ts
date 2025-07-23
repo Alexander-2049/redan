@@ -18,26 +18,59 @@ import {
 const logger = LoggerService.getLogger('ipc-workshop-handlers');
 
 export function registerSteamHandlers() {
-  ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_ALL_ITEMS, async (event, page: number) => {
-    logger.info(`Received request to get all workshop items for page: ${page}`);
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_MY_PUBLISHED_ITEMS, async (event, page: number) => {
+    logger.info(`Received request to get my published workshop items for page: ${page}`);
     const client = Steam.getInstance().getSteamClient();
     if (!client) {
       logger.warn('Steam client not available');
       return null;
     }
+
     try {
-      const result = await client.workshop.getAllItems(
+      const uploadedItemsResult = await client.workshop.getUserItems(
         page,
-        client.workshop.UGCQueryType.RankedByVote,
-        client.workshop.UGCType.ItemsReadyToUse,
-        STEAM_APP_ID,
-        STEAM_APP_ID,
+        client.localplayer.getSteamId().accountId,
+        client.workshop.UserListType.Published,
+        client.workshop.UGCType.Items,
+        client.workshop.UserListOrder.CreationOrderAsc,
+        { consumer: STEAM_APP_ID, creator: STEAM_APP_ID },
       );
-      logger.info(`Successfully fetched workshop items for page: ${page}`);
-      return result;
+
+      logger.info(`Successfully fetched published items for page: ${page}`);
+      return uploadedItemsResult;
     } catch (error) {
       logger.error(
-        `Error fetching workshop items for page ${page}: ${error instanceof Error ? error.message : String(error)}`,
+        `Error fetching my published items for page ${page}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return null;
+    }
+  });
+
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_ALL_ITEMS, async (event, page: number) => {
+    logger.info(`Received request to get all public workshop items for page: ${page}`);
+    const client = Steam.getInstance().getSteamClient();
+    if (!client) {
+      logger.warn('Steam client not available');
+      return null;
+    }
+
+    try {
+      const allItemsResult = await client.workshop.getAllItems(
+        page,
+        client.workshop.UGCQueryType.RankedByVote,
+        client.workshop.UGCType.Items,
+        STEAM_APP_ID,
+        STEAM_APP_ID,
+        {
+          cachedResponseMaxAge: 0,
+        },
+      );
+
+      logger.info(`Successfully fetched public workshop items for page: ${page}`);
+      return allItemsResult;
+    } catch (error) {
+      logger.error(
+        `Error fetching public workshop items for page ${page}: ${error instanceof Error ? error.message : String(error)}`,
       );
       return null;
     }
