@@ -26,6 +26,7 @@
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron-forge/plugin-webpack": "^7.8.1",
     "@electron/fuses": "^1.8.0",
+    "@storybook/addon-docs": "^9.0.16",
     "@storybook/addon-onboarding": "^9.0.16",
     "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
     "@storybook/react-webpack5": "^9.0.16",
@@ -67,8 +68,7 @@
     "typescript": "^5.7.3",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1",
-    "@storybook/addon-docs": "^9.0.16"
+    "webpack-dev-server": "^5.2.2"
   },
   "keywords": [],
   "author": {
@@ -126,6 +126,6 @@
     "zod": "^3.24.1"
   },
   "engines": {
-    "node": ">=18.0.0 <=20.17.0"
+    "node": ">=20.0.0 <=20.17.0"
   }
 }
