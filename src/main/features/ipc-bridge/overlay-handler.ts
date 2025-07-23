@@ -82,7 +82,7 @@ export function registerOverlayHandlers() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const iframeURL = 'http://localhost:42049/preview/thumbnail';
-    const win = new BrowserWindow({ show: false, width: 200, height: 200, frame: false });
+    const win = new BrowserWindow({ show: false, width: 300, height: 300, frame: false });
     await win.loadURL(iframeURL);
 
     await new Promise(resolve => setTimeout(resolve, 1000));

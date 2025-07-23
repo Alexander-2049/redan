@@ -103,7 +103,7 @@ export class OverlayPreviewRouter {
 
       const { defaultWidth, defaultHeight } = manifestData.dimentions;
 
-      const containerSize = 190;
+      const containerSize = 270;
       const widthRatio = containerSize / defaultWidth;
       const heightRatio = containerSize / defaultHeight;
       const scale = Math.min(widthRatio, heightRatio); // Scale to cover
@@ -120,13 +120,13 @@ export class OverlayPreviewRouter {
         html, body {
           margin: 0;
           padding: 0;
-          width: 200px;
-          height: 200px;
+          width: 300px;
+          height: 300px;
           overflow: hidden;
         }
         .frame-container {
-          width: 200px;
-          height: 200px;
+          width: 100%;
+          height: 100%;
           box-sizing: border-box;
           background-image: url("http://localhost:${HTTP_SERVER_PORT}/assets/images/738c2f57-adad-4978-898c-0ac778680d9b.jpg");
           background-position: center;
