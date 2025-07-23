@@ -1,5 +1,5 @@
 import { Trash2, Pencil } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import type React from 'react';
 import type { ReactElement } from 'react';
 
@@ -42,14 +42,6 @@ export const LayoutItem = ({
 }: LayoutItemProps): ReactElement => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(layout.title);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isEditingTitle) {
-      inputRef.current?.focus();
-      inputRef.current?.select(); // Instantly select input box
-    }
-  }, [isEditingTitle]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedTitle(e.target.value);
@@ -98,7 +90,6 @@ export const LayoutItem = ({
       <div className="relative flex w-full min-w-0 items-center">
         {isEditingTitle ? (
           <Input
-            ref={inputRef}
             value={editedTitle}
             onChange={handleTitleChange}
             onBlur={handleSaveTitle}
