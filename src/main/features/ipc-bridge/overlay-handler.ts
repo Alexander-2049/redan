@@ -4,6 +4,7 @@ import path from 'path';
 import { BrowserWindow, ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
+import { OverlaysService } from '../overlays';
 import { OverlayPreviewRouter } from '../overlays/OverlayPreviewRouter';
 import { PathService } from '../paths/PathService';
 
@@ -12,6 +13,7 @@ import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting
 import { OverlayManifestFile } from '@/main/shared/types/OverlayManifestFile';
 import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
+import { OverlayExtended } from '@/shared/types/OverlayExtended';
 
 const logger = LoggerService.getLogger('ipc-overlay-handlers');
 
@@ -97,5 +99,12 @@ export function registerOverlayHandlers() {
     fs.writeFileSync(filePath, image.toPNG());
 
     return filePath;
+  });
+
+  ipcMain.handle(IPC_CHANNELS.OVERLAY.GET_OVERLAY_LIST, (): OverlayExtended[] => {
+    logger.info('Fetching overlay list');
+    const overlays = OverlaysService.loadAllOverlays();
+    logger.info(`Found ${overlays.length} overlays`);
+    return overlays;
   });
 }

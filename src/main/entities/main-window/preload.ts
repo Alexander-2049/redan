@@ -11,6 +11,7 @@ import { GameName } from '@/main/shared/types/GameName';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 import { CreateLayoutProps } from '@/shared/types/CreateLayoutProps';
 import { LayoutFile } from '@/shared/types/LayoutFile';
+import { OverlayExtended } from '@/shared/types/OverlayExtended';
 import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import { SettingsMap } from '@/shared/types/SettingValue';
 import {
@@ -102,6 +103,8 @@ const overlay: OverlayActions = {
   stopServingPreview: () =>
     ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.STOP_SERVING_PREVIEW) as Promise<void>,
   generateThumbnail: () => ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.GENERATE_THUMBNAIL),
+  getOverlayList: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.OVERLAY.GET_OVERLAY_LIST) as Promise<OverlayExtended[]>,
 };
 
 contextBridge.exposeInMainWorld('overlay', overlay);

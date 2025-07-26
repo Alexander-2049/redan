@@ -40,6 +40,7 @@ export const IPC_CHANNELS = {
     SERVE_PREVIEW: 'overlay:serverPreview',
     STOP_SERVING_PREVIEW: 'overlay:stopServingPreview',
     GENERATE_THUMBNAIL: 'overlay:generateThumbnail',
+    GET_OVERLAY_LIST: 'overlay:getOverlayList',
   },
   FS: {
     READ: 'fs:read',

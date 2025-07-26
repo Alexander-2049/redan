@@ -7,11 +7,12 @@ import { PathService } from '../paths/PathService';
 
 import { overlayManifestFileSchema } from '@/main/shared/schemas/overlay-manifest-file-schema';
 import { OverlayManifestFile } from '@/main/shared/types/OverlayManifestFile';
+import { OverlayExtended } from '@/shared/types/OverlayExtended';
 
 const logger = LoggerService.getLogger('overlay-service');
 
 export class OverlaysService {
-  public static loadAllOverlays(): { folderName: string; manifest: OverlayManifestFile | null }[] {
+  public static loadAllOverlays(): OverlayExtended[] {
     logger.info('Loading all overlays...');
 
     const overlaysRoot = PathService.getPath('OVERLAYS');

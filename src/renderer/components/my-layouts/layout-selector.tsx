@@ -57,7 +57,7 @@ export const LayoutSelector = (props: LayoutSelectorProps): ReactElement => {
   );
 
   return (
-    <div className="bg-accent/50 flex h-full w-60 min-w-0 flex-col border-r">
+    <div className="bg-accent/50 flex h-full w-60 min-w-0 shrink-0 flex-col border-r">
       {/* Scrollable Content */}
       <div className="relative flex flex-1 flex-col overflow-hidden">
         <ScrollArea className="relative flex-1 overflow-y-auto">

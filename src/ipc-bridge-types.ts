@@ -2,6 +2,7 @@ import { GameName } from './main/shared/types/GameName';
 import { CreateLayoutProps } from './shared/types/CreateLayoutProps';
 import { LayoutConfig } from './shared/types/LayoutConfig';
 import { LayoutFile } from './shared/types/LayoutFile';
+import { OverlayExtended } from './shared/types/OverlayExtended';
 import { OverlayManifestFile } from './shared/types/OverlayManifestFile';
 import { SettingsMap } from './shared/types/SettingValue';
 import {
@@ -65,6 +66,7 @@ export interface OverlayActions {
   servePreview: (folderPath: string) => Promise<boolean>;
   stopServingPreview: () => Promise<void>;
   generateThumbnail: () => Promise<string>;
+  getOverlayList: () => Promise<OverlayExtended[]>;
 }
 
 export interface FSActions {

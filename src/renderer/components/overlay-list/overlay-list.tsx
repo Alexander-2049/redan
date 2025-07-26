@@ -1,3 +1,5 @@
+import { useOverlayList } from '@/renderer/api/overlays/get-overlays';
+
 interface OverlayListProps {
   overlays: {
     title: string;
@@ -7,8 +9,11 @@ interface OverlayListProps {
 }
 
 const OverlayList = ({ overlays, openOverlay: onOpen }: OverlayListProps) => {
+  const { data } = useOverlayList();
+  console.log(data);
+
   return (
-    <div className="h-full w-3xs shrink-0 bg-red-50">
+    <div className="bg-accent/50 flex h-full w-60 min-w-0 shrink-0 flex-col border-l">
       {overlays.map(overlay => {
         return (
           <button
