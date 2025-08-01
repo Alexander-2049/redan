@@ -1,5 +1,3 @@
-'use client';
-
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Monitor, Gamepad2, Download, Eye } from 'lucide-react';
 import { useState } from 'react';
@@ -7,7 +5,7 @@ import { useState } from 'react';
 import { Badge } from '@/renderer/components/ui/badge';
 import { Button } from '@/renderer/components/ui/button';
 import { Card } from '@/renderer/components/ui/card';
-import { cn } from '@/renderer/lib/utils';
+import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 
 interface Overlay {
   id: string;
@@ -122,23 +120,25 @@ const OverlaySelector = ({ isOpen, close }: OverlaySelectorProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className={cn('bg-background/95 fixed z-30 h-full w-full overflow-auto backdrop-blur-sm')}
+          className="bg-background/95 absolute inset-0 z-30 backdrop-blur-sm"
         >
-          <div className="container mx-auto max-w-7xl p-6">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold">Overlay Selector</h1>
-                <p className="text-muted-foreground mt-1">
-                  Choose from our collection of gaming overlays
-                </p>
+          <ScrollArea className="h-full w-full">
+            <div className="container mx-auto max-w-7xl p-4 sm:p-6">
+              <div className="mb-4 flex flex-col justify-between gap-4 sm:mb-6 sm:flex-row sm:items-center">
+                <div>
+                  <h1 className="text-2xl font-bold sm:text-3xl">Overlay Selector</h1>
+                  <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+                    Choose from our collection of gaming overlays
+                  </p>
+                </div>
+                <Button variant="outline" size="icon" onClick={close}>
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <Button variant="outline" size="icon" onClick={close}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
 
-            <OverlayGrid overlays={mockOverlays} onOverlayClick={handleOverlayClick} />
-          </div>
+              <OverlayGrid overlays={mockOverlays} onOverlayClick={handleOverlayClick} />
+            </div>
+          </ScrollArea>
 
           {/* Overlay Preview Popup */}
           <AnimatePresence>
@@ -160,9 +160,9 @@ interface OverlayGridProps {
 const OverlayGrid = ({ overlays, onOverlayClick }: OverlayGridProps) => {
   return (
     <div
-      className="grid gap-4"
+      className="grid gap-3 sm:gap-4"
       style={{
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
         maxWidth: '100%',
       }}
     >
@@ -181,7 +181,7 @@ interface OverlayItemProps {
 const OverlayItem = ({ overlay, onClick }: OverlayItemProps) => {
   return (
     <Card
-      className="group bg-card hover:bg-accent/50 hover:border-primary/50 cursor-pointer overflow-hidden border-2 p-0 transition-all hover:shadow-lg"
+      className="group bg-card hover:bg-accent/50 hover:border-primary/50 cursor-pointer border-2 p-0 transition-all hover:shadow-lg"
       onClick={onClick}
     >
       <div className="relative aspect-square">
@@ -189,27 +189,29 @@ const OverlayItem = ({ overlay, onClick }: OverlayItemProps) => {
         <img
           src={overlay.image || '/placeholder.svg'}
           alt={overlay.title}
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          className="h-full w-full rounded-t-md object-cover transition-transform group-hover:scale-105"
         />
 
         {/* Overlay info */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 rounded-t-md bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
         {/* Text overlay at the bottom */}
-        <div className="absolute right-0 bottom-0 left-0 p-4">
-          <div className="space-y-2">
-            <h3 className="line-clamp-2 text-sm font-semibold text-white drop-shadow-lg">
+        <div className="absolute right-0 bottom-0 left-0 p-3 sm:p-4">
+          <div className="space-y-1 sm:space-y-2">
+            <h3 className="line-clamp-2 text-xs font-semibold text-white drop-shadow-lg sm:text-sm">
               {overlay.title}
             </h3>
             <p className="text-xs text-white/80 drop-shadow">by {overlay.author}</p>
-            <div className="flex items-center gap-3 text-xs text-white/70">
+            <div className="flex items-center gap-2 text-xs text-white/70 sm:gap-3">
               <div className="flex items-center gap-1">
                 <Download className="h-3 w-3" />
-                {overlay.downloads.toLocaleString()}
+                <span className="hidden sm:inline">{overlay.downloads.toLocaleString()}</span>
+                <span className="sm:hidden">{(overlay.downloads / 1000).toFixed(1)}k</span>
               </div>
               <div className="flex items-center gap-1">
                 <Eye className="h-3 w-3" />
-                {overlay.views.toLocaleString()}
+                <span className="hidden sm:inline">{overlay.views.toLocaleString()}</span>
+                <span className="sm:hidden">{(overlay.views / 1000).toFixed(1)}k</span>
               </div>
             </div>
           </div>
@@ -237,7 +239,7 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
@@ -245,102 +247,112 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: 'spring', duration: 0.3 }}
-        className="bg-background max-h-[80vh] w-full max-w-4xl overflow-auto rounded-lg shadow-2xl"
+        className="bg-background max-h-[90vh] w-full max-w-4xl rounded-lg shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
-        <div className="p-6">
-          <div className="mb-6 flex items-start justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">{overlay.title}</h2>
-              <p className="text-muted-foreground">by {overlay.author}</p>
-            </div>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Preview Section */}
-            <div className="space-y-4">
-              <div className="bg-muted border-muted-foreground/25 flex aspect-square items-center justify-center rounded-lg border-2 border-dashed">
-                <div className="text-muted-foreground text-center">
-                  <Monitor className="mx-auto mb-2 h-12 w-12" />
-                  <p className="text-sm">Iframe Preview Space</p>
-                  <p className="text-xs">Overlay will be loaded here</p>
-                </div>
+        <ScrollArea className="max-h-[90vh]">
+          <div className="p-4 sm:p-6">
+            <div className="mb-4 flex flex-col justify-between gap-4 sm:mb-6 sm:flex-row sm:items-start">
+              <div>
+                <h2 className="text-xl font-bold sm:text-2xl">{overlay.title}</h2>
+                <p className="text-muted-foreground text-sm sm:text-base">by {overlay.author}</p>
               </div>
-
-              <img
-                src={overlay.image || '/placeholder.svg'}
-                alt={overlay.title}
-                className="aspect-square w-full rounded-lg object-cover"
-              />
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
             </div>
 
-            {/* Details Section */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="mb-2 font-semibold">Description</h3>
-                <p className="text-muted-foreground text-sm">{overlay.description}</p>
-              </div>
-
-              <div>
-                <h3 className="mb-2 flex items-center gap-2 font-semibold">
-                  <Monitor className="h-4 w-4" />
-                  Resolution
-                </h3>
-                <Badge variant="outline">{overlay.resolution}</Badge>
-              </div>
-
-              <div>
-                <h3 className="mb-2 flex items-center gap-2 font-semibold">
-                  <Gamepad2 className="h-4 w-4" />
-                  Supported Games
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {overlay.supportedGames.map(game => (
-                    <Badge key={game} variant="secondary">
-                      {game}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-2 font-semibold">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {overlay.tags.map(tag => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 border-t pt-4">
-                <div className="text-center">
-                  <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
-                    <Download className="h-4 w-4" />
-                    <span className="text-sm">Downloads</span>
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+              {/* Preview Section */}
+              <div className="order-2 space-y-4 lg:order-1">
+                <div className="bg-muted border-muted-foreground/25 flex aspect-square items-center justify-center rounded-lg border-2 border-dashed">
+                  <div className="text-muted-foreground text-center">
+                    <Monitor className="mx-auto mb-2 h-8 w-8 sm:h-12 sm:w-12" />
+                    <p className="text-xs sm:text-sm">Iframe Preview Space</p>
+                    <p className="text-xs">Overlay will be loaded here</p>
                   </div>
-                  <p className="font-semibold">{overlay.downloads.toLocaleString()}</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
-                    <Eye className="h-4 w-4" />
-                    <span className="text-sm">Views</span>
-                  </div>
-                  <p className="font-semibold">{overlay.views.toLocaleString()}</p>
-                </div>
+
+                <img
+                  src={overlay.image || '/placeholder.svg'}
+                  alt={overlay.title}
+                  className="aspect-square w-full rounded-lg object-cover"
+                />
               </div>
 
-              <div className="flex gap-2 pt-4">
-                <Button className="flex-1">Select Overlay</Button>
-                <Button variant="outline">Preview</Button>
+              {/* Details Section */}
+              <div className="order-1 space-y-4 sm:space-y-6 lg:order-2">
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold sm:text-base">Description</h3>
+                  <p className="text-muted-foreground text-xs sm:text-sm">{overlay.description}</p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold sm:text-base">
+                    <Monitor className="h-4 w-4" />
+                    Resolution
+                  </h3>
+                  <Badge variant="outline" className="text-xs">
+                    {overlay.resolution}
+                  </Badge>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold sm:text-base">
+                    <Gamepad2 className="h-4 w-4" />
+                    Supported Games
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {overlay.supportedGames.map(game => (
+                      <Badge key={game} variant="secondary" className="text-xs">
+                        {game}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold sm:text-base">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {overlay.tags.map(tag => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 border-t pt-4">
+                  <div className="text-center">
+                    <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
+                      <Download className="h-4 w-4" />
+                      <span className="text-xs sm:text-sm">Downloads</span>
+                    </div>
+                    <p className="text-sm font-semibold sm:text-base">
+                      {overlay.downloads.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
+                      <Eye className="h-4 w-4" />
+                      <span className="text-xs sm:text-sm">Views</span>
+                    </div>
+                    <p className="text-sm font-semibold sm:text-base">
+                      {overlay.views.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 pt-4 sm:flex-row">
+                  <Button className="flex-1 text-sm">Select Overlay</Button>
+                  <Button variant="outline" className="bg-transparent text-sm">
+                    Preview
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </ScrollArea>
       </motion.div>
     </motion.div>
   );
