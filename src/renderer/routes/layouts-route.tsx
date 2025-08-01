@@ -9,7 +9,8 @@ import { useReorderLayouts } from '../api/layouts/reorder-layouts';
 import { useSetActiveLayout } from '../api/layouts/set-active-layout';
 import { useUpdateLayout } from '../api/layouts/update-layout';
 import { LayoutSelector } from '../components/my-layouts/layout-selector';
-import OverlayList from '../components/overlay-list/overlay-list';
+import OverlayList from '../components/my-layouts/overlay-list/overlay-list';
+import OverlaySelector from '../components/my-layouts/overlay-selector/overlay-selector';
 
 import { GameName } from '@/main/shared/types/GameName';
 import { getRandomRacingWords } from '@/main/shared/utils/get-random-racing-words';
@@ -27,6 +28,7 @@ const LayoutsRoute = () => {
   const { mutate: setActiveLayout } = useSetActiveLayout();
 
   const [overlayOpen, setOverlayOpen] = useState<string | null>(null);
+  const [isOverlaySelectorOpen, setIsOverlaySelectorOpen] = useState(true);
 
   const sortedLayouts = useMemo(() => {
     if (!layouts || !layoutOrder) return layouts || [];
@@ -90,7 +92,15 @@ const LayoutsRoute = () => {
 
   const handleOverlayClose = useCallback(() => {
     setOverlayOpen(null);
-  }, []);
+  }, [setOverlayOpen]);
+
+  const handleOpenOverlaySelector = useCallback(() => {
+    setIsOverlaySelectorOpen(true);
+  }, [setIsOverlaySelectorOpen]);
+
+  const handleCloseOverlaySelector = useCallback(() => {
+    setIsOverlaySelectorOpen(false);
+  }, [setIsOverlaySelectorOpen]);
 
   return (
     <div className="flex h-full w-full flex-row justify-between">
@@ -104,6 +114,7 @@ const LayoutsRoute = () => {
         handleSelectLayout={handleSelectLayout}
       />
       <OverlayList overlays={[]} openOverlay={handleOverlayOpen} />
+      <OverlaySelector isOpen={isOverlaySelectorOpen} close={handleCloseOverlaySelector} />
     </div>
   );
 };
