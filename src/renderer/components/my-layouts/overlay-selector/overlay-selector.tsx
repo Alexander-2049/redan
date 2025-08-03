@@ -6,6 +6,7 @@ import { Badge } from '@/renderer/components/ui/badge';
 import { Button } from '@/renderer/components/ui/button';
 import { Card } from '@/renderer/components/ui/card';
 import { ScrollArea } from '@/renderer/components/ui/scroll-area';
+import { HTTP_SERVER_PORT } from '@/shared/constants';
 import { OverlayExtended } from '@/shared/types/OverlayExtended';
 
 interface OverlaySelectorProps {
@@ -111,7 +112,10 @@ const OverlayItem = ({ overlay, onClick }: OverlayItemProps) => {
       <div className="relative aspect-square">
         {/* Image */}
         <img
-          src={overlay.workshop?.previewUrl || '/placeholder.svg'}
+          src={
+            overlay.workshop?.previewUrl ||
+            `http://localhost:${HTTP_SERVER_PORT}/assets/images/placeholder.png`
+          }
           alt={title}
           className="h-full w-full rounded-t-md object-cover transition-transform group-hover:scale-105"
         />
@@ -156,6 +160,7 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
   const title = overlay.workshop?.title || overlay.manifest.title;
   const dimentions = `${overlay.manifest.dimentions.defaultWidth} x ${overlay.manifest.dimentions.defaultHeight}`;
   const subscriptionCount = overlay.workshop?.statistics.numUniqueSubscriptions?.toLocaleString();
+  const description = overlay.workshop?.description || overlay.manifest.description;
 
   return (
     <motion.div
@@ -199,7 +204,10 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
                 </div>
 
                 <img
-                  src={overlay.workshop?.previewUrl || '/placeholder.svg'}
+                  src={
+                    overlay.workshop?.previewUrl ||
+                    `http://localhost:${HTTP_SERVER_PORT}/assets/images/placeholder.png`
+                  }
                   alt={title}
                   className="aspect-square w-full rounded-lg object-cover"
                 />
@@ -209,9 +217,7 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
               <div className="order-1 space-y-4 sm:space-y-6 lg:order-2">
                 <div>
                   <h3 className="mb-2 text-sm font-semibold sm:text-base">Description</h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm">
-                    {overlay.workshop?.description || overlay.manifest.description}
-                  </p>
+                  <p className="text-muted-foreground text-xs sm:text-sm">{description}</p>
                 </div>
 
                 <div>
@@ -249,15 +255,16 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t pt-4">
-                  <div className="text-center">
-                    <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
-                      <Download className="h-4 w-4" />
-                      <span className="text-xs sm:text-sm">Downloads</span>
+                {subscriptionCount && (
+                  <div className="grid grid-cols-2 gap-4 border-t pt-4">
+                    <div className="text-center">
+                      <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
+                        <Download className="h-4 w-4" />
+                        <span className="text-xs sm:text-sm">Downloads</span>
+                      </div>
+                      <p className="text-sm font-semibold sm:text-base">{subscriptionCount}</p>
                     </div>
-                    <p className="text-sm font-semibold sm:text-base">{subscriptionCount}</p>
-                  </div>
-                  {/* <div className="text-center">
+                    {/* <div className="text-center">
                     <div className="text-muted-foreground mb-1 flex items-center justify-center gap-1">
                       <Eye className="h-4 w-4" />
                       <span className="text-xs sm:text-sm">Views</span>
@@ -266,7 +273,8 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
                       {overlay.views.toLocaleString()}
                     </p>
                   </div> */}
-                </div>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-2 pt-4 sm:flex-row">
                   <Button className="flex-1 text-sm">Select Overlay</Button>
