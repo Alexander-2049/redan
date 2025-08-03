@@ -39,13 +39,14 @@ const steam: SteamActions = {
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.SUBSCRIBE, item) as Promise<void>,
     unsubscribe: (item: bigint) =>
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.UNSUBSCRIBE, item) as Promise<void>,
-    getWorkshopAllItems: (page: number, queryConfig: WorkshopItemQueryConfig) =>
+    getAllItems: (page: number, queryConfig: WorkshopItemQueryConfig) =>
       ipcRenderer.invoke(
         IPC_CHANNELS.WORKSHOP.GET_ALL_ITEMS,
         page,
         queryConfig,
       ) as Promise<WorkshopPaginatedResult | null>,
-    getMyItems: (page: number) => ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.GET_MY_ITEMS, page),
+    getMyPublishedItems: (page: number) =>
+      ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.GET_MY_PUBLISHED_ITEMS, page),
     getSubscribedItems: () =>
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.GET_SUBSCRIBED_ITEMS) as Promise<bigint[]>,
     downloadItem: (item: bigint) =>
@@ -67,6 +68,8 @@ const steam: SteamActions = {
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.CREATE, props, visibility),
     updateItem: (itemId: bigint, props: UgcUpdate, visibility?: UgcItemVisibility) =>
       ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.UPDATE_ITEM, itemId, props, visibility),
+    getItems: (itemIds: string[] | bigint[]) =>
+      ipcRenderer.invoke(IPC_CHANNELS.WORKSHOP.GET_ITEMS, itemIds),
   },
 };
 

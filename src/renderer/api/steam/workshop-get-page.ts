@@ -6,7 +6,7 @@ function getWorkshopAllItems(
   page = 1,
   queryConfig?: WorkshopItemQueryConfig,
 ): Promise<WorkshopPaginatedResult | null> {
-  return window.steam.workshop.getWorkshopAllItems(page, {
+  return window.steam.workshop.getAllItems(page, {
     matchAnyTag: true,
     requiredTags: [],
     ...queryConfig,

@@ -18,34 +18,6 @@ import {
 const logger = LoggerService.getLogger('ipc-workshop-handlers');
 
 export function registerSteamHandlers() {
-  ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_MY_PUBLISHED_ITEMS, async (event, page: number) => {
-    logger.info(`Received request to get my published workshop items for page: ${page}`);
-    const client = Steam.getInstance().getSteamClient();
-    if (!client) {
-      logger.warn('Steam client not available');
-      return null;
-    }
-
-    try {
-      const uploadedItemsResult = await client.workshop.getUserItems(
-        page,
-        client.localplayer.getSteamId().accountId,
-        client.workshop.UserListType.Published,
-        client.workshop.UGCType.Items,
-        client.workshop.UserListOrder.CreationOrderAsc,
-        { consumer: STEAM_APP_ID, creator: STEAM_APP_ID },
-      );
-
-      logger.info(`Successfully fetched published items for page: ${page}`);
-      return uploadedItemsResult;
-    } catch (error) {
-      logger.error(
-        `Error fetching my published items for page ${page}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      return null;
-    }
-  });
-
   ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_ALL_ITEMS, async (event, page: number) => {
     logger.info(`Received request to get all public workshop items for page: ${page}`);
     const client = Steam.getInstance().getSteamClient();
@@ -326,7 +298,7 @@ export function registerSteamHandlers() {
   );
 
   ipcMain.handle(
-    IPC_CHANNELS.WORKSHOP.GET_MY_ITEMS,
+    IPC_CHANNELS.WORKSHOP.GET_MY_PUBLISHED_ITEMS,
     async (event, page: 1): Promise<null | WorkshopPaginatedResult> => {
       logger.info(`Received request to fetch user's workshop items on page ${page}`);
       const client = Steam.getInstance().getSteamClient();
@@ -361,4 +333,54 @@ export function registerSteamHandlers() {
       }
     },
   );
+
+  ipcMain.handle(IPC_CHANNELS.WORKSHOP.GET_ITEMS, async (_, itemIds: string[] | bigint[]) => {
+    logger.info(`Received request to get info for item IDs: ${JSON.stringify(itemIds)}`);
+    const client = Steam.getInstance().getSteamClient();
+
+    // Check if client is initialized and user is logged in
+    if (!client) {
+      logger.warn('Steam client not available or user not logged in');
+      return null;
+    }
+
+    let validItemIds: bigint[] = [];
+    if (Array.isArray(itemIds)) {
+      if (typeof itemIds[0] === 'bigint') {
+        // Already an array of bigints
+        validItemIds = itemIds as bigint[];
+      } else {
+        // Assume string[]
+        for (const id of itemIds as string[]) {
+          if (/^\d{6,}$/.test(id)) {
+            try {
+              validItemIds.push(BigInt(id));
+            } catch {
+              logger.warn(`Invalid item ID skipped (cannot convert to BigInt): ${id}`);
+            }
+          } else {
+            logger.warn(`Invalid item ID skipped: ${id}`);
+          }
+        }
+      }
+    } else {
+      logger.warn('itemIds is not an array');
+      return null;
+    }
+
+    logger.info(
+      `Fetching info for valid item IDs: ${validItemIds.map(id => id.toString()).join(', ')}`,
+    );
+
+    try {
+      const result = await client.workshop.getItems(validItemIds);
+      logger.info(`Fetched info for ${result.items.length} items`);
+      return result;
+    } catch (error) {
+      logger.error(
+        `Failed to fetch items info: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return null;
+    }
+  });
 }

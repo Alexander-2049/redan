@@ -11,6 +11,7 @@ import {
   UgcItemVisibility,
   UgcUpdate,
   WorkshopItemQueryConfig,
+  WorkshopItemsResult,
   WorkshopPaginatedResult,
 } from './shared/types/steam';
 
@@ -23,12 +24,12 @@ export interface WindowActions {
 export interface SteamWorkshopActions {
   subscribe: (item: bigint) => Promise<void>;
   unsubscribe: (item: bigint) => Promise<void>;
-  getWorkshopAllItems: (
+  getAllItems: (
     page: number,
     queryConfig: WorkshopItemQueryConfig,
   ) => Promise<WorkshopPaginatedResult | null>;
   getSubscribedItems: () => Promise<bigint[]>;
-  getMyItems: (page: number) => Promise<WorkshopPaginatedResult | null>;
+  getMyPublishedItems: (page: number) => Promise<WorkshopPaginatedResult | null>;
   downloadItem: (item: bigint) => Promise<boolean>;
   downloadInfo: (item: bigint) => Promise<DownloadInfo | null>;
   getInstallInfo: (item: bigint) => Promise<InstallInfo | null>;
@@ -40,6 +41,7 @@ export interface SteamWorkshopActions {
     props: UgcUpdate,
     visibility?: UgcItemVisibility,
   ) => Promise<bigint | null>;
+  getItems: (itemIds: string[] | bigint[]) => Promise<WorkshopItemsResult | null>;
 }
 
 export interface SteamActions {
