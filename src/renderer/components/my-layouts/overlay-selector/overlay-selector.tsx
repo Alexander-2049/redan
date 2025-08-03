@@ -130,12 +130,14 @@ const OverlayItem = ({ overlay, onClick }: OverlayItemProps) => {
               {title}
             </h3>
             {/* <p className="text-xs text-white/80 drop-shadow">by {overlay.author}</p> */}
-            <div className="flex items-center gap-2 text-xs text-white/70 sm:gap-3">
-              <div className="flex items-center gap-1">
-                <Download className="h-3 w-3" />
-                <span className="hidden sm:inline">{subscriptionCount}</span>
+            {subscriptionCount && (
+              <div className="flex items-center gap-2 text-xs text-white/70 sm:gap-3">
+                <div className="flex items-center gap-1">
+                  <Download className="h-3 w-3" />
+                  <span className="hidden sm:inline">{subscriptionCount}</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
