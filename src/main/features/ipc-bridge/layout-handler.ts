@@ -64,10 +64,13 @@ export function registerLayoutHandlers() {
     return layoutWindowManager.getLayoutOrder(game);
   });
 
-  ipcMain.handle(IPC_CHANNELS.LAYOUTS.GET_ACTIVE_LAYOUT, (): LayoutConfig | null => {
-    logger.info('Fetching active layout...');
-    return layoutWindowManager.getActiveLayout();
-  });
+  ipcMain.handle(
+    IPC_CHANNELS.LAYOUTS.GET_ACTIVE_LAYOUT,
+    (): { config: LayoutConfig; data: LayoutFile } | null => {
+      logger.info('Fetching active layout...');
+      return layoutWindowManager.getActiveLayout();
+    },
+  );
 
   ipcMain.handle(
     IPC_CHANNELS.LAYOUTS.SET_ACTIVE_LAYOUT,

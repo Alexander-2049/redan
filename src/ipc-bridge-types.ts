@@ -57,7 +57,7 @@ export interface LayoutsActions {
   getLayoutsOrder: (game: GameName) => Promise<string[]>;
   reorderLayouts: (filenames: string[], game: GameName) => Promise<void>;
   setActiveLayout: (filename: string, game: GameName) => Promise<void>;
-  getActiveLayout: () => Promise<LayoutConfig | null>;
+  getActiveLayout: () => Promise<{ config: LayoutConfig; data: LayoutFile } | null>;
 }
 
 export interface OverlayActions {

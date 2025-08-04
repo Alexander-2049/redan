@@ -47,12 +47,12 @@ async function main() {
   //   },
   // });
 
-  gameSource.addListener('game', game => {
-    layoutWindowManager.load(game || 'None');
-  });
-  gameSource.selectGame('iRacing');
-
   app.on('ready', () => {
+    gameSource.addListener('game', game => {
+      layoutWindowManager.load(game || 'None');
+    });
+    gameSource.selectGame('iRacing');
+
     const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
     registerIpcMessageHandlers();
     mainWindow.load();

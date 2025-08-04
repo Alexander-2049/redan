@@ -16,6 +16,7 @@ import OverlaySelector from '../components/my-layouts/overlay-selector/overlay-s
 
 import { GameName } from '@/main/shared/types/GameName';
 import { getRandomRacingWords } from '@/main/shared/utils/get-random-racing-words';
+import { HTTP_SERVER_PORT } from '@/shared/constants';
 import { LayoutOverlayWithPreviewUrl as LayoutOverlay } from '@/shared/types/LayoutOverlayWithPreviewUrl';
 import type { OverlayExtended } from '@/shared/types/OverlayExtended';
 import type { SettingsMap } from '@/shared/types/SettingValue';
@@ -44,7 +45,6 @@ const LayoutsRoute = () => {
   const [isOverlaySelectorOpen, setIsOverlaySelectorOpen] = useState(false);
   const [selectedOverlayForSettings, setSelectedOverlayForSettings] =
     useState<LayoutOverlay | null>(null);
-  const [layoutOverlays, setLayoutOverlays] = useState<LayoutOverlay[]>([]);
   const [overlaysWithWorkshopData, setOverlaysWithWorkshopData] = useState<OverlayExtended[]>([]);
 
   useEffect(() => {
@@ -75,6 +75,40 @@ const LayoutsRoute = () => {
   }, [layouts, layoutOrder]);
 
   const handleAddOverlay = (overlay: OverlayExtended) => {
+    if (!activeLayout || !overlay.manifest) return;
+
+    const id = Date.now().toString(36) + Math.random().toString(36); // unique id
+    const x = 100; // random value between 50 and 200
+    const y = 100; // random value between 50 and 200
+    const width = overlay.manifest.dimentions.defaultWidth;
+    const height = overlay.manifest.dimentions.defaultHeight;
+
+    updateLayout({
+      filename: activeLayout.config.filename,
+      game: activeLayout.config.game,
+      data: {
+        ...activeLayout.data,
+        overlays: [
+          ...activeLayout.data.overlays,
+          {
+            id,
+            title: overlay.manifest.title,
+            baseUrl: `http://localhost:${HTTP_SERVER_PORT}/overlays/${overlay.folderName}`,
+            folderName: overlay.folderName,
+            position: {
+              x,
+              y,
+            },
+            size: {
+              width,
+              height,
+            },
+            settings: [],
+            visible: true,
+          },
+        ],
+      },
+    });
     // const newLayoutOverlay: LayoutOverlay = {
     //   id: `overlay-${Date.now()}`,
     //   overlayId: overlay.folderName,
@@ -100,7 +134,16 @@ const LayoutsRoute = () => {
   };
 
   const handleDeleteOverlay = (overlayId: string) => {
-    setLayoutOverlays(prev => prev.filter(overlay => overlay.id !== overlayId));
+    if (!activeLayout || !game) return;
+
+    updateLayout({
+      filename: activeLayout.config.filename,
+      game,
+      data: {
+        ...activeLayout.data,
+        overlays: activeLayout.data.overlays.filter(overlay => overlay.id !== overlayId),
+      },
+    });
   };
 
   const handleOverlayClick = (overlay: LayoutOverlay) => {
@@ -179,7 +222,7 @@ const LayoutsRoute = () => {
         <div className="min-w-0 flex-1">
           <LayoutSelector
             layouts={sortedLayouts}
-            activeLayoutFilename={activeLayout?.filename}
+            activeLayoutFilename={activeLayout?.config?.filename}
             handleCreateLayout={handleCreateLayout}
             handleReorderLayouts={handleReorderLayouts}
             handleDeleteLayout={handleDeleteLayout}
@@ -188,7 +231,7 @@ const LayoutsRoute = () => {
           />
         </div>
         <OverlayList
-          overlays={layoutOverlays}
+          overlays={activeLayout?.data.overlays || []}
           onOverlayClick={handleOverlayClick}
           onDeleteOverlay={handleDeleteOverlay}
           onAddOverlay={handleOpenOverlaySelector}
@@ -201,6 +244,7 @@ const LayoutsRoute = () => {
         overlays={overlaysWithWorkshopData}
         isLoading={isOverlaysLoading}
         error={overlaysError}
+        onAddOverlay={handleAddOverlay}
       />
 
       {/* <OverlaySettingsPopup

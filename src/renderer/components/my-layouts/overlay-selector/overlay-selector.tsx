@@ -15,9 +15,10 @@ interface OverlaySelectorProps {
   overlays: OverlayExtended[];
   isLoading: boolean;
   error: Error | null;
+  onAddOverlay: (overlay: OverlayExtended) => void;
 }
 
-const OverlaySelector = ({ isOpen, close, overlays }: OverlaySelectorProps) => {
+const OverlaySelector = ({ isOpen, close, overlays, onAddOverlay }: OverlaySelectorProps) => {
   const [selectedOverlay, setSelectedOverlay] = useState<OverlayExtended | null>(null);
 
   const handleOverlayClick = (overlay: OverlayExtended) => {
@@ -26,6 +27,12 @@ const OverlaySelector = ({ isOpen, close, overlays }: OverlaySelectorProps) => {
 
   const closePopup = () => {
     setSelectedOverlay(null);
+  };
+
+  const handleAddOverlay = (overlay: OverlayExtended) => {
+    onAddOverlay(overlay);
+    setSelectedOverlay(null);
+    close();
   };
 
   return (
@@ -59,7 +66,11 @@ const OverlaySelector = ({ isOpen, close, overlays }: OverlaySelectorProps) => {
           {/* Overlay Preview Popup */}
           <AnimatePresence>
             {selectedOverlay && (
-              <OverlayPreviewPopup overlay={selectedOverlay} onClose={closePopup} />
+              <OverlayPreviewPopup
+                overlay={selectedOverlay}
+                onClose={closePopup}
+                onAddOverlay={handleAddOverlay}
+              />
             )}
           </AnimatePresence>
         </motion.div>
@@ -155,9 +166,10 @@ const OverlayItem = ({ overlay, onClick }: OverlayItemProps) => {
 interface OverlayPreviewPopupProps {
   overlay: OverlayExtended;
   onClose: () => void;
+  onAddOverlay: (overlay: OverlayExtended) => void;
 }
 
-const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => {
+const OverlayPreviewPopup = ({ overlay, onClose, onAddOverlay }: OverlayPreviewPopupProps) => {
   if (!overlay.manifest) return;
   const title = overlay.workshop?.title || overlay.manifest.title;
   const dimentions = `${overlay.manifest.dimentions.defaultWidth} x ${overlay.manifest.dimentions.defaultHeight}`;
@@ -279,7 +291,14 @@ const OverlayPreviewPopup = ({ overlay, onClose }: OverlayPreviewPopupProps) => 
                 )}
 
                 <div className="flex flex-col gap-2 pt-4 sm:flex-row">
-                  <Button className="flex-1 text-sm">Select Overlay</Button>
+                  <Button
+                    onClick={() => {
+                      onAddOverlay(overlay);
+                    }}
+                    className="flex-1 text-sm"
+                  >
+                    Select Overlay
+                  </Button>
                   <Button variant="outline" className="bg-transparent text-sm">
                     Preview
                   </Button>

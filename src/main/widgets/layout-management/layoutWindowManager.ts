@@ -95,8 +95,11 @@ class LayoutWindowManager {
     }
   }
 
-  public getActiveLayout(): LayoutConfig | null {
-    return this._activeLayout?.getConfig() || null;
+  public getActiveLayout(): { config: LayoutConfig; data: LayoutFile } | null {
+    const data = this._activeLayout?.getLayoutFile();
+    const config = this._activeLayout?.getConfig();
+    if (data && config) return { data, config };
+    return null;
   }
 
   public getLayoutFilenames(game: GameName) {

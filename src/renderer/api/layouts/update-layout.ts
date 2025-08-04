@@ -22,6 +22,7 @@ export const useUpdateLayout = () => {
     }) => updateLayout(filename, data, game),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['layouts'] });
+      void queryClient.invalidateQueries({ queryKey: ['active-layout'] });
     },
   });
 };

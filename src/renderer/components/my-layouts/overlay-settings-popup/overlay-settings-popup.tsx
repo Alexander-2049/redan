@@ -2,47 +2,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, RotateCcw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
+import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
 import OverlayPreview from '@/renderer/components/create-overlay/components/overlay-preview';
 import { SettingControl } from '@/renderer/components/create-overlay/components/setting-control';
 import { Button } from '@/renderer/components/ui/button';
 import { ScrollArea } from '@/renderer/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/renderer/components/ui/tabs';
 import type { OverlaySettingDescription } from '@/shared/types/OverlaySettingDescription';
-import type { SettingValue, SettingsMap } from '@/shared/types/SettingValue';
-
-interface LayoutOverlay {
-  id: string;
-  overlayId: string;
-  title: string;
-  author: string;
-  enabled: boolean;
-  position: {
-    x: number;
-    y: number;
-  };
-  size: {
-    width: number;
-    height: number;
-  };
-  settings: SettingsMap;
-  manifest: {
-    dimentions: {
-      defaultWidth: number;
-      defaultHeight: number;
-    };
-    settings: OverlaySettingDescription[];
-  };
-}
+import type { SettingValue } from '@/shared/types/SettingValue';
 
 interface OverlaySettingsPopupProps {
   overlay: LayoutOverlay | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (overlayId: string, settings: SettingsMap) => void;
+  onSave: (overlayId: string, settings: OverlaySettingInLayout[]) => void;
 }
 
 const OverlaySettingsPopup = ({ overlay, isOpen, onClose, onSave }: OverlaySettingsPopupProps) => {
-  const [currentSettings, setCurrentSettings] = useState<SettingsMap>({});
+  const [currentSettings, setCurrentSettings] = useState<OverlaySettingInLayout[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
@@ -100,7 +78,7 @@ const OverlaySettingsPopup = ({ overlay, isOpen, onClose, onSave }: OverlaySetti
   const buildIframeUrl = () => {
     if (!overlay) return '';
 
-    const baseUrl = `http://localhost:42049/preview/${overlay.overlayId}`;
+    const baseUrl = `http://localhost:42049/preview/${overlay.id}`;
     const params = new URLSearchParams();
 
     Object.entries(currentSettings).forEach(([key, value]) => {

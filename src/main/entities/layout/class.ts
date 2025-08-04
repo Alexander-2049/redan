@@ -4,6 +4,7 @@ import { Overlay } from '../overlay';
 import { OverlayFactory } from '../overlay/factory';
 
 import { JsonFileService } from '@/main/features/json-files';
+import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';
 import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { GameName } from '@/main/shared/types/GameName';
@@ -12,6 +13,8 @@ import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-fil
 import { LayoutConfig } from '@/shared/types/LayoutConfig';
 import { LayoutFile } from '@/shared/types/LayoutFile';
 import { LayoutProperties } from '@/shared/types/LayoutProperties';
+
+const logger = LoggerService.getLogger('class-layout');
 
 export class Layout {
   private _game: GameName = 'None'; // Defines which game this layout used for
@@ -82,6 +85,9 @@ export class Layout {
     this._screenWidth = data.screen.width;
     this._screenHeight = data.screen.height;
 
+    logger.debug(`Data has been received for an update: ${JSON.stringify(data)}`);
+    logger.debug(`${data.overlays.length} overlays have been received`);
+
     // Update settings for existing/open overlays
     // Close overlays that were removed from layout file
     for (let i = 0; i < overlays.length; i++) {
@@ -99,7 +105,7 @@ export class Layout {
       const overlayConfig = data.overlays[i];
       const overlay = this._overlays.find(e => e.id === overlayConfig.id);
       if (!overlay) {
-        OverlayFactory.createFromFolder(
+        const newOverlay = OverlayFactory.createFromFolder(
           overlayConfig.id,
           overlayConfig.baseUrl,
           JsonFileService.path.join(PathService.getPath('OVERLAYS'), overlayConfig.folderName),
@@ -109,6 +115,11 @@ export class Layout {
           },
           overlayConfig.visible,
         );
+        if (newOverlay) {
+          this.addOverlay(newOverlay, overlayConfig.folderName);
+        } else {
+          logger.error(`${overlayConfig.folderName} overlay folder was not found`);
+        }
       }
     }
 
@@ -182,6 +193,27 @@ export class Layout {
       },
       overlays: this._overlays.map(e => e.manifest),
     };
+  }
+
+  public getLayoutFile(): LayoutFile | null {
+    if (!this.filename) return null;
+
+    const filePath = JsonFileService.path.join(
+      PathService.getPath('LAYOUTS'),
+      toValidWindowsFileName(this._game),
+      this.filename,
+    );
+
+    let parsed: LayoutFile;
+    try {
+      const rawData = JsonFileService.read(filePath);
+      parsed = layoutFileSchema.parse(rawData);
+      logger.debug(`Successfully parsed layout file: ${this.filename}`);
+      return parsed;
+    } catch (err) {
+      logger.error(`Failed to parse layout file "${this.filename}":`, err);
+      return null;
+    }
   }
 
   private getOverlayProperties(overlay: Overlay): LayoutOverlay {
