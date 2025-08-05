@@ -68,7 +68,12 @@ class LayoutWindowManager {
 
   public setActiveLayout(fileName: string | null, game: GameName, show = true) {
     this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
-    this._activeLayout?.hide();
+    try {
+      this._activeLayout?.hide();
+    } catch (error) {
+      if (error instanceof Error) this.logger.error(error.message);
+      else this.logger.error('Something went wrong while .hide() active layout');
+    }
 
     if (this._game !== game) {
       this.load(game);
