@@ -148,7 +148,18 @@ export class Overlay {
   }
 
   public show() {
-    if (this.visible) this._window.show();
+    if (this.visible) {
+      this.logger.debug(`Showing ${this._manifest.title} [${this._id}] at ${this.baseUrl}`);
+
+      this._window
+        .loadURL(this._baseUrl)
+        .then(() => {
+          this._window.show();
+        })
+        .catch(() => {
+          this.logger.error('show(): An error occured trying to load ' + this._baseUrl);
+        });
+    }
   }
 
   public hide() {

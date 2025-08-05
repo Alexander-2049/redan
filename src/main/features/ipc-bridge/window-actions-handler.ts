@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
 
+import { layoutWindowManager } from '@/main/widgets/layout-management';
 import { IPC_CHANNELS } from '@/shared/ipc/channels';
 
 const logger = LoggerService.getLogger('ipc-bridge-window-actions-handler');
@@ -27,6 +28,7 @@ export function registerWindowActionsHandlers() {
     const win = BrowserWindow.fromWebContents(event.sender);
     logger.info('Closing window');
     if (win) {
+      layoutWindowManager.destroy();
       return win.close();
     }
     logger.warn('No window found to close');

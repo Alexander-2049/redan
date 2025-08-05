@@ -11,7 +11,6 @@ import { layoutFileSchema } from '@/main/shared/schemas/layout-file-schema';
 import { GameName } from '@/main/shared/types/GameName';
 import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions';
 import { toValidWindowsFileName } from '@/main/shared/utils/to-valid-windows-file-name';
-import { HTTP_SERVER_PORT } from '@/shared/constants';
 import { LayoutFile } from '@/shared/types/LayoutFile';
 
 const logger = LoggerService.getLogger('layout-factory');
@@ -29,7 +28,7 @@ export class LayoutFactory {
     try {
       const rawData = JsonFileService.read(filePath);
       parsed = layoutFileSchema.parse(rawData);
-      logger.debug(`Successfully parsed layout file: ${filename}`);
+      logger.debug(`createFromFile(...): Successfully parsed layout file: ${filename}`);
     } catch (err) {
       logger.error(`Failed to parse layout file "${filename}":`, err);
       return null;
@@ -53,7 +52,7 @@ export class LayoutFactory {
 
       const overlay = OverlayFactory.createFromFolder(
         overlayConfig.id,
-        `http://localhost:${HTTP_SERVER_PORT}/${overlayConfig.folderName}`,
+        overlayConfig.baseUrl,
         path.join(PathService.getPath('OVERLAYS'), overlayConfig.folderName),
         bounds,
         overlayConfig.visible,
@@ -67,7 +66,6 @@ export class LayoutFactory {
       }
 
       overlay.updateSettings(overlayConfig.settings);
-      overlayConfig.visible ? overlay.show() : overlay.hide();
       layout.addOverlay(overlay, overlayConfig.folderName);
       logger.debug(`Added overlay: ${overlayConfig.id} to layout.`);
     }

@@ -24,7 +24,6 @@ export class Layout {
   private _overlayFolders: Map<Overlay, string> = new Map();
   private _screenWidth = 0;
   private _screenHeight = 0;
-  private _isVisible = false;
 
   constructor(props: LayoutProperties) {
     this._game = props.game;
@@ -156,14 +155,12 @@ export class Layout {
   }
 
   public show() {
-    if (this._isVisible) return;
     this._overlays.forEach(overlay => {
       overlay.show();
     });
   }
 
   public hide() {
-    if (!this._isVisible) return;
     this._overlays.forEach(overlay => {
       overlay.hide();
     });
@@ -208,7 +205,7 @@ export class Layout {
     try {
       const rawData = JsonFileService.read(filePath);
       parsed = layoutFileSchema.parse(rawData);
-      logger.debug(`Successfully parsed layout file: ${this.filename}`);
+      logger.debug(`getLayoutFile(): Successfully parsed layout file: ${this.filename}`);
       return parsed;
     } catch (err) {
       logger.error(`Failed to parse layout file "${this.filename}":`, err);

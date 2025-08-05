@@ -133,6 +133,8 @@ class LayoutWindowManager {
     this.logger.info(`Deleting layout: ${filename}`);
     this._layoutOrder = this.layoutOrder.filter(f => f !== filename);
     if (this._game === game) {
+      const layout = this._layouts.get(filename);
+      if (layout) layout.destroy();
       const deleted = this._layouts.delete(filename);
       if (deleted) {
         this.logger.debug(`Layout deleted: ${filename}`);

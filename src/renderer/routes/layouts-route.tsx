@@ -93,7 +93,7 @@ const LayoutsRoute = () => {
           {
             id,
             title: overlay.manifest.title,
-            baseUrl: `http://localhost:${HTTP_SERVER_PORT}/overlays/${overlay.folderName}`,
+            baseUrl: `http://localhost:${HTTP_SERVER_PORT}/overlays/${overlay.folderName}/index.html`,
             folderName: overlay.folderName,
             position: {
               x,
