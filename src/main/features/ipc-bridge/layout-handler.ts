@@ -79,4 +79,12 @@ export function registerLayoutHandlers() {
       return layoutWindowManager.setActiveLayout(filename, game, true);
     },
   );
+
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.SET_EDIT_MODE, (_, isEditMode: boolean) => {
+    return layoutWindowManager.setEditMode(isEditMode);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.GET_EDIT_MODE, () => {
+    return layoutWindowManager.isEditMode();
+  });
 }

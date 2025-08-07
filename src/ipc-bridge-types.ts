@@ -58,6 +58,8 @@ export interface LayoutsActions {
   reorderLayouts: (filenames: string[], game: GameName) => Promise<void>;
   setActiveLayout: (filename: string, game: GameName) => Promise<void>;
   getActiveLayout: () => Promise<{ config: LayoutConfig; data: LayoutFile } | null>;
+  isEditMode: () => Promise<boolean>;
+  setEditMode: (isEditMode: boolean) => Promise<boolean>;
 }
 
 export interface OverlayActions {

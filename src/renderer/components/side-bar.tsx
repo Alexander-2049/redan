@@ -1,6 +1,9 @@
 import type { LucideIcon } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 
+import { useIsEditMode } from '../api/layouts/is-edit-mode';
+import { useSetEditMode } from '../api/layouts/set-edit-mode';
+
 import { ScrollArea } from './ui/scroll-area';
 
 import { cn } from '@/renderer/lib/utils';
@@ -23,10 +26,20 @@ interface CollapsedSidebarProps {
 const Sidebar = ({ sidebarLinks }: CollapsedSidebarProps) => {
   const location = useLocation();
   const { pathname } = location;
+  const { data: isEditMode } = useIsEditMode();
+  const { mutate: setEditMode } = useSetEditMode();
 
   return (
     <ScrollArea className="bg-muted/10 border-r">
       <div className="w-20 p-2">
+        <button
+          onClick={() => {
+            setEditMode({ isEditMode: !isEditMode });
+          }}
+          className={isEditMode ? 'bg-sky-400' : 'bg-gray-200'}
+        >
+          EDIT MODE
+        </button>
         {sidebarLinks.map((group, index) => (
           <div key={group.group} className="mb-4">
             {/* Group separator line instead of text label */}

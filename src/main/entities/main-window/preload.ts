@@ -90,6 +90,9 @@ const layouts: LayoutsActions = {
   getActiveLayout: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_ACTIVE_LAYOUT),
   setActiveLayout: (filename: string, game: GameName) =>
     ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.SET_ACTIVE_LAYOUT, filename, game),
+  isEditMode: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_EDIT_MODE),
+  setEditMode: (isEditMode: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.SET_EDIT_MODE, isEditMode),
 };
 contextBridge.exposeInMainWorld('layouts', layouts);
 

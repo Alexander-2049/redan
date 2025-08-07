@@ -24,6 +24,7 @@ export class Layout {
   private _overlayFolders: Map<Overlay, string> = new Map();
   private _screenWidth = 0;
   private _screenHeight = 0;
+  private _isEditMode = false;
 
   constructor(props: LayoutProperties) {
     this._game = props.game;
@@ -42,6 +43,19 @@ export class Layout {
   set screen({ width, height }: { width: number; height: number }) {
     this._screenWidth = width;
     this._screenHeight = height;
+  }
+
+  public isEditMode() {
+    return this._isEditMode;
+  }
+
+  public setEditMode(isEditMode: boolean) {
+    this._overlays.forEach(overlay => {
+      if (overlay.isEditMode() !== isEditMode) {
+        overlay.updateEditMode(isEditMode);
+      }
+    });
+    this._isEditMode = isEditMode;
   }
 
   public save() {

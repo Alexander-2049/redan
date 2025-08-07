@@ -18,11 +18,24 @@ class LayoutWindowManager {
   private _layouts: Map<string, Layout> = new Map();
   private _activeLayout: Layout | null = null;
   private _game: GameName = 'None';
+  private _isEditMode = false;
 
   constructor(layoutsPath: string, game?: GameName) {
     this._layoutsPath = layoutsPath;
     this.logger.info(`Initializing LayoutWindowManager at path: ${this._layoutsPath}`);
     this.load(game || 'None');
+  }
+
+  public isEditMode() {
+    return this._isEditMode;
+  }
+
+  public setEditMode(isEditMode: boolean): boolean {
+    if (this._isEditMode !== isEditMode) {
+      this._activeLayout?.setEditMode(isEditMode);
+      this._isEditMode = isEditMode;
+    }
+    return this._isEditMode;
   }
 
   public readSettings(game: GameName) {
@@ -70,6 +83,7 @@ class LayoutWindowManager {
     this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
     try {
       this._activeLayout?.hide();
+      this._activeLayout?.setEditMode(false);
     } catch (error) {
       if (error instanceof Error) this.logger.error(error.message);
       else this.logger.error('Something went wrong while .hide() active layout');
@@ -96,6 +110,7 @@ class LayoutWindowManager {
 
     if (show) {
       this.logger.debug(`Showing layout: ${fileName}`);
+      this._activeLayout.setEditMode(this.isEditMode());
       this._activeLayout?.show();
     }
   }
