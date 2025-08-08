@@ -78,7 +78,13 @@ export const LayoutItem = ({
       onDragOver={e => onDragOver(e, index)}
       onDrop={e => onDrop(e, index)}
       onDragEnd={onDragEnd}
-      onClick={() => onSelect(layout.filename)}
+      onClick={e => {
+        const target = e.target as HTMLElement;
+        if (target.closest('input, textarea, [contenteditable="true"]')) {
+          return;
+        }
+        onSelect(layout.filename);
+      }}
       className={cn(
         'group bg-card/80 hover:bg-card border-border/50 hover:border-border flex min-h-[120px] w-56 min-w-0 flex-col items-stretch justify-between gap-2 rounded-lg border p-3 text-center transition-all duration-200 hover:shadow-sm',
         !isEditingTitle && 'hover:scale-[1.02] hover:cursor-pointer active:scale-[0.98]',
