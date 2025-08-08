@@ -47,6 +47,13 @@ async function main() {
   //   },
   // });
 
+  // PREVENTS FLICKERING WHEN HOVERING CHROMIUM APPS
+  // BUT CAUSES LESS PERFORMANCE
+  // Hardware Acceleration shares some tasks to GPU
+  // WIthouat Hardware Acceleration all calculations are
+  // going through CPU
+  // app.disableHardwareAcceleration();
+
   app.on('ready', () => {
     gameSource.addListener('game', game => {
       layoutWindowManager.load(game || 'None');
