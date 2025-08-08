@@ -87,6 +87,10 @@ class LayoutWindowManager {
   }
 
   public setActiveLayout(fileName: string | null, game: GameName, show = true) {
+    if (fileName === this._activeLayout?.filename) {
+      this.logger.info('Aborting setActiveLayout: current layout = desired layout');
+      return;
+    }
     this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
     try {
       if (this.isEditMode()) {
