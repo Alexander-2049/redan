@@ -21,4 +21,5 @@ export const mainConfig: Configuration = {
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  devtool: 'source-map',
 };
