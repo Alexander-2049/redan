@@ -1,6 +1,6 @@
 {
-  "name": "pitbox-pro",
-  "productName": "PitboxPro",
+  "name": "pitbox-software",
+  "productName": "PitboxSoftware",
   "version": "1.0.0",
   "description": "Utility application for Sim Racing Games",
   "main": ".webpack/main",
