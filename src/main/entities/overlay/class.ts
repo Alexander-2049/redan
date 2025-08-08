@@ -36,7 +36,7 @@ export class Overlay {
     this._ipcEditModeChannel = `edit-mode-${this._id}`;
 
     this._window = new BrowserWindow({
-      show: false,
+      show: visible,
       frame: false,
       transparent: true,
       alwaysOnTop: true,
@@ -168,22 +168,8 @@ export class Overlay {
 
   public destroy() {
     this._window.destroy();
+    this.removeListener('change-dimensions');
     ipcMain.removeHandler(this._ipcEditModeChannel);
-  }
-
-  public on(
-    event: 'change-dimensions',
-    callback: (position: { x: number; y: number }, size: { width: number; height: number }) => void,
-  ) {
-    if (event !== 'change-dimensions') return;
-
-    const handler = () => {
-      const { x, y, width, height } = this._window.getBounds();
-      callback({ x, y }, { width, height });
-    };
-
-    this._window.on('resize', handler);
-    this._window.on('move', handler);
   }
 
   public removeListener(event: 'change-dimensions') {

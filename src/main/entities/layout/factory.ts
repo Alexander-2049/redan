@@ -38,6 +38,7 @@ export class LayoutFactory {
       filename,
       game,
       screen: parsed.screen,
+      title: parsed.title,
     });
 
     for (const overlayConfig of parsed.overlays) {

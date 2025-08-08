@@ -31,9 +31,16 @@ class LayoutWindowManager {
   }
 
   public setEditMode(isEditMode: boolean): boolean {
+    this.logger.debug(`setEditMode(${isEditMode ? 'true' : 'false'})`);
     if (this._isEditMode !== isEditMode) {
+      this.logger.debug(`activeLayout ${this._activeLayout ? 'exists' : 'does not exist'}`);
       this._activeLayout?.setEditMode(isEditMode);
       this._isEditMode = isEditMode;
+
+      if (!isEditMode) {
+        this.logger.debug(`Calling: activeLayout.save()'}`);
+        void this._activeLayout?.save();
+      }
     }
     return this._isEditMode;
   }
@@ -82,6 +89,9 @@ class LayoutWindowManager {
   public setActiveLayout(fileName: string | null, game: GameName, show = true) {
     this.logger.info(`Setting active layout to: ${fileName || 'null'}`);
     try {
+      if (this.isEditMode()) {
+        void this._activeLayout?.save();
+      }
       this._activeLayout?.hide();
       this._activeLayout?.setEditMode(false);
     } catch (error) {

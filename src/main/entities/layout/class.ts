@@ -31,6 +31,7 @@ export class Layout {
     this._filename = props.filename;
     this._screenWidth = props.screen.width;
     this._screenHeight = props.screen.height;
+    this._title = props.title || null;
   }
 
   get screen(): { readonly width: number; readonly height: number } {
@@ -59,6 +60,7 @@ export class Layout {
   }
 
   public save() {
+    logger.info('layout.save()');
     return new Promise((resolve, reject) => {
       if (this._game === 'None') return reject('Game name is not specified');
       if (this.screen.width === 0 || this.screen.height === 0)
@@ -69,7 +71,9 @@ export class Layout {
       const data: z.infer<typeof layoutFileSchema> = {
         title: this._title,
         overlays: this._overlays.map(overlay => {
-          return this.getOverlayProperties(overlay);
+          const properties = this.getOverlayProperties(overlay);
+          logger.debug(`Overlay [${overlay.id}] properties to save: ${JSON.stringify(properties)}`);
+          return properties;
         }),
         screen: {
           height: this.screen.height,
