@@ -123,7 +123,7 @@ export class Overlay {
     this.load();
   }
 
-  public updateEditMode(isEditMode: boolean) {
+  public setEditMode(isEditMode: boolean) {
     this._isEditMode = isEditMode;
     this._window.resizable = isEditMode;
     this._window.setIgnoreMouseEvents(!isEditMode);

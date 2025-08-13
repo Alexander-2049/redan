@@ -53,7 +53,7 @@ export class Layout {
   public setEditMode(isEditMode: boolean) {
     this._overlays.forEach(overlay => {
       if (overlay.isEditMode() !== isEditMode) {
-        overlay.updateEditMode(isEditMode);
+        overlay.setEditMode(isEditMode);
       }
     });
     this._isEditMode = isEditMode;
@@ -98,7 +98,7 @@ export class Layout {
 
   public update(data: LayoutFile) {
     this._title = data.title;
-    const overlays = [...this._overlays];
+    const currentOverlays = [...this._overlays];
     this._screenWidth = data.screen.width;
     this._screenHeight = data.screen.height;
 
@@ -107,39 +107,43 @@ export class Layout {
 
     // Update settings for existing/open overlays
     // Close overlays that were removed from layout file
-    for (let i = 0; i < overlays.length; i++) {
-      const overlay = overlays[i];
-      const settings = data.overlays.find(e => e.id === overlay.id)?.settings;
+    for (let i = 0; i < currentOverlays.length; i++) {
+      const currentOverlay = currentOverlays[i];
+      const settings = data.overlays.find(e => e.id === currentOverlay.id)?.settings;
       if (settings) {
-        overlay.updateSettings(settings);
+        currentOverlay.updateSettings(settings);
       } else {
-        this.removeOverlayById(overlay.id);
+        this.removeOverlayById(currentOverlay.id);
       }
     }
 
+    let isOverlayAdded = false;
+
     // Open overlays that are in layout file, but are not open yet
     for (let i = 0; i < data.overlays.length; i++) {
-      const overlayConfig = data.overlays[i];
-      const overlay = this._overlays.find(e => e.id === overlayConfig.id);
-      if (!overlay) {
+      const newOverlayConfig = data.overlays[i];
+      const currentOverlay = this._overlays.find(e => e.id === newOverlayConfig.id);
+      if (!currentOverlay) {
         const newOverlay = OverlayFactory.createFromFolder(
-          overlayConfig.id,
-          overlayConfig.baseUrl,
-          JsonFileService.path.join(PathService.getPath('OVERLAYS'), overlayConfig.folderName),
+          newOverlayConfig.id,
+          newOverlayConfig.baseUrl,
+          JsonFileService.path.join(PathService.getPath('OVERLAYS'), newOverlayConfig.folderName),
           {
-            ...overlayConfig.size,
-            ...overlayConfig.position,
+            ...newOverlayConfig.size,
+            ...newOverlayConfig.position,
           },
-          overlayConfig.visible,
+          newOverlayConfig.visible,
         );
         if (newOverlay) {
-          this.addOverlay(newOverlay, overlayConfig.folderName);
+          this.addOverlay(newOverlay, newOverlayConfig.folderName);
+          isOverlayAdded = true;
         } else {
-          logger.error(`${overlayConfig.folderName} overlay folder was not found`);
+          logger.error(`${newOverlayConfig.folderName} overlay folder was not found`);
         }
       }
     }
 
+    if (isOverlayAdded) this.show();
     return this.save();
   }
 
@@ -174,6 +178,7 @@ export class Layout {
 
   public show() {
     this._overlays.forEach(overlay => {
+      overlay.setEditMode(this.isEditMode());
       overlay.show();
     });
   }

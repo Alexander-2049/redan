@@ -53,7 +53,7 @@ export function registerOverlayHandlers() {
   ipcMain.handle(IPC_CHANNELS.OVERLAY.UPDATE_EDIT_MODE, (event, mode: boolean) => {
     logger.info(`Update edit mode: ${mode ? 'true' : 'false'}`);
     if (overlay instanceof Overlay) {
-      overlay.updateEditMode(mode);
+      overlay.setEditMode(mode);
     }
   });
 
