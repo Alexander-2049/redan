@@ -1,5 +1,5 @@
 import { Layout } from '@/main/entities/layout';
-import { LayoutFactory } from '@/main/entities/layout/factory';
+import { LayoutFactory } from '@/main/entities/layout/layout-factory';
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { PathService } from '@/main/features/paths/PathService';

@@ -2,7 +2,7 @@ import path from 'path';
 
 import { OverlayFactory } from '../overlay/factory';
 
-import { Layout } from './class';
+import { Layout } from './Layout';
 
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
