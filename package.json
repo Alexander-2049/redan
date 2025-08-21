@@ -5,9 +5,13 @@
   "description": "Utility application for Sim Racing Games",
   "main": ".webpack/main",
   "scripts": {
+    "prestart": "node scripts/version.js",
     "start": "cross-env NODE_ENV=development electron-forge start -- -- --debug",
+    "prepackage": "node scripts/version.js",
     "package": "electron-forge package",
+    "premake": "node scripts/version.js",
     "make": "electron-forge make",
+    "prepublish": "node scripts/version.js",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "storybook": "storybook dev -p 6006",

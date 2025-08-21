@@ -1,5 +1,6 @@
 import { app } from 'electron';
 
+import buildMeta from '../../../build-meta.json';
 import { MainWindow } from '../entities/main-window';
 import { AssetsRouter } from '../features/assets';
 import gameSource from '../features/game-source/GameSource';
@@ -36,6 +37,8 @@ async function main() {
     server: httpServer.server,
   });
   httpServer.start();
+
+  logger.info(`App is running on build: ${buildMeta.buildVersion}`);
 
   // layoutWindowManager.createLayout('JasonStathem.json', {
   //   title: 'Jason Stathem',
