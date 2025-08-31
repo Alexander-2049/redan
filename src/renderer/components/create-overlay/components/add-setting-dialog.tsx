@@ -6,12 +6,12 @@ import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 
-import type { OverlaySettingDescription } from '@/shared/types/OverlaySettingDescription';
+import type { OverlayManifestSettingType } from '@/shared/types/OverlaySettingDescription';
 
 interface AddSettingDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (setting: OverlaySettingDescription) => void;
+  onAdd: (setting: OverlayManifestSettingType) => void;
 }
 
 export const AddSettingDialog = ({ isOpen, onClose, onAdd }: AddSettingDialogProps) => {
@@ -29,7 +29,7 @@ export const AddSettingDialog = ({ isOpen, onClose, onAdd }: AddSettingDialogPro
       requiredFields: [],
     };
 
-    let newSetting: OverlaySettingDescription;
+    let newSetting: OverlayManifestSettingType;
 
     switch (settingType) {
       case 'slider':

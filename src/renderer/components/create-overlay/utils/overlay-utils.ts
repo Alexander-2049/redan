@@ -7,16 +7,31 @@ export const generateOverlayUrl = (manifest: OverlayManifestFile, baseUrl: strin
   url.searchParams.set('preview', 'true');
 
   // Add all settings as query parameters
-  manifest.settings.forEach(setting => {
-    url.searchParams.set(setting.id, String(setting.defaultValue));
+  manifest.pages.forEach(page => {
+    page.groups.forEach(group => {
+      if (group.type === 'default') {
+        group.settings.forEach(setting => {
+          url.searchParams.set(setting.id, String(setting.defaultValue));
+        });
+      }
+      if (group.type === 'reorderable') {
+        group.elements.forEach(element => {
+          if (element.settings) {
+            element.settings.forEach(setting => {
+              url.searchParams.set(setting.id, String(setting.defaultValue));
+            });
+          }
+        });
+      }
+    });
   });
 
   // Add required and optional fields
-  if (manifest.requiredFields.length > 0) {
+  if (manifest.requiredFields && manifest.requiredFields.length > 0) {
     url.searchParams.set('requiredFields', manifest.requiredFields.join(','));
   }
 
-  if (manifest.optionalFields.length > 0) {
+  if (manifest.optionalFields && manifest.optionalFields.length > 0) {
     url.searchParams.set('optionalFields', manifest.optionalFields.join(','));
   }
 

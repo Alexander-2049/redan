@@ -218,7 +218,7 @@ export const WorkshopUploadForm = () => {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Settings</Label>
-                  <p className="text-muted-foreground">{manifestData.settings.length} configured</p>
+                  <p className="text-muted-foreground">{manifestData.pages.length} configured</p>
                 </div>
               </div>
             </CardContent>

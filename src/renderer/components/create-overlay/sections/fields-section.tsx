@@ -44,7 +44,7 @@ export const FieldsSection = ({ manifest, onUpdate }: FieldsSectionProps) => {
   };
 
   const handleAddRequired = (field: string) => {
-    if (!manifest.requiredFields.includes(field)) {
+    if (manifest.requiredFields && !manifest.requiredFields.includes(field)) {
       onUpdate({
         requiredFields: [...manifest.requiredFields, field],
       });
@@ -52,7 +52,7 @@ export const FieldsSection = ({ manifest, onUpdate }: FieldsSectionProps) => {
   };
 
   const handleAddOptional = (field: string) => {
-    if (!manifest.optionalFields.includes(field)) {
+    if (manifest.optionalFields && !manifest.optionalFields.includes(field)) {
       onUpdate({
         optionalFields: [...manifest.optionalFields, field],
       });
@@ -61,13 +61,16 @@ export const FieldsSection = ({ manifest, onUpdate }: FieldsSectionProps) => {
 
   const handleRemoveField = (field: string) => {
     onUpdate({
-      requiredFields: manifest.requiredFields.filter(f => f !== field),
-      optionalFields: manifest.optionalFields.filter(f => f !== field),
+      requiredFields: (manifest.requiredFields || []).filter(f => f !== field),
+      optionalFields: (manifest.optionalFields || []).filter(f => f !== field),
     });
   };
 
   const isFieldInAnyList = (field: string) => {
-    return manifest.requiredFields.includes(field) || manifest.optionalFields.includes(field);
+    return (
+      (manifest.requiredFields || []).includes(field) ||
+      (manifest.optionalFields || []).includes(field)
+    );
   };
 
   const getFieldSupportedGames = (field: string): string[] => {
@@ -179,10 +182,10 @@ export const FieldsSection = ({ manifest, onUpdate }: FieldsSectionProps) => {
             <FieldsList
               title="Required Fields"
               description="Fields that must be available for the overlay to work"
-              fields={manifest.requiredFields}
+              fields={manifest.requiredFields || []}
               onRemove={field =>
                 onUpdate({
-                  requiredFields: manifest.requiredFields.filter(f => f !== field),
+                  requiredFields: (manifest.requiredFields || []).filter(f => f !== field),
                 })
               }
               getFieldSupportedGames={getFieldSupportedGames}
@@ -192,10 +195,10 @@ export const FieldsSection = ({ manifest, onUpdate }: FieldsSectionProps) => {
             <FieldsList
               title="Optional Fields"
               description="Fields that enhance functionality but aren't required"
-              fields={manifest.optionalFields}
+              fields={manifest.optionalFields || []}
               onRemove={field =>
                 onUpdate({
-                  optionalFields: manifest.optionalFields.filter(f => f !== field),
+                  optionalFields: (manifest.optionalFields || []).filter(f => f !== field),
                 })
               }
               getFieldSupportedGames={getFieldSupportedGames}

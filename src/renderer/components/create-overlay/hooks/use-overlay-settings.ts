@@ -1,20 +1,20 @@
 import { useState, useCallback, useEffect } from 'react';
 
+// import { createDefaultSettings } from '../utils/settings-utils';
+
 import { createDefaultSettings } from '../utils/settings-utils';
 
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 import type { SettingsMap, SettingValue } from '@/shared/types/SettingValue';
 
 export const useOverlaySettings = (manifest: OverlayManifestFile, overlayWindow: Window | null) => {
-  const [settings, setSettings] = useState<SettingsMap>(() =>
-    createDefaultSettings(manifest.settings),
-  );
+  const [settings, setSettings] = useState<SettingsMap>(() => createDefaultSettings(manifest));
 
   // Reset settings when manifest changes
   useEffect(() => {
-    const newSettings = createDefaultSettings(manifest.settings);
+    const newSettings = createDefaultSettings(manifest);
     setSettings(newSettings);
-  }, [manifest.settings]);
+  }, [manifest.pages]);
 
   const updateSetting = useCallback((settingId: string, value: SettingValue) => {
     setSettings(prev => ({
@@ -23,23 +23,14 @@ export const useOverlaySettings = (manifest: OverlayManifestFile, overlayWindow:
     }));
   }, []);
 
-  const resetSetting = useCallback(
-    (settingId: string) => {
-      const setting = manifest.settings.find(s => s.id === settingId);
-      if (setting) {
-        setSettings(prev => ({
-          ...prev,
-          [settingId]: setting.defaultValue,
-        }));
-      }
-    },
-    [manifest.settings],
-  );
+  const resetSetting = useCallback(() => {
+    setSettings(createDefaultSettings(manifest));
+  }, [manifest]);
 
   const resetAllSettings = useCallback(() => {
-    const newSettings = createDefaultSettings(manifest.settings);
+    const newSettings = createDefaultSettings(manifest);
     setSettings(newSettings);
-  }, [manifest.settings]);
+  }, [manifest]);
 
   const loadSettings = useCallback((savedSettings: SettingsMap) => {
     setSettings(savedSettings);

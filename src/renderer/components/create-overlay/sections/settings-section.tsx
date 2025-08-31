@@ -4,11 +4,8 @@ import { useState } from 'react';
 import { Button } from '../../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
-import { AddSettingDialog } from '../components/add-setting-dialog';
-import { SettingItem } from '../components/setting-item';
 
 import type { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
-import type { OverlaySettingDescription } from '@/shared/types/OverlaySettingDescription';
 
 interface SettingsSectionProps {
   manifest: OverlayManifestFile;
@@ -18,30 +15,30 @@ interface SettingsSectionProps {
 export const SettingsSection = ({ manifest, onUpdate }: SettingsSectionProps) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const addSetting = (setting: OverlaySettingDescription) => {
-    onUpdate({ settings: [...manifest.settings, setting] });
-  };
+  // const addSetting = (setting: OverlayManifestSettingType) => {
+  //   onUpdate({ settings: [...manifest.settings, setting] });
+  // };
 
-  const updateSetting = (index: number, updatedSetting: OverlaySettingDescription) => {
-    const newSettings = [...manifest.settings];
-    newSettings[index] = updatedSetting;
-    onUpdate({ settings: newSettings });
-  };
+  // const updateSetting = (index: number, updatedSetting: OverlayManifestSettingType) => {
+  //   const newSettings = [...manifest.settings];
+  //   newSettings[index] = updatedSetting;
+  //   onUpdate({ settings: newSettings });
+  // };
 
-  const removeSetting = (index: number) => {
-    const newSettings = manifest.settings.filter((_, i) => i !== index);
-    onUpdate({ settings: newSettings });
-  };
+  // const removeSetting = (index: number) => {
+  //   const newSettings = manifest.settings.filter((_, i) => i !== index);
+  //   onUpdate({ settings: newSettings });
+  // };
 
-  const duplicateSetting = (index: number) => {
-    const settingToDuplicate = manifest.settings[index];
-    const duplicatedSetting = {
-      ...settingToDuplicate,
-      id: `${settingToDuplicate.id}_copy_${Date.now()}`,
-      name: `${settingToDuplicate.name} (Copy)`,
-    };
-    onUpdate({ settings: [...manifest.settings, duplicatedSetting] });
-  };
+  // const duplicateSetting = (index: number) => {
+  //   const settingToDuplicate = manifest.settings[index];
+  //   const duplicatedSetting = {
+  //     ...settingToDuplicate,
+  //     id: `${settingToDuplicate.id}_copy_${Date.now()}`,
+  //     name: `${settingToDuplicate.name} (Copy)`,
+  //   };
+  //   onUpdate({ settings: [...manifest.settings, duplicatedSetting] });
+  // };
 
   return (
     <Card>
@@ -65,14 +62,14 @@ export const SettingsSection = ({ manifest, onUpdate }: SettingsSectionProps) =>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {manifest.settings.length === 0 ? (
+        {manifest.pages.length === 0 ? (
           <div className="text-muted-foreground py-8 text-center">
             <p>No settings configured yet.</p>
             <p className="text-sm">Click "Add Setting" to create your first overlay setting.</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {manifest.settings.map((setting, index) => (
+            {/* {manifest.pages.map((page, index) => (
               <SettingItem
                 key={setting.id}
                 setting={setting}
@@ -80,15 +77,15 @@ export const SettingsSection = ({ manifest, onUpdate }: SettingsSectionProps) =>
                 onRemove={() => removeSetting(index)}
                 onDuplicate={() => duplicateSetting(index)}
               />
-            ))}
+            ))} */}
           </div>
         )}
 
-        <AddSettingDialog
+        {/* <AddSettingDialog
           isOpen={isAddDialogOpen}
           onClose={() => setIsAddDialogOpen(false)}
           onAdd={addSetting}
-        />
+        /> */}
       </CardContent>
     </Card>
   );

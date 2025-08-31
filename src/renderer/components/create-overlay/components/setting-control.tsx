@@ -4,11 +4,11 @@ import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Slider } from '../../ui/slider';
 
-import type { OverlaySettingDescription } from '@/shared/types/OverlaySettingDescription';
+import type { OverlayManifestSettingType } from '@/shared/types/OverlaySettingDescription';
 import type { SettingValue } from '@/shared/types/SettingValue';
 
 interface SettingControlProps {
-  setting: OverlaySettingDescription;
+  setting: OverlayManifestSettingType;
   value: SettingValue;
   onChange: (value: SettingValue) => void;
 }

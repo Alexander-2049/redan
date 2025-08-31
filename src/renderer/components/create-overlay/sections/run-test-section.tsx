@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { BaseUrlConfig } from '../components/base-url-config';
 import { OverlayControls } from '../components/overlay-controls';
-import { OverlaySettings } from '../components/overlay-settings';
 import { useOverlaySettings } from '../hooks/use-overlay-settings';
 import { useOverlayWindow } from '../hooks/use-overlay-window';
 import { getCookie, setCookie } from '../utils/cookies-utils';
@@ -44,8 +43,10 @@ export const RunTestSection = ({ manifest }: RunTestSectionProps) => {
     setEditMode(false);
   });
 
-  const { settings, updateSetting, resetSetting, resetAllSettings, sendSettingsToOverlay } =
-    useOverlaySettings(manifest, overlayWindow);
+  const { settings, updateSetting, resetAllSettings, sendSettingsToOverlay } = useOverlaySettings(
+    manifest,
+    overlayWindow,
+  );
 
   useEffect(() => {
     return () => {
@@ -84,8 +85,6 @@ export const RunTestSection = ({ manifest }: RunTestSectionProps) => {
   };
 
   const handleResetSetting = (settingId: string) => {
-    resetSetting(settingId);
-
     // Send settings update after reset
     if (window.overlay?.updateSettings) {
       const settingsArray = Object.entries(settings).map(([key, val]) => ({ [key]: val }));
@@ -150,14 +149,14 @@ export const RunTestSection = ({ manifest }: RunTestSectionProps) => {
           <CardTitle>Live Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <OverlaySettings
+          {/* <OverlaySettings
             settings={settings}
             manifest={manifest}
             onSettingChange={handleSettingChange}
             onResetSetting={handleResetSetting}
             onResetAllSettings={handleResetAllSettings}
             isOverlayOpen={isOverlayOpen}
-          />
+          /> */}
         </CardContent>
       </Card>
     </div>

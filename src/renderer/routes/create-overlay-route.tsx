@@ -36,7 +36,7 @@ const CreateOverlayRoute = () => {
         maxWidth: 800,
         maxHeight: 600,
       },
-      settings: [],
+      pages: [],
       requiredFields: [],
       optionalFields: [],
     };
