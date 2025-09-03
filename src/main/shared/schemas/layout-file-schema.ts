@@ -10,7 +10,12 @@ export const overlayPositionInLayoutFileSchema = z.object({
   y: z.number(),
 });
 
-export const overlaySettingValueInLayoutFileSchema = z.union([z.number(), z.string(), z.boolean()]);
+export const overlaySettingValueInLayoutFileSchema = z.union([
+  z.number(),
+  z.string(),
+  z.boolean(),
+  z.array(z.string()), // for elements order
+]);
 
 export const overlaySettingInLayoutFileSchema = z.object({
   id: z.string(),

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { useCreateLayout } from '../api/layouts/create-layout';
 import { useDeleteLayout } from '../api/layouts/delete-layout';
@@ -13,13 +14,15 @@ import { useWorkshopItems } from '../api/steam/workshop-get-items';
 import { LayoutSelector } from '../components/my-layouts/layout-selector';
 import OverlayList from '../components/my-layouts/overlay-list/overlay-list';
 import OverlaySelector from '../components/my-layouts/overlay-selector/overlay-selector';
+import OverlaySettingsPopup from '../components/my-layouts/overlay-settings-popup/overlay-settings-popup';
 
 import { GameName } from '@/main/shared/types/GameName';
+import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
 import { getRandomRacingWords } from '@/main/shared/utils/get-random-racing-words';
 import { HTTP_SERVER_PORT } from '@/shared/constants';
 import { LayoutOverlayWithPreviewUrl as LayoutOverlay } from '@/shared/types/LayoutOverlayWithPreviewUrl';
 import type { OverlayExtended } from '@/shared/types/OverlayExtended';
-import type { SettingsMap } from '@/shared/types/SettingValue';
+import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 
 const LayoutsRoute = () => {
   const game: GameName = 'iRacing';
@@ -41,10 +44,11 @@ const LayoutsRoute = () => {
     overlays.map(overlay => overlay.folderName),
   );
 
-  const [overlayOpen, setOverlayOpen] = useState<string | null>(null);
   const [isOverlaySelectorOpen, setIsOverlaySelectorOpen] = useState(false);
-  const [selectedOverlayForSettings, setSelectedOverlayForSettings] =
-    useState<LayoutOverlay | null>(null);
+  const [selectedOverlayForSettings, setSelectedOverlayForSettings] = useState<{
+    overlay: LayoutOverlay;
+    manifest: OverlayManifestFile;
+  } | null>(null);
   const [overlaysWithWorkshopData, setOverlaysWithWorkshopData] = useState<OverlayExtended[]>([]);
 
   useEffect(() => {
@@ -147,10 +151,18 @@ const LayoutsRoute = () => {
   };
 
   const handleOverlayClick = (overlay: LayoutOverlay) => {
-    setSelectedOverlayForSettings(overlay);
+    const manifest = overlays.find(e => e.folderName === overlay.folderName)?.manifest;
+    if (!manifest) {
+      setSelectedOverlayForSettings(null);
+      return toast.error('manifest.json file was not found');
+    }
+    setSelectedOverlayForSettings({
+      overlay,
+      manifest,
+    });
   };
 
-  const handleSaveSettings = (overlayId: string, settings: SettingsMap) => {
+  const handleSaveSettings = (overlayId: string, settings: OverlaySettingInLayout[]) => {
     // setLayoutOverlays(prev =>
     //   prev.map(overlay => (overlay.id === overlayId ? { ...overlay, settings } : overlay)),
     // );
@@ -197,23 +209,12 @@ const LayoutsRoute = () => {
     [setActiveLayout, game],
   );
 
-  const handleOverlayOpen = useCallback(
-    (overlayFolderName: string) => {
-      setOverlayOpen(overlayFolderName);
-    },
-    [setOverlayOpen],
-  );
-
-  const handleOverlayClose = useCallback(() => {
-    setOverlayOpen(null);
-  }, [setOverlayOpen]);
+  const handleOverlaySettingsClose = useCallback(() => {
+    setSelectedOverlayForSettings(null);
+  }, [setSelectedOverlayForSettings]);
 
   const handleOpenOverlaySelector = useCallback(() => {
     setIsOverlaySelectorOpen(true);
-  }, [setIsOverlaySelectorOpen]);
-
-  const handleCloseOverlaySelector = useCallback(() => {
-    setIsOverlaySelectorOpen(false);
   }, [setIsOverlaySelectorOpen]);
 
   return (
@@ -235,6 +236,13 @@ const LayoutsRoute = () => {
           onOverlayClick={handleOverlayClick}
           onDeleteOverlay={handleDeleteOverlay}
           onAddOverlay={handleOpenOverlaySelector}
+        />
+        <OverlaySettingsPopup
+          isOpen={!!selectedOverlayForSettings}
+          onClose={handleOverlaySettingsClose}
+          onSave={handleSaveSettings}
+          overlay={selectedOverlayForSettings?.overlay || null}
+          overlayManifest={selectedOverlayForSettings?.manifest || null}
         />
       </div>
 
