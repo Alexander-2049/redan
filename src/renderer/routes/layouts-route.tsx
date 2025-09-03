@@ -242,7 +242,7 @@ const LayoutsRoute = () => {
           onClose={handleOverlaySettingsClose}
           onSave={handleSaveSettings}
           overlay={selectedOverlayForSettings?.overlay || null}
-          overlayManifest={selectedOverlayForSettings?.manifest || null}
+          manifest={selectedOverlayForSettings?.manifest || null}
         />
       </div>
 
@@ -254,13 +254,6 @@ const LayoutsRoute = () => {
         error={overlaysError}
         onAddOverlay={handleAddOverlay}
       />
-
-      {/* <OverlaySettingsPopup
-        overlay={selectedOverlayForSettings}
-        isOpen={!!selectedOverlayForSettings}
-        onClose={() => setSelectedOverlayForSettings(null)}
-        onSave={handleSaveSettings}
-      /> */}
     </div>
   );
 };

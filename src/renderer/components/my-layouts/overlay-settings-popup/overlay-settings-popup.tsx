@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 // import { X, Save, RotateCcw } from 'lucide-react';
-import { X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
+import { AcceptedValueTypes, SettingsInterface } from './settings-interface';
 
 import { OverlayManifestFile } from '@/main/shared/schemas/overlay-manifest-file-schema';
 import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
 import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
-import { SettingValue } from '@/shared/types/SettingValue';
 
 // import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
 // import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
@@ -20,7 +20,7 @@ import { SettingValue } from '@/shared/types/SettingValue';
 
 interface OverlaySettingsPopupProps {
   overlay: LayoutOverlay | null;
-  overlayManifest: OverlayManifestFile | null;
+  manifest: OverlayManifestFile | null;
   isOpen: boolean;
   onClose: () => void;
   onSave: (overlayId: string, settings: OverlaySettingInLayout[]) => void;
@@ -28,25 +28,30 @@ interface OverlaySettingsPopupProps {
 
 const OverlaySettingsPopup = ({
   overlay,
+  manifest,
   isOpen,
   onClose,
   onSave,
-  overlayManifest,
 }: OverlaySettingsPopupProps) => {
   const [currentSettings, setCurrentSettings] = useState<OverlaySettingInLayout[]>([]);
+  const [settingValues, setSettingValues] = useState<Record<string, AcceptedValueTypes>>({});
+
+  const [lastOverlay, setLastOverlay] = useState<null | LayoutOverlay>(null);
+  const [lastManifest, setLastManifest] = useState<null | OverlayManifestFile>(null);
 
   useEffect(() => {
-    if (overlay) {
-      setCurrentSettings(overlay.settings);
+    if (overlay !== null) {
+      setLastOverlay(overlay);
     }
   }, [overlay]);
 
-  const handleSettingChange = (settingId: string, value: SettingValue) => {
-    setCurrentSettings(prev => ({
-      ...prev,
-      [settingId]: value,
-    }));
-  };
+  useEffect(() => {
+    if (manifest !== null) {
+      setLastManifest(manifest);
+    }
+  }, [overlay]);
+
+  console.log(lastOverlay, lastManifest);
 
   const handleSave = () => {
     if (overlay) {
@@ -57,48 +62,12 @@ const OverlaySettingsPopup = ({
 
   const handleCancel = () => {
     if (overlay) {
-      setCurrentSettings(overlay.settings);
+      setCurrentSettings([]);
     }
     onClose();
   };
 
-  const handleReset = () => {
-    if (overlay) {
-      setCurrentSettings(overlay.settings);
-    }
-  };
-
-  //   const groupSettingsByGroup = (settings: OverlaySettingDescription[]) => {
-  //     const grouped: Record<string, OverlaySettingDescription[]> = {};
-
-  //     settings.forEach(setting => {
-  //       const groupName = setting.group || 'Other Settings';
-  //       if (!grouped[groupName]) {
-  //         grouped[groupName] = [];
-  //       }
-  //       grouped[groupName].push(setting);
-  //     });
-
-  //     return grouped;
-  //   };
-
-  //   const buildIframeUrl = () => {
-  //     if (!overlay) return '';
-
-  //     const baseUrl = `http://localhost:42049/preview/${overlay.id}`;
-  //     const params = new URLSearchParams();
-
-  //     Object.entries(currentSettings).forEach(([key, value]) => {
-  //       params.append(key, String(value));
-  //     });
-
-  //     return params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
-  //   };
-
-  //   if (!overlay) return null;
-
-  //   const groupedSettings = groupSettingsByGroup(overlay.manifest.settings);
-  //   const groupNames = Object.keys(groupedSettings);
+  if (!lastOverlay || !lastManifest) return;
 
   return (
     <AnimatePresence>
@@ -118,10 +87,11 @@ const OverlaySettingsPopup = ({
             className="bg-background flex max-h-[95vh] w-full max-w-6xl flex-col rounded-lg shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
-            <button onClick={onClose}>
-              <X />
-            </button>
-            <div>Content</div>
+            <SettingsInterface
+              manifest={lastManifest}
+              setSettingValues={setSettingValues}
+              settingValues={settingValues}
+            />
           </motion.div>
         </motion.div>
       )}
