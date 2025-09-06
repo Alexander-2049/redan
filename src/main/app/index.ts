@@ -1,4 +1,5 @@
 import { app } from 'electron';
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 import buildMeta from '../../../build-meta.json';
 import { MainWindow } from '../entities/main-window';
@@ -11,9 +12,11 @@ import { OverlayPreviewRouter } from '../features/overlays/OverlayPreviewRouter'
 import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { SchemasRouter } from '../features/schemas/SchemasRouter';
 import { HttpServer } from '../infrastructure/http-server';
+import { IS_DEBUG, IS_DEV } from '../shared/constants';
 import { layoutWindowManager } from '../widgets/layout-management';
 
 import { HTTP_SERVER_PORT } from '@/shared/constants';
+process.traceProcessWarnings = IS_DEV;
 
 const logger = LoggerService.getLogger('main');
 
@@ -65,7 +68,18 @@ async function main() {
 
     const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
     registerIpcMessageHandlers();
+
     mainWindow.load();
+
+    if (IS_DEV || IS_DEBUG) {
+      installExtension(REACT_DEVELOPER_TOOLS, true)
+        .then(() => {
+          logger.info(`Added extension: ${REACT_DEVELOPER_TOOLS}`);
+        })
+        .catch(err => {
+          logger.error('An error occurred: ', err);
+        });
+    }
   });
 }
 
