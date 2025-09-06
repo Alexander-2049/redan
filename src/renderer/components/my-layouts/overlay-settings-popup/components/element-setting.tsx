@@ -15,7 +15,7 @@ interface ElementSettingProps {
   onSettingChange: (id: string, value: AcceptedValueTypes) => void;
   settingValues: Record<string, AcceptedValueTypes>;
   isDragging?: boolean;
-  dragHandleProps?: any;
+  dragHandleProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
   manifest: OverlayManifestFile;
 }
 

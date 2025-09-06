@@ -16,10 +16,10 @@ import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 
 interface SettingRendererProps {
   setting: OverlayManifestElementType | OverlayManifestSettingType;
-  value: any;
+  value: AcceptedValueTypes;
   onSettingChange: (id: string, value: AcceptedValueTypes) => void;
   isDragging?: boolean;
-  dragHandleProps?: any;
+  dragHandleProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
   settingValues: Record<string, AcceptedValueTypes>;
   manifest: OverlayManifestFile;
 }
@@ -73,7 +73,7 @@ export function SettingRenderer({
       return (
         <SliderSetting
           setting={nonElementSetting}
-          value={value ?? nonElementSetting.defaultValue}
+          value={typeof value === 'number' ? value : nonElementSetting.defaultValue}
           onSettingChange={onSettingChange}
           manifest={manifest}
         />
@@ -82,7 +82,7 @@ export function SettingRenderer({
       return (
         <ToggleSetting
           setting={nonElementSetting}
-          value={value ?? nonElementSetting.defaultValue}
+          value={typeof value === 'boolean' ? value : nonElementSetting.defaultValue}
           onSettingChange={onSettingChange}
           manifest={manifest}
         />
@@ -91,7 +91,7 @@ export function SettingRenderer({
       return (
         <SelectSetting
           setting={nonElementSetting}
-          value={value ?? nonElementSetting.defaultValue}
+          value={typeof value === 'string' ? value : nonElementSetting.defaultValue}
           onSettingChange={onSettingChange}
           manifest={manifest}
         />
@@ -100,7 +100,7 @@ export function SettingRenderer({
       return (
         <NumberSetting
           setting={nonElementSetting}
-          value={value ?? nonElementSetting.defaultValue}
+          value={typeof value === 'number' ? value : nonElementSetting.defaultValue}
           onSettingChange={onSettingChange}
           manifest={manifest}
         />
@@ -109,7 +109,7 @@ export function SettingRenderer({
       return (
         <StringSetting
           setting={nonElementSetting}
-          value={value ?? nonElementSetting.defaultValue}
+          value={typeof value === 'string' ? value : nonElementSetting.defaultValue}
           onSettingChange={onSettingChange}
           manifest={manifest}
         />
@@ -118,7 +118,7 @@ export function SettingRenderer({
       return (
         <ColorSetting
           setting={nonElementSetting}
-          value={value ?? nonElementSetting.defaultValue}
+          value={typeof value === 'string' ? value : nonElementSetting.defaultValue}
           onSettingChange={onSettingChange}
           manifest={manifest}
         />
