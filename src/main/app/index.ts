@@ -74,7 +74,7 @@ async function main() {
     if (IS_DEV || IS_DEBUG) {
       installExtension(REACT_DEVELOPER_TOOLS, true)
         .then(() => {
-          logger.info(`Added extension: ${REACT_DEVELOPER_TOOLS}`);
+          logger.info(`Added extension: ${REACT_DEVELOPER_TOOLS.id}`);
         })
         .catch(err => {
           logger.error('An error occurred: ', err);
