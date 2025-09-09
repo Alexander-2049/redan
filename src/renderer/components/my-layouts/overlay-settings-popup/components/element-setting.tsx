@@ -66,7 +66,7 @@ export function ElementSetting({
                   e.stopPropagation();
                   onEnabledChange(!enabled);
                 }}
-                className={`rounded-md p-1 transition-colors ${
+                className={`rounded-md p-1 transition-colors hover:cursor-pointer ${
                   enabled ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-50'
                 }`}
               >

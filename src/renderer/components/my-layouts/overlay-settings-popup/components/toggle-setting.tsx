@@ -42,7 +42,7 @@ export function ToggleSetting({ setting, value, onSettingChange }: ToggleSetting
         {!isDefault && <ResetToDefaultButton handleReset={handleReset} />}
         <button
           type="button"
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none ${
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors hover:cursor-pointer focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none ${
             value ? 'bg-blue-600' : 'bg-gray-200'
           }`}
           onClick={() => onSettingChange(setting.id, !value)}
