@@ -1,12 +1,14 @@
 import {
   DndContext,
   type DragEndEvent,
+  type DragStartEvent,
   closestCenter,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -43,11 +45,10 @@ type SortableSettingItemProps = {
   onSettingChange: (id: string, value: AcceptedValueTypes) => void;
   manifest: OverlayManifestFile;
   settingValues: Record<string, AcceptedValueTypes>;
+  isDraggingOverlay?: boolean;
 };
 
-const animateLayoutChanges: AnimateLayoutChanges = args =>
-  // Keep dnd-kit intelligence, but ensure super-snappy transitions
-  defaultAnimateLayoutChanges(args);
+const animateLayoutChanges: AnimateLayoutChanges = args => defaultAnimateLayoutChanges(args);
 
 function SortableSettingItem({
   id,
@@ -55,39 +56,57 @@ function SortableSettingItem({
   onSettingChange,
   manifest,
   settingValues,
+  isDraggingOverlay = false,
 }: SortableSettingItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
     animateLayoutChanges,
   });
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition ? transition.replace(/(\d+)ms/, '80ms') : 'transform 80ms ease',
-    // Keep dragged item above others
-    zIndex: isDragging ? 50 : undefined,
-  };
+  const style: React.CSSProperties = isDraggingOverlay
+    ? {
+        zIndex: 9999,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+        transform: CSS.Transform.toString({
+          x: (transform?.x || 0) - 81, // magic numbers to fix wrong offset
+          y: (transform?.y || 0) - 36, // magic numbers to fix wrong offset
+          scaleX: 1,
+          scaleY: 1,
+        }),
+      }
+    : {
+        transform: CSS.Transform.toString({
+          x: transform?.x || 0,
+          y: transform?.y || 0,
+          scaleX: 1, // prevent scaling
+          scaleY: 1, // prevent scaling
+        }),
+        transition: transition ? transition.replace(/(\d+)ms/, '0ms') : 'transform 0ms ease',
+        opacity: isDragging ? 0.4 : 1,
+      };
 
   const setting = useMemo(() => group.elements.find(e => e.id === id), [group.elements, id]);
-
   if (!setting) return null;
 
   return (
     <div ref={setNodeRef} style={style}>
       <SettingRenderer
-        // We don't have the exact SettingType here; casting to keep strict types without "any".
         setting={setting}
         onSettingChange={onSettingChange}
         isDragging={isDragging}
-        settingValues={settingValues} // not used by renderer? preserve prop compatibility below
+        settingValues={settingValues}
         manifest={manifest}
-        dragHandleProps={{
-          ...attributes,
-          ...listeners,
-          style: {
-            cursor: isDragging ? 'grabbing' : 'grab',
-          },
-        }}
+        dragHandleProps={
+          !isDraggingOverlay
+            ? {
+                ...attributes,
+                ...listeners,
+                style: {
+                  cursor: isDragging ? 'grabbing' : 'grab',
+                },
+              }
+            : undefined
+        }
       />
     </div>
   );
@@ -105,6 +124,7 @@ export function SettingsGroup({
       : ((settingValues[group.id] as string[] | undefined) ?? group.elements.map(e => e.id));
 
   const [ids, setIds] = useState<string[]>(initialIds);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     setIds(
@@ -136,8 +156,14 @@ export function SettingsGroup({
     useSensor(KeyboardSensor),
   );
 
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    setActiveId(String(event.active.id));
+  }, []);
+
   const handleDragEnd = useCallback(
     (event: DragEndEvent): void => {
+      setActiveId(null);
+
       const { active, over } = event;
       if (!over || active.id === over.id) return;
 
@@ -154,7 +180,7 @@ export function SettingsGroup({
 
   if (group.type === 'default') {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="mb-4 rounded-xl border border-gray-200 bg-white shadow-sm">
         <div className="border-b border-gray-100 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -183,7 +209,7 @@ export function SettingsGroup({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="mb-4 rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="border-b border-gray-100 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -206,7 +232,12 @@ export function SettingsGroup({
         </div>
       </div>
       <div className="p-6">
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           <SortableContext items={ids} strategy={verticalListSortingStrategy}>
             <div className="space-y-4">
               {ids.map(id => (
@@ -221,6 +252,23 @@ export function SettingsGroup({
               ))}
             </div>
           </SortableContext>
+
+          <DragOverlay
+            dropAnimation={{
+              duration: 100,
+            }}
+          >
+            {activeId ? (
+              <SortableSettingItem
+                id={activeId}
+                group={group}
+                onSettingChange={onSettingChange}
+                manifest={manifest}
+                settingValues={settingValues}
+                isDraggingOverlay
+              />
+            ) : null}
+          </DragOverlay>
         </DndContext>
       </div>
     </div>

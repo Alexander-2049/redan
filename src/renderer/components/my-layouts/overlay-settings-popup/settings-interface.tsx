@@ -123,7 +123,7 @@ export function SettingsInterface({
             <button
               onClick={() => setShowResetModal(true)}
               disabled={isAllDefault()}
-              className={`flex items-center space-x-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+              className={`flex items-center space-x-2 rounded-lg px-4 py-2 text-sm font-medium transition-all hover:cursor-pointer ${
                 isAllDefault()
                   ? 'cursor-not-allowed bg-gray-100 text-gray-400'
                   : 'border border-red-200 bg-red-50 text-red-700 hover:bg-red-100'
@@ -185,7 +185,7 @@ export function SettingsInterface({
                 <button
                   key={`page-${page.title}`}
                   onClick={() => setActiveTab(page.title)}
-                  className={`group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+                  className={`group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors hover:cursor-pointer ${
                     isActive
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
