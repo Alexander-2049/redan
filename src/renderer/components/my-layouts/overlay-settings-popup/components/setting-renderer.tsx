@@ -16,7 +16,6 @@ import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 
 interface SettingRendererProps {
   setting: OverlayManifestElementType | OverlayManifestSettingType;
-  value: AcceptedValueTypes;
   onSettingChange: (id: string, value: AcceptedValueTypes) => void;
   isDragging?: boolean;
   dragHandleProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -33,7 +32,6 @@ function isElementSetting(
 
 export function SettingRenderer({
   setting,
-  value,
   onSettingChange,
   isDragging = false,
   dragHandleProps,
@@ -67,6 +65,7 @@ export function SettingRenderer({
 
   // Handle NonElementSetting types
   const nonElementSetting: OverlayManifestSettingType = setting;
+  const value = settingValues[setting.id];
 
   switch (nonElementSetting.type) {
     case 'slider':

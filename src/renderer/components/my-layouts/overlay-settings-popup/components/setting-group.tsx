@@ -40,9 +40,9 @@ type SettingsGroupProps = {
 type SortableSettingItemProps = {
   id: string;
   group: OverlayManifestReorderableGroup;
-  value: AcceptedValueTypes;
   onSettingChange: (id: string, value: AcceptedValueTypes) => void;
   manifest: OverlayManifestFile;
+  settingValues: Record<string, AcceptedValueTypes>;
 };
 
 const animateLayoutChanges: AnimateLayoutChanges = args =>
@@ -52,9 +52,9 @@ const animateLayoutChanges: AnimateLayoutChanges = args =>
 function SortableSettingItem({
   id,
   group,
-  value,
   onSettingChange,
   manifest,
+  settingValues,
 }: SortableSettingItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
@@ -77,10 +77,9 @@ function SortableSettingItem({
       <SettingRenderer
         // We don't have the exact SettingType here; casting to keep strict types without "any".
         setting={setting}
-        value={value}
         onSettingChange={onSettingChange}
         isDragging={isDragging}
-        settingValues={{}} // not used by renderer? preserve prop compatibility below
+        settingValues={settingValues} // not used by renderer? preserve prop compatibility below
         manifest={manifest}
         dragHandleProps={{
           ...attributes,
@@ -171,7 +170,6 @@ export function SettingsGroup({
               <div key={id}>
                 <SettingRenderer
                   setting={setting}
-                  value={settingValues[id]}
                   onSettingChange={onSettingChange}
                   settingValues={settingValues}
                   manifest={manifest}
@@ -216,9 +214,9 @@ export function SettingsGroup({
                   key={id}
                   id={id}
                   group={group}
-                  value={settingValues[id]}
                   onSettingChange={onSettingChange}
                   manifest={manifest}
+                  settingValues={settingValues}
                 />
               ))}
             </div>

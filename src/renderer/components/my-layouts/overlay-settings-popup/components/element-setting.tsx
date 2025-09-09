@@ -111,7 +111,6 @@ export function ElementSetting({
             <div key={subSetting.id} className="ml-6">
               <SettingRenderer
                 setting={subSetting}
-                value={settingValues[subSetting.id] ?? subSetting.defaultValue}
                 onSettingChange={onSettingChange}
                 settingValues={settingValues}
                 manifest={manifest}

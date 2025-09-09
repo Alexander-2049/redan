@@ -46,12 +46,14 @@ const OverlaySettingsPopup = ({
   }, [overlay]);
 
   useEffect(() => {
+    console.log(settingValues);
+  }, [settingValues]);
+
+  useEffect(() => {
     if (manifest !== null) {
       setLastManifest(manifest);
     }
   }, [overlay]);
-
-  console.log(lastOverlay, lastManifest);
 
   const handleSave = () => {
     if (overlay) {
