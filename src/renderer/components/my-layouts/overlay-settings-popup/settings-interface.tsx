@@ -102,7 +102,7 @@ export function SettingsInterface({
   };
 
   return (
-    <div className="m-16 min-h-screen bg-gray-50 p-5">
+    <div className="m-16 min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8">
         {/* Header */}
         <div className="mb-8">
