@@ -1,8 +1,6 @@
 import { Settings, RotateCcw } from 'lucide-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-import { ScrollArea } from '../../ui/scroll-area';
-
 import { iconMap } from './components/icons/icon-map';
 import { ResetConfirmationModal } from './components/reset-confirmation-model';
 import { SettingsGroup } from './components/setting-group';
@@ -102,7 +100,7 @@ export function SettingsInterface({
   };
 
   return (
-    <div className="m-16 min-h-screen">
+    <div className="m-16 h-full">
       <div className="mx-auto max-w-6xl px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -206,7 +204,7 @@ export function SettingsInterface({
 
       {/* Settings Content */}
       {activePage && (
-        <ScrollArea className="mx-auto h-max max-w-6xl space-y-6">
+        <div>
           {activePage.groups.map(group => (
             <SettingsGroup
               key={`group-${group.title}-${group.type}`}
@@ -216,7 +214,7 @@ export function SettingsInterface({
               manifest={manifest}
             />
           ))}
-        </ScrollArea>
+        </div>
       )}
 
       {/* Reset Confirmation Modal */}

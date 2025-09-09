@@ -2,6 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 // import { X, Save, RotateCcw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+import { ScrollArea } from '../../ui/scroll-area';
+
 import { AcceptedValueTypes, SettingsInterface } from './settings-interface';
 
 import { OverlayManifestFile } from '@/main/shared/schemas/overlay-manifest-file-schema';
@@ -86,14 +88,16 @@ const OverlaySettingsPopup = ({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', duration: 0.3 }}
-            className="bg-background flex max-h-[95vh] w-full max-w-6xl flex-col rounded-lg shadow-2xl"
+            className="bg-background flex h-[80vh] w-full max-w-6xl flex-col rounded-lg shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
-            <SettingsInterface
-              manifest={lastManifest}
-              setSettingValues={setSettingValues}
-              settingValues={settingValues}
-            />
+            <ScrollArea>
+              <SettingsInterface
+                manifest={lastManifest}
+                setSettingValues={setSettingValues}
+                settingValues={settingValues}
+              />
+            </ScrollArea>
           </motion.div>
         </motion.div>
       )}
