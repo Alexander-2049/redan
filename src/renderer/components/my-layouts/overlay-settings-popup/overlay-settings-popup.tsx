@@ -96,6 +96,7 @@ const OverlaySettingsPopup = ({
                 manifest={lastManifest}
                 setSettingValues={setSettingValues}
                 settingValues={settingValues}
+                overlay={lastOverlay}
               />
             </ScrollArea>
           </motion.div>

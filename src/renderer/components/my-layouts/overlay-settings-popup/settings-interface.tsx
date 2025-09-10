@@ -1,11 +1,13 @@
 import { Settings, RotateCcw } from 'lucide-react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { iconMap } from './components/icons/icon-map';
 import { ResetConfirmationModal } from './components/reset-confirmation-model';
 import { SettingsGroup } from './components/setting-group';
+import SettingsOverlayPreview from './components/settings-overlay-preview';
 
 import { OverlayManifestPage } from '@/main/shared/schemas/overlay-manifest-file-schema';
+import { LayoutOverlay } from '@/main/shared/types/LayoutOverlay';
 import { OverlayManifestFile } from '@/shared/types/OverlayManifestFile';
 
 export type AcceptedValueTypes = string | number | boolean | string[];
@@ -14,15 +16,38 @@ interface SettingsInterfaceProps {
   manifest: OverlayManifestFile;
   settingValues: Record<string, AcceptedValueTypes>;
   setSettingValues: Dispatch<SetStateAction<Record<string, AcceptedValueTypes>>>;
+  overlay: LayoutOverlay;
 }
 
 export function SettingsInterface({
   manifest,
   settingValues,
   setSettingValues,
+  overlay,
 }: SettingsInterfaceProps) {
   const [activeTab, setActiveTab] = useState(manifest.pages[0]?.title || '');
   const [showResetModal, setShowResetModal] = useState(false);
+  const [settingsAsQueryParams, setSettingsAsQueryParams] = useState<string>('');
+
+  useEffect(() => {
+    const keys = Object.keys(settingValues);
+    let result = '';
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const value = settingValues[key];
+
+      if (typeof value === 'boolean') {
+        result += `&${encodeURIComponent(key)}=${value ? 'true' : 'false'}`;
+      }
+      if (typeof value === 'number' || typeof value === 'string') {
+        result += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+      }
+      if (Array.isArray(value)) {
+        result += `&${encodeURIComponent(key)}=${value.map(v => encodeURIComponent(v)).join(',')}`;
+      }
+    }
+    setSettingsAsQueryParams(result);
+  }, [settingValues]);
 
   const handleSettingChange = (settingId: string, value: AcceptedValueTypes) => {
     setSettingValues(prev => ({ ...prev, [settingId]: value }));
@@ -170,6 +195,18 @@ export function SettingsInterface({
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Overlay Preview */}
+      <div>
+        <p className="max-w-3xl wrap-break-word">{`${overlay.baseUrl}?preview=true${settingsAsQueryParams}`}</p>
+        <SettingsOverlayPreview
+          defaultHeight={manifest.dimentions.defaultHeight}
+          defaultWidth={manifest.dimentions.defaultWidth}
+          iframeUrl={`${overlay.baseUrl}?preview=true${settingsAsQueryParams}`}
+          backgroundImageUrl="https://t3.ftcdn.net/jpg/03/09/04/12/360_F_309041299_fucpREMWXjdBrghlPefPXLAYrgkbn1FJ.jpg"
+          parentHeight={300}
+        />
       </div>
 
       {/* Tabs */}
