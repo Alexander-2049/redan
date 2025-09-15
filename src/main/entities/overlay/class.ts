@@ -244,11 +244,23 @@ export class Overlay {
 
   public convertSettingsToQuery(settings: OverlaySettingInLayout[]): string {
     return settings
-      .map(setting =>
-        Object.entries(setting)
-          .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
-          .join('&'),
-      )
+      .map(setting => {
+        let value = '';
+        if (typeof setting.value === 'string') {
+          value = setting.value;
+        }
+        if (typeof setting.value === 'boolean') {
+          value = setting.value ? 'true' : 'false';
+        }
+        if (typeof setting.value === 'number') {
+          value = `${setting.value}`;
+        }
+        if (Array.isArray(setting.value)) {
+          value = setting.value.join(',');
+        }
+
+        return `${encodeURIComponent(setting.id)}=${encodeURIComponent(value)}`;
+      })
       .join('&');
   }
 }
