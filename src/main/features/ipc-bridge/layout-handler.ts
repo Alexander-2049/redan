@@ -87,4 +87,12 @@ export function registerLayoutHandlers() {
   ipcMain.handle(IPC_CHANNELS.LAYOUTS.GET_EDIT_MODE, () => {
     return layoutWindowManager.isEditMode();
   });
+
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.SET_PREVIEW_MODE, (_, isPreviewMode: boolean) => {
+    return layoutWindowManager.setPreviewMode(isPreviewMode);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.LAYOUTS.GET_PREVIEW_MODE, () => {
+    return layoutWindowManager.isEditMode();
+  });
 }

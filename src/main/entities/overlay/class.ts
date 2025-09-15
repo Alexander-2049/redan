@@ -130,7 +130,7 @@ export class Overlay {
     this._window.webContents.send('edit-mode', isEditMode);
   }
 
-  public updatePreviewMode(isPreviewMode: boolean) {
+  public setPreviewMode(isPreviewMode: boolean) {
     if (this._isPreviewMode === isPreviewMode) return;
     this._isPreviewMode = isPreviewMode;
     this.load();

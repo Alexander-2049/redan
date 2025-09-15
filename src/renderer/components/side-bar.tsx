@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 
 import { useIsEditMode } from '../api/layouts/is-edit-mode';
 import { useSetEditMode } from '../api/layouts/set-edit-mode';
+import { useSetPreviewMode } from '../api/layouts/set-preview-mode';
 
 import { ScrollArea } from './ui/scroll-area';
 
@@ -28,6 +29,7 @@ const Sidebar = ({ sidebarLinks }: CollapsedSidebarProps) => {
   const { pathname } = location;
   const { data: isEditMode } = useIsEditMode();
   const { mutate: setEditMode } = useSetEditMode();
+  const { mutate: setPreviewMode } = useSetPreviewMode();
 
   return (
     <ScrollArea className="bg-muted/10 border-r">
@@ -35,6 +37,7 @@ const Sidebar = ({ sidebarLinks }: CollapsedSidebarProps) => {
         <button
           onClick={() => {
             setEditMode({ isEditMode: !isEditMode });
+            setPreviewMode({ isPreviewMode: !isEditMode });
           }}
           className={isEditMode ? 'bg-sky-400' : 'bg-gray-200'}
         >

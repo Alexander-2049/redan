@@ -60,6 +60,8 @@ export interface LayoutsActions {
   getActiveLayout: () => Promise<{ config: LayoutConfig; data: LayoutFile } | null>;
   isEditMode: () => Promise<boolean>;
   setEditMode: (isEditMode: boolean) => Promise<boolean>;
+  isPreviewMode: () => Promise<boolean>;
+  setPreviewMode: (isPreviewMode: boolean) => Promise<boolean>;
 }
 
 export interface OverlayActions {

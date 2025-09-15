@@ -33,6 +33,8 @@ export const IPC_CHANNELS = {
     SET_ACTIVE_LAYOUT: 'layouts:setActiveLayout',
     GET_EDIT_MODE: 'layouts:isEditMode',
     SET_EDIT_MODE: 'layouts:setEditMode',
+    GET_PREVIEW_MODE: 'layouts:getPreviewMode',
+    SET_PREVIEW_MODE: 'layouts:setPreviewMode',
   },
   OVERLAY: {
     OPEN: 'overlay:open',

@@ -25,6 +25,7 @@ export class Layout {
   private _screenWidth = 0;
   private _screenHeight = 0;
   private _isEditMode = false;
+  private _isPreviewMode = false;
 
   constructor(props: LayoutProperties) {
     this._game = props.game;
@@ -57,6 +58,19 @@ export class Layout {
       }
     });
     this._isEditMode = isEditMode;
+  }
+
+  public isPreviewMode() {
+    return this._isPreviewMode;
+  }
+
+  public setPreviewMode(isPreviewMode: boolean) {
+    this._overlays.forEach(overlay => {
+      if (overlay.isPreviewMode() !== isPreviewMode) {
+        overlay.setPreviewMode(isPreviewMode);
+      }
+    });
+    this._isPreviewMode = isPreviewMode;
   }
 
   public save() {

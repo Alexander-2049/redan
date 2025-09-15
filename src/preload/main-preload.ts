@@ -93,6 +93,9 @@ const layouts: LayoutsActions = {
   isEditMode: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_EDIT_MODE),
   setEditMode: (isEditMode: boolean) =>
     ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.SET_EDIT_MODE, isEditMode),
+  isPreviewMode: () => ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.GET_PREVIEW_MODE),
+  setPreviewMode: (isPreviewMode: boolean) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAYOUTS.SET_PREVIEW_MODE, isPreviewMode),
 };
 contextBridge.exposeInMainWorld('layouts', layouts);
 

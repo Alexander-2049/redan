@@ -19,6 +19,7 @@ class LayoutWindowManager {
   private _activeLayout: Layout | null = null;
   private _game: GameName = 'None';
   private _isEditMode = false;
+  private _isPreviewMode = false;
 
   constructor(layoutsPath: string, game?: GameName) {
     this._layoutsPath = layoutsPath;
@@ -43,6 +44,25 @@ class LayoutWindowManager {
       }
     }
     return this._isEditMode;
+  }
+
+  public isPreviewMode() {
+    return this._isPreviewMode;
+  }
+
+  public setPreviewMode(isPreviewMode: boolean): boolean {
+    this.logger.debug(`setPreviewMode(${isPreviewMode ? 'true' : 'false'})`);
+    if (this._isPreviewMode !== isPreviewMode) {
+      this.logger.debug(`activeLayout ${this._activeLayout ? 'exists' : 'does not exist'}`);
+      this._activeLayout?.setPreviewMode(isPreviewMode);
+      this._isPreviewMode = isPreviewMode;
+
+      if (!isPreviewMode) {
+        this.logger.debug(`Calling: activeLayout.save()'}`);
+        void this._activeLayout?.save();
+      }
+    }
+    return this._isPreviewMode;
   }
 
   public readSettings(game: GameName) {
