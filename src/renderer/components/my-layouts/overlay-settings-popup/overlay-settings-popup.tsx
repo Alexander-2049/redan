@@ -48,7 +48,22 @@ const OverlaySettingsPopup = ({
   }, [overlay]);
 
   useEffect(() => {
-    console.log(settingValues);
+    if (overlay) {
+      console.log(overlay.settings);
+      setSettingValues(
+        overlay.settings.reduce((acc, setting) => ({ ...acc, [setting.id]: setting.value }), {}),
+      );
+    }
+  }, [overlay]);
+
+  useEffect(() => {
+    const newSettings: OverlaySettingInLayout[] = Object.entries(settingValues).map(
+      ([id, value]) => ({
+        id,
+        value,
+      }),
+    );
+    setCurrentSettings(newSettings);
   }, [settingValues]);
 
   useEffect(() => {
@@ -99,6 +114,7 @@ const OverlaySettingsPopup = ({
                 overlay={lastOverlay}
               />
             </ScrollArea>
+            <button onClick={handleSave}>Save</button>
           </motion.div>
         </motion.div>
       )}

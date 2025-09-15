@@ -163,9 +163,32 @@ const LayoutsRoute = () => {
   };
 
   const handleSaveSettings = (overlayId: string, settings: OverlaySettingInLayout[]) => {
+    if (!activeLayout) return;
+
+    const updatedOverlays = activeLayout.data.overlays.map(overlay => {
+      if (overlay.id !== overlayId) return overlay;
+      return {
+        ...overlay,
+        settings,
+      };
+    });
+
+    const result = {
+      filename: activeLayout.config.filename,
+      data: {
+        ...activeLayout.data,
+        overlays: updatedOverlays,
+      },
+      game: activeLayout.config.game,
+    };
+
+    console.log(overlayId, settings);
+
+    updateLayout(result);
     // setLayoutOverlays(prev =>
     //   prev.map(overlay => (overlay.id === overlayId ? { ...overlay, settings } : overlay)),
     // );
+    // updateLayout
   };
 
   const handleCreateLayout = useCallback(() => {
