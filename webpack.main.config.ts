@@ -6,11 +6,12 @@ import path from 'path';
 
 export const mainConfig: Configuration = {
   /**
-   * This is the main entry point for your application, it's the first file
-   * that runs in the main process.
+   * Multiple entry points: main app + steam worker
    */
-  entry: './src/main/app/index.ts',
-  // Put your normal webpack config below here
+  entry: {
+    index: './src/main/app/index.ts', // your existing main entry
+    'steam-worker': './src/main/steam/steam-worker.ts', // new worker entry
+  },
   module: {
     rules,
   },
@@ -20,6 +21,10 @@ export const mainConfig: Configuration = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+  },
+  output: {
+    filename: '[name].js', // ensures index.js and steam-worker.js are emitted separately
+    path: path.resolve(__dirname, '.webpack/main'),
   },
   devtool: 'source-map',
 };

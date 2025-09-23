@@ -13,6 +13,7 @@ import { OverlaysRouter } from '../features/overlays/OverlaysRouter';
 import { SchemasRouter } from '../features/schemas/SchemasRouter';
 import { HttpServer } from '../infrastructure/http-server';
 import { IS_DEBUG, IS_DEV } from '../shared/constants';
+import { startSteamWorkerWithReconnect } from '../steam/steam-runner';
 import { layoutWindowManager } from '../widgets/layout-management';
 
 import { HTTP_SERVER_PORT } from '@/shared/constants';
@@ -80,6 +81,9 @@ async function main() {
           logger.error('An error occurred: ', err);
         });
     }
+
+    // 🔥 start the Steam worker here
+    startSteamWorkerWithReconnect();
   });
 }
 
