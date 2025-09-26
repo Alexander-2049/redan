@@ -2,13 +2,14 @@ import path from 'path';
 
 import { app } from 'electron';
 
-// import { Steam } from '../steam';
+import { findWorkshopContentPath } from '@/main/steam/steam-utility';
+import { STEAM_APP_ID } from '@/shared/constants';
 
-// import { STEAM_APP_ID } from '@/shared/constants';
+const workshopContentPath = findWorkshopContentPath(STEAM_APP_ID);
 
 export class PathService {
   private static paths = {
-    OVERLAYS: path.join(app.getPath('userData'), 'Overlays'),
+    OVERLAYS: workshopContentPath || path.join(app.getPath('userData'), 'Overlays'),
     LAYOUTS: path.join(app.getPath('userData'), 'Layouts'),
     REPLAYS: path.join(app.getPath('userData'), 'Replays'),
     CACHE: path.join(app.getPath('userData'), 'Cache'),

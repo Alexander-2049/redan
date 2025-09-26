@@ -7,7 +7,7 @@ import VDF from 'vdf';
 
 import { LoggerService } from '../features/logger/LoggerService';
 
-const logger = LoggerService.getLogger('steam');
+const logger = LoggerService.getLogger('steam-library-folders');
 
 interface LibraryFoldersEntry {
   path?: string;
@@ -17,17 +17,7 @@ interface LibraryFoldersEntry {
 type LibraryFolders = Record<string, LibraryFoldersEntry | string>;
 
 export function findWorkshopContentPath(appId: string | number): string | null {
-  if (this.client) {
-    const subscribedItems = this.client.workshop.getSubscribedItems();
-    if (subscribedItems.length > 0) {
-      const item = this.client.workshop.installInfo(subscribedItems[0]);
-      if (item) {
-        return path.join(item.folder, '..');
-      }
-    }
-  }
-
-  const steamLibraryPaths = this.getSteamLibraryPaths();
+  const steamLibraryPaths = getSteamLibraryPaths();
   const id = typeof appId === 'number' ? appId.toString() : appId;
 
   for (const libPath of steamLibraryPaths) {
