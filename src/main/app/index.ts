@@ -63,7 +63,7 @@ async function main() {
 
   app.on('ready', () => {
     gameSource.addListener('game', game => {
-      layoutWindowManager.load(game || 'None');
+      if (game !== 'None' && game !== null) layoutWindowManager.load(game);
     });
     gameSource.selectGame('iRacing');
 

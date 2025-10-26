@@ -83,7 +83,7 @@ export function startSteamWorker(): UtilityProcess {
         logger.info('✅ Steam connected');
         break;
       case 'heartbeat':
-        logger.debug('💓 Heartbeat from ' + msg.data.username);
+        // logger.debug('💓 Heartbeat from ' + msg.data.username);
         break;
       case 'error':
         // logger.error('❌ Worker error:', msg.error);
