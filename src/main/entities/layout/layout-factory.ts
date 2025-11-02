@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { OverlayFactory } from '../overlay/factory';
+import { OverlayFactory } from '../overlay/overlay-factory';
 
 import { Layout } from './Layout';
 
@@ -57,6 +57,7 @@ export class LayoutFactory {
         path.join(PathService.getPath('OVERLAYS'), overlayConfig.folderName),
         bounds,
         overlayConfig.visible,
+        overlayConfig.settings,
       );
 
       if (!overlay) {
@@ -66,7 +67,6 @@ export class LayoutFactory {
         continue;
       }
 
-      overlay.updateSettings(overlayConfig.settings);
       layout.addOverlay(overlay, overlayConfig.folderName);
       logger.debug(`Added overlay: ${overlayConfig.id} to layout.`);
     }

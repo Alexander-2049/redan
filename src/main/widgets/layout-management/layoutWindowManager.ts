@@ -116,7 +116,7 @@ class LayoutWindowManager {
       if (this.isEditMode()) {
         void this._activeLayout?.save();
       }
-      this._activeLayout?.hide();
+      this._activeLayout?.close();
       this._activeLayout?.setEditMode(false);
     } catch (error) {
       if (error instanceof Error) this.logger.error(error.message);
@@ -220,7 +220,7 @@ class LayoutWindowManager {
 
   public load(game: GameName) {
     this.logger.info('Loading layouts from disk');
-    this._activeLayout?.hide();
+    this._activeLayout?.close();
     this._activeLayout = null;
     this._layouts.clear();
     this._layoutOrder = [];

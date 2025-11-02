@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { Overlay } from '../overlay';
-import { OverlayFactory } from '../overlay/factory';
+import { OverlayFactory } from '../overlay/overlay-factory';
 
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
@@ -147,6 +147,7 @@ export class Layout {
             ...newOverlayConfig.position,
           },
           newOverlayConfig.visible,
+          newOverlayConfig.settings,
         );
         if (newOverlay) {
           this.addOverlay(newOverlay, newOverlayConfig.folderName);
@@ -197,9 +198,9 @@ export class Layout {
     });
   }
 
-  public hide() {
+  public close() {
     this._overlays.forEach(overlay => {
-      overlay.hide();
+      overlay.close();
     });
   }
 

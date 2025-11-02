@@ -7,19 +7,28 @@ import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions
 
 declare const OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+/*
+  Overlay initializes outside of screen view with x: -9999999
+  
+*/
 export class Overlay {
   private readonly logger = LoggerService.getLogger('overlay');
 
   private _window: BrowserWindow;
   private _settings: OverlaySettingInLayout[] = [];
-  private _baseUrl: string;
-  private _manifest: OverlayManifestFile;
   private _isEditMode = false;
-  private _id: string;
   private _isPreviewMode = false;
   private _visible = false;
 
   private readonly _ipcEditModeChannel: string;
+  private params: {
+    id: string;
+    baseUrl: string;
+    manifest: OverlayManifestFile;
+    bounds: OverlayWindowBounds;
+    visible: boolean;
+  };
+  private readonly browserWindowParams;
 
   constructor(
     id: string,
@@ -27,16 +36,20 @@ export class Overlay {
     manifest: OverlayManifestFile,
     bounds: OverlayWindowBounds,
     visible: boolean,
+    settings: OverlaySettingInLayout[] = this._settings,
   ) {
-    this._id = id;
-    this._baseUrl = baseUrl;
-    this._manifest = manifest;
-    this._visible = visible;
+    this.params = {
+      id,
+      baseUrl,
+      manifest,
+      bounds,
+      visible,
+    };
+    this._ipcEditModeChannel = `edit-mode-${this.params.id}`;
+    this._settings = settings;
 
-    this._ipcEditModeChannel = `edit-mode-${this._id}`;
-
-    this._window = new BrowserWindow({
-      show: visible,
+    this.browserWindowParams = {
+      show: false,
       frame: false,
       transparent: true,
       alwaysOnTop: true,
@@ -54,13 +67,21 @@ export class Overlay {
         devTools: false,
         additionalArguments: [`--edit-mode-channel=${this._ipcEditModeChannel}`],
       },
-      minHeight: bounds.minHeight,
-      minWidth: bounds.minWidth,
-      maxHeight: bounds.maxHeight,
-      maxWidth: bounds.maxWidth,
-      x: bounds.x,
-      y: bounds.y,
-    });
+      minHeight: this.params.bounds.minHeight,
+      minWidth: this.params.bounds.minWidth,
+      maxHeight: this.params.bounds.maxHeight,
+      maxWidth: this.params.bounds.maxWidth,
+      x: -9999999,
+      y: 0,
+    };
+
+    this._window = new BrowserWindow(this.browserWindowParams);
+
+    this.init();
+  }
+
+  private init() {
+    if (this._window.isDestroyed()) this._window = new BrowserWindow(this.browserWindowParams);
 
     this._window.setAlwaysOnTop(true, 'screen-saver');
     this._window.setVisibleOnAllWorkspaces(true);
@@ -75,7 +96,7 @@ export class Overlay {
     });
 
     this._window.on('close', event => {
-      event.preventDefault();
+      if (!this._window.isClosable()) event.preventDefault();
     });
 
     this._window.webContents.setWindowOpenHandler(() => {
@@ -96,11 +117,13 @@ export class Overlay {
   }
 
   public load() {
+    if (this._window.isDestroyed()) this.init();
+
     let queryParams = this.convertSettingsToQuery(this._settings);
     if (this._isPreviewMode) {
       queryParams = queryParams.length > 0 ? `${queryParams}&preview=true` : 'preview=true';
     }
-    const url = `${this._baseUrl}?${queryParams}`;
+    const url = `${this.params.baseUrl}?${queryParams}`;
 
     const currentUrl = this._window.webContents.getURL();
     if (currentUrl !== url) {
@@ -118,12 +141,13 @@ export class Overlay {
   public updateSettings(newSettings: OverlaySettingInLayout[]) {
     const changed = JSON.stringify(this._settings) !== JSON.stringify(newSettings);
     if (!changed) return;
-
     this._settings = newSettings;
     this.load();
   }
 
   public setEditMode(isEditMode: boolean) {
+    if (this._window.isDestroyed()) this.init();
+
     this._isEditMode = isEditMode;
     this._window.resizable = isEditMode;
     this._window.setIgnoreMouseEvents(!isEditMode);
@@ -131,12 +155,16 @@ export class Overlay {
   }
 
   public setPreviewMode(isPreviewMode: boolean) {
+    if (this._window.isDestroyed()) this.init();
+
     if (this._isPreviewMode === isPreviewMode) return;
     this._isPreviewMode = isPreviewMode;
     this.load();
   }
 
   public setVisibile(visible: boolean, updateImmediately: boolean) {
+    if (this._window.isDestroyed()) this.init();
+
     if (visible === this._visible) return;
     this._visible = visible;
     if (updateImmediately && this._visible) {
@@ -148,31 +176,76 @@ export class Overlay {
   }
 
   public show() {
+    if (this._window.isDestroyed()) this.init();
+
+    this._window.closable = false;
     if (this.visible) {
-      this.logger.debug(`Showing ${this._manifest.title} [${this._id}] at ${this.baseUrl}`);
+      let queryParams = this.convertSettingsToQuery(this._settings);
+      if (this._isPreviewMode) {
+        queryParams = queryParams.length > 0 ? `${queryParams}&preview=true` : 'preview=true';
+      }
+      const url = `${this.params.baseUrl}?${queryParams}`;
+
+      this.logger.debug(`Showing ${this.params.manifest.title} [${this.params.id}] at ${url}`);
 
       this._window
-        .loadURL(this._baseUrl)
+        .loadURL(url)
         .then(() => {
           this._window.show();
+          this.updateWindowBounds({
+            ...this.params.bounds,
+          });
         })
         .catch(() => {
-          this.logger.error('show(): An error occured trying to load ' + this._baseUrl);
+          this.logger.error('show(): An error occured trying to load ' + this.params.baseUrl);
         });
     }
   }
 
   public hide() {
+    if (this._window.isDestroyed()) this.init();
+
     this._window.hide();
   }
 
+  public close() {
+    if (this._window.isDestroyed()) this.init();
+
+    const { x, y, width, height } = this._window.getBounds();
+
+    this.params.bounds = {
+      ...this.params.bounds,
+      height,
+      width,
+      x,
+      y,
+    };
+
+    this._window.closable = true;
+    this._window.close();
+  }
+
   public destroy() {
+    if (this._window.isDestroyed()) this.init();
+
+    const { x, y, width, height } = this._window.getBounds();
+
+    this.params.bounds = {
+      ...this.params.bounds,
+      height,
+      width,
+      x,
+      y,
+    };
+
     this._window.destroy();
     this.removeListener('change-dimensions');
     ipcMain.removeHandler(this._ipcEditModeChannel);
   }
 
   public removeListener(event: 'change-dimensions') {
+    if (this._window.isDestroyed()) this.init();
+
     if (event === 'change-dimensions') {
       this._window.removeAllListeners('resize');
       this._window.removeAllListeners('move');
@@ -180,6 +253,11 @@ export class Overlay {
   }
 
   public getWindowBounds(): OverlayWindowBounds {
+    if (this._window.isDestroyed())
+      return {
+        ...this.params.bounds,
+      };
+
     const { x, y, width, height } = this._window.getBounds();
     return {
       x,
@@ -194,6 +272,8 @@ export class Overlay {
   }
 
   public updateWindowBounds(bounds: Partial<OverlayWindowBounds>) {
+    if (this._window.isDestroyed()) this.init();
+
     const { x, y, width, height, minWidth, minHeight, maxWidth, maxHeight } = {
       ...this.getWindowBounds(),
       ...bounds,
@@ -206,12 +286,12 @@ export class Overlay {
       y,
     });
 
-    if (typeof minWidth === 'number' && typeof minHeight === 'number') {
-      this._window.setMinimumSize(minWidth, minHeight);
-    }
-    if (typeof maxWidth === 'number' && typeof maxHeight === 'number') {
-      this._window.setMaximumSize(maxWidth, maxHeight);
-    }
+    // if (typeof minWidth === 'number' && typeof minHeight === 'number') {
+    //   this._window.setMinimumSize(minWidth, minHeight);
+    // }
+    // if (typeof maxWidth === 'number' && typeof maxHeight === 'number') {
+    //   this._window.setMaximumSize(maxWidth, maxHeight);
+    // }
   }
 
   public isEditMode() {
@@ -223,7 +303,7 @@ export class Overlay {
   }
 
   public get id() {
-    return this._id;
+    return this.params.id;
   }
 
   public get settings() {
@@ -231,15 +311,15 @@ export class Overlay {
   }
 
   public get manifest() {
-    return this._manifest;
+    return this.params.manifest;
   }
 
   public get baseUrl(): string {
-    return this._baseUrl;
+    return this.params.baseUrl;
   }
 
   public get visible() {
-    return this._visible;
+    return this.params.visible;
   }
 
   public convertSettingsToQuery(settings: OverlaySettingInLayout[]): string {

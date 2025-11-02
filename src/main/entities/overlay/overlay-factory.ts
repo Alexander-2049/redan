@@ -1,10 +1,11 @@
 import path from 'node:path';
 
-import { Overlay } from './class';
+import { Overlay } from './Overlay';
 
 import { JsonFileService } from '@/main/features/json-files';
 import { LoggerService } from '@/main/features/logger/LoggerService';
 import { overlayManifestFileSchema } from '@/main/shared/schemas/overlay-manifest-file-schema';
+import { OverlaySettingInLayout } from '@/main/shared/types/LayoutOverlaySetting';
 import { OverlayManifestFile } from '@/main/shared/types/OverlayManifestFile';
 import { OverlayWindowBounds } from '@/main/shared/types/OverlayWindowDimentions';
 
@@ -17,6 +18,7 @@ export class OverlayFactory {
     folderPath: string,
     bounds: Partial<OverlayWindowBounds>,
     visible: boolean,
+    settings: OverlaySettingInLayout[],
   ): Overlay | null {
     try {
       const data = JsonFileService.read(path.join(folderPath, 'manifest.json'));
@@ -34,6 +36,7 @@ export class OverlayFactory {
           ...bounds,
         },
         visible,
+        settings,
       );
     } catch (error) {
       if (error instanceof Error) logger.info(error.message);
@@ -48,7 +51,8 @@ export class OverlayFactory {
     manifest: OverlayManifestFile,
     bounds: OverlayWindowBounds,
     visible: boolean,
+    settings: OverlaySettingInLayout[],
   ): Overlay {
-    return new Overlay(uniqueId, baseUrl, manifest, bounds, visible);
+    return new Overlay(uniqueId, baseUrl, manifest, bounds, visible, settings);
   }
 }
