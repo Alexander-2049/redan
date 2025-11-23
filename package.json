@@ -1,6 +1,6 @@
 {
-  "name": "pitbox-software",
-  "productName": "PitboxSoftware",
+  "name": "redan",
+  "productName": "Redan",
   "version": "1.0.0",
   "description": "Utility application for Sim Racing Games",
   "main": ".webpack/main",
