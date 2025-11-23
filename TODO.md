@@ -1,0 +1,8 @@
+- When APP starts it has to check if all subscribed overlays are downloaded
+- There should be some status bar for all downloads in general
+- When "Add Overlay" is clicked there must be displayed currently downloading overlay, if it is downloading and list of overlays must be updated in time
+- Overlay Configurator must be done
+- In workshop tab subscribed items must be marked as subscribed before clicked (on thumbnail)
+- Edit Mode button must be appropriately styled
+- In "Add Overlay", when it is open if list is empty there must be displayed a message "no overlays found" and link to "get more overlays"
+- App version must be displayed on "title-bar"
