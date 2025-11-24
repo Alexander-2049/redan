@@ -5,5 +5,5 @@
 - In workshop tab subscribed items must be marked as subscribed before clicked (on thumbnail)
 - Edit Mode button must be appropriately styled
 - In "Add Overlay", when it is open if list is empty there must be displayed a message "no overlays found" and link to "get more overlays"
-- App version must be displayed on "title-bar"
+<!-- - App version must be displayed on "title-bar" -->
 - Implement safety features for overlays. (disable access to "unsigned" resources)
