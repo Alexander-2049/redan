@@ -1,4 +1,5 @@
 import {
+  AppActions,
   FSActions,
   LayoutsActions,
   OverlayActions,
@@ -13,6 +14,7 @@ declare global {
     layouts: LayoutsActions;
     overlay: OverlayActions;
     fs: FSActions;
+    app: AppActions;
   }
 }
 

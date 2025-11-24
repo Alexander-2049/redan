@@ -78,3 +78,10 @@ export interface OverlayActions {
 export interface FSActions {
   read: (path: string) => Promise<string>;
 }
+
+export interface AppActions {
+  getBuildVersion: () => Promise<string>;
+  getBuildDate: () => Promise<string>;
+  getCommitCount: () => Promise<number>;
+  getVersion: () => Promise<string>;
+}

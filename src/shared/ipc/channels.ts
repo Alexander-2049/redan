@@ -49,4 +49,10 @@ export const IPC_CHANNELS = {
   FS: {
     READ: 'fs:read',
   },
+  APP: {
+    GET_BUILD_VERSION: 'app:getBuildVersion',
+    GET_BUILD_DATE: 'app:getBuildDate',
+    GET_COMMIT_COUNT: 'app:getCommitCount',
+    GET_VERSION: 'app:getVersion',
+  },
 } as const;

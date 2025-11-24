@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron/renderer';
 
 import {
+  AppActions,
   FSActions,
   LayoutsActions,
   OverlayActions,
@@ -123,3 +124,11 @@ const fs: FSActions = {
 };
 
 contextBridge.exposeInMainWorld('fs', fs);
+
+const app: AppActions = {
+  getBuildVersion: () => ipcRenderer.invoke(IPC_CHANNELS.APP.GET_BUILD_VERSION) as Promise<string>,
+  getBuildDate: () => ipcRenderer.invoke(IPC_CHANNELS.APP.GET_BUILD_DATE) as Promise<string>,
+  getCommitCount: () => ipcRenderer.invoke(IPC_CHANNELS.APP.GET_COMMIT_COUNT) as Promise<number>,
+  getVersion: () => ipcRenderer.invoke(IPC_CHANNELS.APP.GET_VERSION) as Promise<string>,
+};
+contextBridge.exposeInMainWorld('app', app);

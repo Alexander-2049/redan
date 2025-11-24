@@ -1,3 +1,4 @@
+import { registerAppActionsHandlers } from './app-handler';
 import { registerFsHandlers } from './fs-handler';
 import { registerLayoutHandlers } from './layout-handler';
 import { registerOverlayHandlers } from './overlay-handler';
@@ -10,4 +11,5 @@ export const registerIpcMessageHandlers = () => {
   registerLayoutHandlers();
   registerOverlayHandlers();
   registerFsHandlers();
+  registerAppActionsHandlers();
 };
