@@ -9,3 +9,4 @@
 - Implement safety features for overlays. (disable access to "unsigned" resources)
 - Add visualization when Steam is online/connected
 - Track steam connection, to automatically update page when Steam got open/closed both in Workshop tab and Create tab
+<!-- - On "Close" / "X" button click application does not exit, main window + overlays closes only, but run keeps running in the background -->

@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 
 import { LoggerService } from '../logger/LoggerService';
 
@@ -29,6 +29,7 @@ export function registerWindowActionsHandlers() {
     logger.info('Closing window');
     if (win) {
       layoutWindowManager.destroy();
+      app.quit();
       return win.close();
     }
     logger.warn('No window found to close');
