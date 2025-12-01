@@ -7,3 +7,5 @@
 - In "Add Overlay", when it is open if list is empty there must be displayed a message "no overlays found" and link to "get more overlays"
 <!-- - App version must be displayed on "title-bar" -->
 - Implement safety features for overlays. (disable access to "unsigned" resources)
+- Add visualization when Steam is online/connected
+- Track steam connection, to automatically update page when Steam got open/closed both in Workshop tab and Create tab
