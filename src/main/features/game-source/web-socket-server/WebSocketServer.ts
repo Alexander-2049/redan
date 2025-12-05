@@ -33,7 +33,7 @@ export class WebSocketServer {
     session: {},
   };
   private mockTick = 0;
-  private mockIntervalMs = 400;
+  private mockIntervalMs = 100;
   private mockInterval: NodeJS.Timeout | null = null;
   private client: GameSource = gameSource;
   private bytesSentThisPeriod = 0;

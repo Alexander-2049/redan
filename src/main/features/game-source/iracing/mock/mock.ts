@@ -6,7 +6,7 @@ import { iRacingData } from '@/main/shared/types/iRacing';
 
 export const iRacingMockData: iRacingData[] = [];
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 80; i++) {
   iRacingMockData.push({
     game: 'iRacing',
     drivers: iRacingDriversMock[i % iRacingDriversMock.length],

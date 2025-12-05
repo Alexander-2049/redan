@@ -1,6 +1,6 @@
 import { iRacingSessionData } from '@/main/shared/types/iRacing';
 
-const FRAME_COUNT = 20;
+const FRAME_COUNT = 80;
 
 function calculateTrackTempC(i: number): number {
   return 32.5 + 2 * Math.sin((i / FRAME_COUNT) * 2 * Math.PI);

@@ -1,6 +1,6 @@
 import { iRacingRealtimeData } from '@/main/shared/types/iRacing';
 
-const FRAME_COUNT = 20;
+const FRAME_COUNT = 80;
 const MID = FRAME_COUNT / 2;
 
 const rpmStageFirst = 6700;
@@ -19,7 +19,7 @@ function calculateThrottle(i: number): number {
 }
 
 function calculateBrake(i: number): number {
-  return i % 10 < 2 ? 0.2 + 0.1 * Math.random() : 0;
+  return 0.4 + 0.2 * Math.sin((i / FRAME_COUNT) * 2 * Math.PI);
 }
 
 function calculateSteering(i: number): number {
@@ -42,9 +42,11 @@ for (let i = 0; i < FRAME_COUNT; i++) {
   const rpm = calculateRpm(i);
   const speedKph = calculateSpeedKph(i);
 
+  const brake = calculateBrake(i);
+
   iRacingRealtimeMock.push({
     throttle: calculateThrottle(i),
-    brake: calculateBrake(i),
+    brake,
     steeringAnglePct: calculateSteering(i),
     gear: calculateGear(i),
     speedKph,
@@ -55,7 +57,7 @@ for (let i = 0; i < FRAME_COUNT; i++) {
     rpmStageLast: rpmStageShift,
     rpmStageBlink,
     displayUnits: 'METRIC',
-    absActive: false,
+    absActive: brake > 0.5 ? true : false,
     isOnTrack: true,
     isInReplay: true,
     spectateCarId: 12,
