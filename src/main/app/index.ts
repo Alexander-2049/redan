@@ -19,28 +19,12 @@ const logger = LoggerService.getLogger('main');
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-// eslint-disable-next-line @typescript-eslint/require-await
-async function main() {
+let mainWindow: MainWindow | null = null;
+
+function main() {
   startServers();
 
   logger.info(`App is running on build: ${buildMeta.buildVersion}`);
-
-  // layoutWindowManager.createLayout('JasonStathem.json', {
-  //   title: 'Jason Stathem',
-  //   game: 'iRacing',
-  //   overlays: [],
-  //   screen: {
-  //     width: 1920,
-  //     height: 1080,
-  //   },
-  // });
-
-  // PREVENTS FLICKERING WHEN HOVERING CHROMIUM APPS
-  // BUT CAUSES LESS PERFORMANCE
-  // Hardware Acceleration shares some tasks to GPU
-  // WIthouat Hardware Acceleration all calculations are
-  // going through CPU
-  // app.disableHardwareAcceleration();
 
   app.on('ready', () => {
     gameSource.addListener('game', game => {
@@ -48,25 +32,21 @@ async function main() {
     });
     gameSource.selectGame('iRacing');
 
-    const mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow = new MainWindow(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, MAIN_WINDOW_WEBPACK_ENTRY);
     registerIpcMessageHandlers();
 
     mainWindow.load();
 
     if (IS_DEV || IS_DEBUG) {
       installExtension(REACT_DEVELOPER_TOOLS, true)
-        .then(() => {
-          logger.info(`Added extension: ${REACT_DEVELOPER_TOOLS.id}`);
-        })
-        .catch(err => {
-          logger.error('An error occurred: ', err);
-        });
+        .then(() => logger.info(`Added extension: ${REACT_DEVELOPER_TOOLS.id}`))
+        .catch(err => logger.error('An error occurred: ', err));
     }
 
-    // 🔥 start the Steam worker here
     startSteamWorkerWithReconnect();
 
     mainWindow.window.on('closed', () => {
+      mainWindow = null;
       void shutdownApp();
     });
   });
@@ -85,6 +65,25 @@ async function main() {
   });
 }
 
-main().catch((e: unknown) => {
-  logger.error(e instanceof Error ? e.message : String(e));
-});
+// SINGLE INSTANCE LOCK
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  logger.info('Another instance is already running, quitting...');
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      const browserWindow = mainWindow.window;
+      if (browserWindow.isMinimized()) browserWindow.restore();
+      browserWindow.focus();
+    }
+  });
+
+  // Call main only if this is the first instance
+  try {
+    main();
+  } catch (e: unknown) {
+    logger.error(e instanceof Error ? e.message : String(e));
+  }
+}
