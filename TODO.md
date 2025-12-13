@@ -1,4 +1,4 @@
-<!-- - On ALT+FR4 port 42049 keeps being in use and routes such as http://localhost:42049/overlays/ are kept being available -->
+- After receiving request on http://localhost:42049/overlays on ALT+F4 port 42049 keeps being in use and routes such as http://localhost:42049/overlays/ are kept being available + Sometimes main window is not closing from the first try on X mark click
 - When APP starts it has to check if all subscribed overlays are downloaded
 - There should be some status bar for all downloads in general
 - When "Add Overlay" is clicked there must be displayed currently downloading overlay, if it is downloading and list of overlays must be updated in time
