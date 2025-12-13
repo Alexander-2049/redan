@@ -14,13 +14,13 @@ const iconPath = app.isPackaged
 export class MainWindow {
   private _entry: string;
   private _preload: string;
-  private window: BrowserWindow;
+  private _window: BrowserWindow;
 
   constructor(preload: string, entry: string) {
     this._entry = entry;
     this._preload = preload;
     logger.info('Initializing main window...');
-    this.window = new BrowserWindow({
+    this._window = new BrowserWindow({
       width: 1280,
       height: 880,
       minWidth: 800,
@@ -38,7 +38,7 @@ export class MainWindow {
     // registerHandlers(mainWindow);
 
     // mainWindow.setMenuBarVisibility(false);
-    this.window.webContents.setAudioMuted(true);
+    this._window.webContents.setAudioMuted(true);
 
     // this.window.on('close', () => {
     //   logger.info('Main window is closing, cleaning up overlay windows');
@@ -53,7 +53,7 @@ export class MainWindow {
 
   public load() {
     try {
-      this.window
+      this._window
         .loadURL(this.entry)
         .then(() => logger.info('Main window loaded successfully'))
         .catch(error => logger.error('Failed to load main window:', error));
@@ -63,7 +63,7 @@ export class MainWindow {
   }
 
   public show() {
-    this.window.show();
+    this._window.show();
   }
 
   public get entry() {
@@ -71,5 +71,9 @@ export class MainWindow {
   }
   public get preload(): string {
     return this._preload;
+  }
+
+  public get window() {
+    return this._window;
   }
 }

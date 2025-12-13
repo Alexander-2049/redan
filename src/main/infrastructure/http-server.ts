@@ -40,4 +40,23 @@ export class HttpServer {
       this.logger.info(`HTTP server is running on http://localhost:${this.port}`);
     });
   }
+
+  public stop(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.server.listening) {
+        resolve();
+        return;
+      }
+
+      this.logger.info('Stopping HTTP server...');
+      this.server.close(err => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        this.logger.info('HTTP server stopped');
+        resolve();
+      });
+    });
+  }
 }
