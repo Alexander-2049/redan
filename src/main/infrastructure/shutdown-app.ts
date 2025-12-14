@@ -18,6 +18,8 @@ export async function shutdownApp() {
 
   logger.info('Shutdown started');
 
+  BrowserWindow.getAllWindows().forEach(w => w.destroy());
+
   try {
     await httpServer.stop();
   } catch (e) {
@@ -29,8 +31,6 @@ export async function shutdownApp() {
   } catch (e) {
     logger.error('Window manager destroy failed', e);
   }
-
-  BrowserWindow.getAllWindows().forEach(w => w.destroy());
 
   logger.info('Shutdown finished');
 
