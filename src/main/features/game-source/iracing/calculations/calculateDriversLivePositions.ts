@@ -21,12 +21,12 @@ export function calculateDriversLivePositions(
   for (const driver of sessionInfo.DriverInfo.Drivers) {
     const carIdx = driver.CarIdx;
     const classId = driver.CarClassID;
-    const isCarOnTrack = telemetry.CarIdxTrackSurface[carIdx] !== 'NotInWorld';
+    const isCarInWorld = telemetry.CarIdxTrackSurface[carIdx] !== 'NotInWorld';
     const isPaceCar = driver.CarIsPaceCar;
 
     if (isPaceCar) continue;
 
-    if (!isCarOnTrack) {
+    if (!isCarInWorld) {
       positions.set(carIdx, {
         position: telemetry.CarIdxPosition[carIdx],
         classPosition: telemetry.CarIdxClassPosition[carIdx],

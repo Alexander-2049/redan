@@ -72,7 +72,7 @@ export const driverElementSchema = z.object({
   currentLap: z.number().nullable().optional(),
   rpm: z.number().nullable().optional(),
   gear: z.number().nullable().optional(),
-  isCarOnTrack: z.boolean().optional(),
+  isCarInWorld: z.boolean().optional(),
   carClassShortName: z.union([z.string(), z.null()]).optional(),
   carClassId: z.number().optional(),
   iRacingLicString: z.union([z.string(), z.null()]).optional(),

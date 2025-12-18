@@ -60,6 +60,8 @@ export const minimalSession = z.object({
   trackTempFString: z.string(),
   airTempCString: z.string(),
   airTempFString: z.string(),
+  trackLengthMeters: z.number(),
+  currentSessionType: z.string(),
 });
 export const minimalDriver = z.object({
   carId: z.number(),
@@ -73,6 +75,7 @@ export const minimalDriver = z.object({
   currentLap: z.number(),
   position: z.number(),
   classPosition: z.number(),
+  isCarInWorld: z.boolean(),
   isCarOnTrack: z.boolean(),
   iRating: z.number(),
   iRatingChange: z.number(),

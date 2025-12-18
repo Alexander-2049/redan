@@ -30,7 +30,7 @@ export const WorkshopUploadForm = () => {
     setPreviewUrl(null);
     void window.overlay.servePreview(contentPath).then(isServed => {
       if (isServed) {
-        setPreviewUrl(`http://localhost:${HTTP_SERVER_PORT}/preview?=${Math.random()}`);
+        setPreviewUrl(`http://localhost:${HTTP_SERVER_PORT}/preview?v=${Math.random()}`);
       }
     });
   }, [contentPath]);

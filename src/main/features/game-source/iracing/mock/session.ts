@@ -38,5 +38,7 @@ for (let i = 0; i < FRAME_COUNT; i++) {
     trackTempFString: formatTemp(trackTempF, 'F'),
     airTempCString: formatTemp(airTempC, 'C'),
     airTempFString: formatTemp(airTempF, 'F'),
+    currentSessionType: 'RACE',
+    trackLengthMeters: 1700,
   });
 }

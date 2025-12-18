@@ -1,5 +1,6 @@
 import { SessionInfoData, TelemetryValues } from 'iracing-sdk-2025/src/JsIrSdk';
 
+import { getTrackLengthInMeters } from '../helpers/getTrackLengthMeters';
 import { getTrackWetnessString } from '../helpers/getTrackWetnessString';
 
 import { iRacingSessionData } from '@/main/shared/types/iRacing';
@@ -22,5 +23,8 @@ export function getSessionFields(
       : '0',
     airTempCString: telemetry.AirTemp ? `${telemetry.AirTemp.toFixed(0)}°C` : '0',
     airTempFString: telemetry.AirTemp ? `${((telemetry.AirTemp * 9) / 5 + 32).toFixed(0)}°F` : '0',
+    trackLengthMeters: getTrackLengthInMeters(sessionInfo.WeekendInfo.TrackLength),
+    currentSessionType:
+      sessionInfo.SessionInfo.Sessions[sessionInfo.SessionInfo.CurrentSessionNum].SessionName,
   };
 }

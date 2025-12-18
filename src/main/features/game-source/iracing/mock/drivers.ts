@@ -49,7 +49,7 @@ function generateDriver(driverIndex: number, frameIndex: number): iRacingDriverD
     currentLap,
     position,
     classPosition,
-    isCarOnTrack: true,
+    isCarInWorld: true,
     iRating: Math.round(calculateIRating(baseIRating, frameIndex)),
     iRatingChange: Math.round(Math.sin(frameIndex + driverIndex) * 15),
     carClassShortName: 'GT3',

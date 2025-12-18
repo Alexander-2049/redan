@@ -1,7 +1,8 @@
 import { SessionInfoData, TelemetryValues } from 'iracing-sdk-2025/src/JsIrSdk';
 
 import { calculateIRatingChanges } from '../calculations/calculateIRatingChanges';
-import { getCarIsOnTrack } from '../helpers/getCarIsOnTrack';
+import { getIsCarInWorld } from '../helpers/getIsCarInWorld';
+import { getIsCarOnTrack } from '../helpers/getIsCarOnTrack';
 import { getLapDistTotalPct } from '../helpers/getLapDistTotalPct';
 import { parseDriverName } from '../helpers/parseDriverName';
 
@@ -56,7 +57,8 @@ export function getDriversFields(
       position: telemetry.CarIdxPosition[driver.CarIdx],
       // classPosition: livePosition.get(driver.CarIdx)?.classPosition || 0, (AS SOME DRIVERS ARE OUT OF VISION IT COULD BE CALCULATED WRONG)
       classPosition: telemetry.CarIdxClassPosition[driver.CarIdx],
-      isCarOnTrack: getCarIsOnTrack(telemetry, driver.CarIdx),
+      isCarInWorld: getIsCarInWorld(telemetry, driver.CarIdx),
+      isCarOnTrack: getIsCarOnTrack(telemetry, driver.CarIdx),
       iRating: driver.IRating,
       iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
       /*

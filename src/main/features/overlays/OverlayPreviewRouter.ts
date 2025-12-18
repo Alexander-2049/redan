@@ -54,7 +54,12 @@ export class OverlayPreviewRouter {
 
       const indexPath = path.join(this.activeFolder, 'index.html');
       if (fs.existsSync(indexPath) && fs.statSync(indexPath).isFile()) {
-        return res.redirect(301, req.baseUrl + '/index.html');
+        const queryString =
+          new URLSearchParams(req.query as Record<string, string>).toString() + '&' + 'preview';
+        const redirectUrl = queryString
+          ? `${req.baseUrl}/index.html?${queryString}`
+          : `${req.baseUrl}/index.html`;
+        return res.redirect(301, redirectUrl);
       } else {
         return res.status(404).send('index.html not found.');
       }
@@ -108,7 +113,7 @@ export class OverlayPreviewRouter {
       const heightRatio = containerSize / defaultHeight;
       const scale = Math.min(widthRatio, heightRatio); // Scale to cover
 
-      const iframeSrc = `http://localhost:${HTTP_SERVER_PORT}/preview`; // remove query params from src
+      const iframeSrc = `http://localhost:${HTTP_SERVER_PORT}/preview?preview`; // remove query params from src
       const html = `
   <!DOCTYPE html>
   <html lang="en">
