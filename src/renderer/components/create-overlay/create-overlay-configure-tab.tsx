@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import { useManifestValidation } from './hooks/use-manifest-validation';
@@ -5,6 +7,7 @@ import { BasicInfoSection } from './sections/basic-info-section';
 import { ConfigureHeader } from './sections/configure-header';
 import { DimensionsSection } from './sections/dimensions-section';
 import { FieldsSection } from './sections/fields-section';
+import { HookGeneratorSection } from './sections/hook-generator-section';
 import { JsonPreviewSection } from './sections/json-preview-section';
 import { SettingsSection } from './sections/settings-section';
 import { TagsSection } from './sections/tags-section';
@@ -53,6 +56,8 @@ const CreateOverlayConfigureTab = ({
           <SettingsSection manifest={manifest} onUpdate={updateManifest} />
 
           <FieldsSection manifest={manifest} onUpdate={updateManifest} />
+
+          <HookGeneratorSection manifest={manifest} />
 
           <JsonPreviewSection manifest={manifest} />
         </div>
