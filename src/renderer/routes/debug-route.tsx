@@ -5,6 +5,7 @@ import { ScrollArea } from '../components/ui/scroll-area';
 import { GameData } from '@/main/entities/game';
 
 type WireGameData = {
+  game: GameData['game'];
   session: GameData['session'];
   realtime: GameData['realtime'];
   drivers: GameData['drivers'];
@@ -25,7 +26,7 @@ function isWireGameData(data: Partial<WireGameData>): data is WireGameData {
 const useGameData = (): { data: GameData | null; error: string | null } => {
   const url = 'ws://localhost:42049';
 
-  const params = useMemo(() => ['session', 'realtime', 'drivers'], []);
+  const params = useMemo(() => ['game', 'session', 'realtime', 'drivers'], []);
 
   const [data, setData] = useState<GameData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -85,10 +86,7 @@ const useGameData = (): { data: GameData | null; error: string | null } => {
               if (isWireGameData(accumulatedRef.current)) {
                 hasSnapshotRef.current = true;
 
-                setData({
-                  game: 'iRacing',
-                  ...accumulatedRef.current,
-                });
+                setData(accumulatedRef.current);
               }
             } else {
               setData(prev => (prev ? { ...prev, ...accumulatedRef.current } : null));

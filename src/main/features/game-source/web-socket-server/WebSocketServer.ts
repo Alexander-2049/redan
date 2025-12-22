@@ -22,16 +22,18 @@ interface ConstructorProps {
   server: http.Server;
 }
 
+const gameDataInitial: GameData = {
+  game: 'None',
+  drivers: [],
+  realtime: {},
+  session: {},
+} as const;
+
 export class WebSocketServer {
   private logger = LoggerService.getLogger('web-socket-server');
   private wss: WebSocket.Server | null = null;
   private listeners: Listener[] = [];
-  private gameData: GameData = {
-    game: 'None',
-    drivers: [],
-    realtime: {},
-    session: {},
-  };
+  private gameData: GameData = gameDataInitial;
   private mockTick = 0;
   private mockIntervalMs = 100;
   private mockInterval: NodeJS.Timeout | null = null;
@@ -47,6 +49,18 @@ export class WebSocketServer {
     this.client.addListener('data', data => {
       if (!this.isPreviewMode) {
         this.updateAndSendGameDataUpdateToAllListeners(data);
+      }
+    });
+
+    this.client.addListener('isConnected', isConnected => {
+      if (!this.isPreviewMode && !isConnected) {
+        this.updateAndSendGameDataUpdateToAllListeners({ ...gameDataInitial, game: 'None' });
+      }
+    });
+
+    this.client.addListener('game', game => {
+      if (game === 'None') {
+        this.updateAndSendGameDataUpdateToAllListeners({ ...gameDataInitial, game: 'None' });
       }
     });
 
@@ -140,12 +154,10 @@ export class WebSocketServer {
           this.removeListenerSocket(socket);
         });
 
-        if (this.gameData) {
-          const data = extractFieldsFromObject(fields, this.gameData);
-          const payload = Response.success(data).toJSON();
-          socket.send(payload);
-          this.bytesSentThisPeriod += Buffer.byteLength(payload, 'utf8');
-        }
+        const data = extractFieldsFromObject(fields, this.gameData);
+        const payload = Response.success(data).toJSON();
+        socket.send(payload);
+        this.bytesSentThisPeriod += Buffer.byteLength(payload, 'utf8');
 
         this.addListenerSocket(socket, fields, isPreviewOnly);
         this.logger.info(
@@ -207,10 +219,14 @@ export class WebSocketServer {
   private updateAndSendGameDataUpdateToAllListeners(data: GameData) {
     if (this.isPreviewMode) return;
 
+    const updatedData = {
+      ...data,
+      game: this.isGameOpen(data) ? data.game : 'None',
+    };
+
     this.listeners.forEach(listener => {
       if (listener.previewOnly) return;
       const oldData = this.gameData;
-      const updatedData = data;
       const extractedFields = getChangedFields(listener.fields, oldData, updatedData);
       if (Object.keys(extractedFields).length !== 0) {
         this.sendGameDataToListener(listener, extractedFields);
@@ -218,10 +234,7 @@ export class WebSocketServer {
       }
     });
 
-    this.gameData = {
-      ...data,
-      game: this.isGameOpen(data) ? data.game : 'None',
-    };
+    this.gameData = updatedData;
   }
 
   private sendGameDataToListener<T>(listener: Listener, data: T) {
@@ -250,6 +263,6 @@ export class WebSocketServer {
   }
 
   get game() {
-    return this.gameData?.game || 'none';
+    return this.gameData?.game || 'None';
   }
 }

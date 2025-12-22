@@ -9,7 +9,6 @@ export const minimalRealtime = z.object({
   steeringAnglePct: z.number(),
   gear: z.number(),
   speedKph: z.number(),
-  speedMph: z.number(),
   rpm: z.number(),
   rpmStageFirst: z.number(),
   rpmStageShift: z.number(),

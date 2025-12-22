@@ -182,8 +182,6 @@ const LayoutsRoute = () => {
       game: activeLayout.config.game,
     };
 
-    console.log(overlayId, settings);
-
     updateLayout(result);
     // setLayoutOverlays(prev =>
     //   prev.map(overlay => (overlay.id === overlayId ? { ...overlay, settings } : overlay)),

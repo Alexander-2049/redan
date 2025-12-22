@@ -11,9 +11,11 @@ export function getRealtimeFields(telemetry: TelemetryValues): iRacingRealtimeDa
     brake: telemetry.Brake,
     steeringAnglePct: iracingSteeringAngleToPercents(telemetry.SteeringWheelAngle),
     gear: telemetry.Gear,
-    speedKph: SpeedConverter.convert(telemetry.Speed, 'METERS_PER_SECOND', 'KILOMETERS_PER_HOUR'),
-    speedMph: SpeedConverter.convert(telemetry.Speed, 'METERS_PER_SECOND', 'MILES_PER_HOUR'),
-    rpm: telemetry.RPM,
+    speedKph:
+      Math.floor(
+        SpeedConverter.convert(telemetry.Speed, 'METERS_PER_SECOND', 'KILOMETERS_PER_HOUR') * 100,
+      ) / 100,
+    rpm: Math.floor(telemetry.RPM * 100) / 100,
     rpmStageFirst: telemetry.PlayerCarSLFirstRPM,
     rpmStageShift: telemetry.PlayerCarSLShiftRPM,
     rpmStageLast: telemetry.PlayerCarSLLastRPM,
