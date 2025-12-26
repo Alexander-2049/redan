@@ -51,12 +51,14 @@ function generateDriver(driverIndex: number, frameIndex: number): iRacingDriverD
     classPosition,
     isCarInWorld: true,
     isCarOnTrack: true,
+    isCarOffTrack: false,
     iRating: Math.round(calculateIRating(baseIRating, frameIndex)),
     iRatingChange: Math.round(Math.sin(frameIndex + driverIndex) * 15),
     carClassShortName: 'GT3',
     carClassId: 101,
     iRacingLicString: 'A 3.56',
     iRacingLicSubLevel: 3,
+    speedKph: 120,
   };
 }
 

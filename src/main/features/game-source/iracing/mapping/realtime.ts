@@ -50,5 +50,6 @@ export function getRealtimeFields(telemetry: TelemetryValues): iRacingRealtimeDa
       lapDeltaToSessionLastlLap_DD: telemetry.LapDeltaToSessionLastlLap_DD,
       lapDeltaToSessionLastlLap_OK: telemetry.LapDeltaToSessionLastlLap_OK,
     },
+    test: telemetry,
   };
 }

@@ -1,9 +1,12 @@
 import { SessionInfoData, TelemetryValues } from 'iracing-sdk-2025/src/JsIrSdk';
 
 import { calculateIRatingChanges } from '../calculations/calculateIRatingChanges';
+import { getCarSpeedKph } from '../helpers/getCarSpeedKph';
 import { getIsCarInWorld } from '../helpers/getIsCarInWorld';
+import { getIsCarOffTrack } from '../helpers/getIsCarOffTrack';
 import { getIsCarOnTrack } from '../helpers/getIsCarOnTrack';
 import { getLapDistTotalPct } from '../helpers/getLapDistTotalPct';
+import { getTrackLengthInMeters } from '../helpers/getTrackLengthMeters';
 import { parseDriverName } from '../helpers/parseDriverName';
 
 import { iRacingDriverData } from '@/main/shared/types/iRacing';
@@ -59,6 +62,7 @@ export function getDriversFields(
       classPosition: telemetry.CarIdxClassPosition[driver.CarIdx],
       isCarInWorld: getIsCarInWorld(telemetry, driver.CarIdx),
       isCarOnTrack: getIsCarOnTrack(telemetry, driver.CarIdx),
+      isCarOffTrack: getIsCarOffTrack(telemetry, driver.CarIdx),
       iRating: driver.IRating,
       iRatingChange: iRatingChangeEntry ? iRatingChangeEntry.ratingChange : 0,
       /*
@@ -70,6 +74,14 @@ export function getDriversFields(
       iRacingLicString: driver.LicString[0] || '',
       iRacingLicSubLevel: driver.LicSubLevel / 100,
       // deltaToSelectedDriver: relativeTime,
+      speedKph: getCarSpeedKph(
+        driver.CarIdx,
+        telemetry.CarIdxLapDistPct[driver.CarIdx],
+        getTrackLengthInMeters(sessionInfo.WeekendInfo.TrackLength),
+        telemetry.SessionTime,
+      ),
+
+      // test: telemetry.CarIdxTrackSurface[driver.CarIdx],
     });
   }
 

@@ -46,6 +46,7 @@ export const minimalRealtime = z.object({
       lapDeltaToSessionLastlLap_OK: z.boolean(),
     })
     .strict(),
+  test: z.any().optional(),
 });
 export const minimalSession = z.object({
   trackName: z.string(),
@@ -76,12 +77,15 @@ export const minimalDriver = z.object({
   classPosition: z.number(),
   isCarInWorld: z.boolean(),
   isCarOnTrack: z.boolean(),
+  isCarOffTrack: z.boolean(),
   iRating: z.number(),
   iRatingChange: z.number(),
   carClassShortName: z.string(),
   carClassId: z.number(),
   iRacingLicString: z.string(),
   iRacingLicSubLevel: z.number(),
+  speedKph: z.number(),
+  test: z.any().optional(),
 });
 
 const iRacingShape = {
