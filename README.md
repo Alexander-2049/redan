@@ -29,7 +29,6 @@ To keep the overlay guides organized and scalable as we add support for more fra
 ├── docs/
 │   ├── VITE.md          # Vite + React + TS setup guide
 │   ├── CRA.md           # (planned) Create React App setup guide
-│   ├── NEXT.md          # (planned) Next.js setup guide
 │   └── other-guides/
 │       └── ...          # Additional framework or tooling guides
 ├── examples/
