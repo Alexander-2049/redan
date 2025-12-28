@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 
 export interface Field {
-  name: string; // "realtime.throttle", "drivers[].lapDistPct"
+  name: string;
   type: 'number' | 'string' | 'boolean' | 'enum';
   enumValues?: readonly (string | number | boolean)[];
   optional?: boolean;
@@ -37,9 +37,6 @@ function parseField(field: Field): ParsedField {
   const clean = field.name.replace('[]', '');
   const parts = clean.split('.');
 
-  const root = parts[0];
-  const pathParts = parts.slice(1);
-
   let tsType: string = field.type;
   if (field.type === 'enum' && field.enumValues) {
     tsType = field.enumValues.map(v => JSON.stringify(v)).join(' | ');
@@ -47,11 +44,15 @@ function parseField(field: Field): ParsedField {
 
   return {
     raw: field,
-    root,
+    root: parts[0],
     isArray,
-    pathParts,
+    pathParts: parts.slice(1),
     tsType,
   };
+}
+
+function hasRequiredFields(fields: ParsedField[]): boolean {
+  return fields.some(f => !f.raw.optional);
 }
 
 /* =======================
@@ -74,102 +75,86 @@ function buildTree(fields: ParsedField[]): FieldNode {
 }
 
 /* =======================
- * TYPE GENERATION
+ * TYPE RENDER
  * ======================= */
 
-function renderType(node: FieldNode, indent = '  ', optionalAware = true): string {
+function renderType(node: FieldNode, indent = '  '): string {
   return Object.entries(node.children)
     .map(([key, child]) => {
       if (child.field) {
         const f = child.field;
-        const type = optionalAware && f.raw.optional ? `${f.tsType} | null` : f.tsType;
-
+        const type = f.raw.optional ? `${f.tsType} | null` : f.tsType;
         return `${indent}${key}: ${type};`;
       }
 
-      return `${indent}${key}: {\n${renderType(child, indent + '  ', optionalAware)}\n${indent}};`;
+      return `${indent}${key}: {\n${renderType(child, indent + '  ')}\n${indent}};`;
     })
     .join('\n');
 }
 
 /* =======================
- * VALIDATOR GENERATION
+ * VALIDATOR HELPERS
  * ======================= */
 
-function renderValidatorAssignments(root: string, node: FieldNode, path: string[] = []): string[] {
+function renderAssignments(
+  varRoot: string,
+  node: FieldNode,
+  path: string[] = [],
+  rawPrefix: string,
+): string[] {
   const out: string[] = [];
 
   for (const [key, child] of Object.entries(node.children)) {
-    const nextPath = [...path, key];
+    const next = [...path, key];
+    const varName = `${varRoot}_${next.join('_')}`;
+    const rawPath = `${rawPrefix}.${key}`;
 
     if (child.field) {
-      const f = child.field;
-      const varName = `${root}_${nextPath.join('_')}`;
-
-      if (f.raw.type === 'enum' && f.raw.enumValues) {
-        const checks = f.raw.enumValues
-          .map(v => `${varName}Raw === ${JSON.stringify(v)}`)
-          .join(' || ');
-
-        out.push(`
-    const ${varName}Raw = raw["${f.raw.name}"];
-    const ${varName} =
-      (${checks})
-        ? ${varName}Raw
-        : null;
+      out.push(`
+      const ${varName} =
+        typeof src["${rawPath}"] === "${child.field.raw.type}"
+          ? src["${rawPath}"]
+          : null;
 `);
-      } else {
-        out.push(`
-    const ${varName} =
-      typeof raw["${f.raw.name}"] === "${f.raw.type}"
-        ? raw["${f.raw.name}"]
-        : null;
-`);
-      }
     } else {
-      out.push(...renderValidatorAssignments(root, child, nextPath));
+      out.push(...renderAssignments(varRoot, child, next, rawPath));
     }
   }
 
   return out;
 }
 
-function renderRequiredChecks(root: string, node: FieldNode, path: string[] = []): string[] {
-  const checks: string[] = [];
+function renderRequiredChecks(varRoot: string, node: FieldNode, path: string[] = []): string[] {
+  const out: string[] = [];
 
   for (const [key, child] of Object.entries(node.children)) {
-    const nextPath = [...path, key];
-
+    const next = [...path, key];
     if (child.field && !child.field.raw.optional) {
-      checks.push(`${root}_${nextPath.join('_')} === null`);
+      out.push(`${varRoot}_${next.join('_')} === null`);
     } else {
-      checks.push(...renderRequiredChecks(root, child, nextPath));
+      out.push(...renderRequiredChecks(varRoot, child, next));
     }
   }
 
-  return checks;
+  return out;
 }
 
-function renderObjectBuild(
-  root: string,
+function renderBuild(
+  varRoot: string,
   node: FieldNode,
   path: string[] = [],
-  indent = '      ',
+  indent = '        ',
 ): string {
   return Object.entries(node.children)
     .map(([key, child]) => {
-      const nextPath = [...path, key];
+      const next = [...path, key];
+      const v = `${varRoot}_${next.join('_')}`;
 
       if (child.field) {
-        return `${indent}${key}: ${root}_${nextPath.join('_')},`;
+        return `${indent}${key}: ${v},`;
       }
 
-      return `${indent}${key}: {\n${renderObjectBuild(
-        root,
-        child,
-        nextPath,
-        indent + '  ',
-      )}\n${indent}},`;
+      return `${indent}${key}: {\n${renderBuild(varRoot, child, next, indent + '  ')}\n${indent}},`;
     })
     .join('\n');
 }
@@ -203,8 +188,6 @@ export function generateReactHook(fields: Field[]): string {
   const typeBlocks: string[] = [];
 
   for (const [root, items] of Object.entries(grouped)) {
-    if (items[0].isArray) continue;
-
     const tree = buildTree(items);
 
     typeBlocks.push(`
@@ -236,27 +219,44 @@ function validateGameData(raw: Record<string, unknown>): GameData | null {
 `);
 
   for (const [root, items] of Object.entries(grouped)) {
-    if (items[0].isArray) continue;
-
     const tree = buildTree(items);
+    const requiredChecks = renderRequiredChecks(root, tree);
+    const hasRequired = hasRequiredFields(items);
 
-    v.push(`
-    // --- ${root} ---
-${renderValidatorAssignments(root, tree).join('\n')}
-`);
-
-    const required = renderRequiredChecks(root, tree);
-    if (required.length) {
+    if (items[0].isArray) {
       v.push(`
-    if (${required.join(' || ')}) return null;
-`);
+    // --- ${root}[] ---
+    const ${root}Arr = raw["${root}"];
+    if (!Array.isArray(${root}Arr)) return null;
+
+    const ${root}: ${capitalize(root)}Data[] = [];
+
+    for (const src of ${root}Arr as any[]) {
+${renderAssignments(root, tree, [], root).join('\n')}
+
+${hasRequired ? `      if (${requiredChecks.join(' || ')}) continue;` : ''}
+
+      ${root}.push({
+${renderBuild(root, tree)}
+      });
     }
 
-    v.push(`
+${hasRequired ? `    if (${root}.length === 0) return null;` : ''}
+`);
+    } else {
+      v.push(`
+    // --- ${root} ---
+    const src = raw;
+
+${renderAssignments(root, tree, [], root).join('\n')}
+
+${hasRequired ? `    if (${requiredChecks.join(' || ')}) return null;` : ''}
+
     const ${root}: ${capitalize(root)}Data = {
-${renderObjectBuild(root, tree)}
+${renderBuild(root, tree, [], '      ')}
     };
 `);
+    }
   }
 
   v.push(`
