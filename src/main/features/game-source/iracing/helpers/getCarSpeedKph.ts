@@ -23,7 +23,7 @@ export function getCarSpeedKph(
   const rawTimeDelta = sessionTime - prevData.sessionTime;
   const timeDeltaSeconds = Math.abs(rawTimeDelta);
 
-  if (timeDeltaSeconds < 0.15) {
+  if (timeDeltaSeconds < 0.5) {
     return prevData.speedKph;
   }
 
