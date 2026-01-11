@@ -41,7 +41,7 @@ export const LayoutItemOverlayPreview = ({ layout }: LayoutItemOverlayPreviewPro
       }}
     >
       {layout.overlays.map(overlay => {
-        const url = `${overlay.baseUrl}?preview=true${overlay.settings
+        const url = `${overlay.baseUrl}?preview=true&${overlay.settings
           .map(s => {
             const key = s.id;
             const value = s.value;
