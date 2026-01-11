@@ -6,6 +6,8 @@ import type { ReactElement } from 'react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 
+import { LayoutItemOverlayPreview } from './layout-item-overlay-preview';
+
 import { cn } from '@/renderer/lib/utils'; // Assuming cn utility is available
 import type { LayoutFile } from '@/shared/types/LayoutFile';
 
@@ -154,9 +156,12 @@ export const LayoutItem = ({
       </div>
 
       {/* Placeholder for Layout Preview */}
-      <div className="bg-muted/30 text-muted-foreground flex w-full flex-1 items-center justify-center rounded-md text-xs">
-        Layout Preview Area
-      </div>
+      {layout.overlays.length === 0 && (
+        <div className="bg-muted/30 text-muted-foreground flex w-full flex-1 items-center justify-center rounded-md text-xs">
+          No overlays added
+        </div>
+      )}
+      {layout.overlays.length > 0 && <LayoutItemOverlayPreview layout={layout} />}
     </div>
   );
 };
