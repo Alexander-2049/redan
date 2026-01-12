@@ -11,4 +11,5 @@
 - Add visualization when Steam is online/connected
 - Track steam connection, to automatically update page when Steam got open/closed both in Workshop tab and Create tab
 <!-- - On "Close" / "X" button click application does not exit, main window + overlays closes only, but run keeps running in the background -->
-- BUG: Adding overlay >> moving it in editing mode >> keeping in editing mode >> adding another overlay >> causes overlay moved before to teleport back to its original position 
+- BUG: Adding overlay >> moving it in editing mode >> keeping in editing mode >> adding another overlay >> causes overlay moved before to teleport back to its original position
+- BUG: Adding overlay >> Overlay displays in correct position, but on initiation its settings (x,y,width,height) are being saved incorrectly
